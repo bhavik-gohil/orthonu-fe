@@ -10,6 +10,16 @@ const nextConfig: NextConfig = {
         port: '3100',
         pathname: '/**',
       },
+      {
+        protocol: 'https',
+        hostname: 'newtestapi.orthonu.com',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'api.orthonu.com', // Added for your PROD environment
+        pathname: '/**',
+      },
     ],
   },
 };
