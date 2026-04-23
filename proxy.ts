@@ -22,29 +22,11 @@ export function proxy(req: NextRequest) {
   const ADMIN_DOMAIN = process.env.ADMIN_DOMAIN;
   const MAIN_DOMAIN = process.env.MAIN_DOMAIN;
 
-  const isShop = hostname === SHOP_DOMAIN;
-  const isAdmin = hostname === ADMIN_DOMAIN;
   const isMain = hostname === MAIN_DOMAIN;
 
-  // SHOP subdomain — Nginx already rewrites / → /shop/ internally.
-  // If a frontend <Link href="/shop/..."> causes /shop to appear in the URL,
-  // redirect to strip it so URLs stay clean.
-  if (isShop && pathname.startsWith("/shop")) {
-    const stripped = pathname.slice("/shop".length) || "/";
-    return NextResponse.redirect(
-      new URL(`${stripped}${url.search}`, `https://${SHOP_DOMAIN}`),
-    );
-  }
-
-  // ADMIN subdomain — same logic as shop
-  if (isAdmin && pathname.startsWith("/admin")) {
-    const stripped = pathname.slice("/admin".length) || "/";
-    return NextResponse.redirect(
-      new URL(`${stripped}${url.search}`, `https://${ADMIN_DOMAIN}`),
-    );
-  }
-
-  // MAIN SITE — redirect /shop and /admin to their subdomains
+  // MAIN SITE ONLY — redirect /shop and /admin to their subdomains
+  // Nginx already handles the subdomain → internal path rewriting,
+  // so the proxy does NOT touch requests on shop/admin subdomains.
   if (isMain) {
     if (pathname.startsWith("/shop")) {
       const stripped = pathname.slice("/shop".length) || "/";
