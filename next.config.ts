@@ -9,6 +9,16 @@ const nextConfig: NextConfig = {
         hostname: 'api.orthonu.com',
         pathname: '/**',
       },
+      {
+        protocol: 'https',
+        hostname: 'newtestapi.orthonu.com',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'api.orthonu.com', // Added for your PROD environment
+        pathname: '/**',
+      },
     ],
   },
 };
