@@ -1,0 +1,42 @@
+@import "tailwindcss";
+
+:root {
+  --background: #F5F3F0;
+  /* Warm Gray */
+  --foreground: #2D3E50;
+  /* Soft Dark */
+
+  --nu-blue: #7BD2F6;
+  --atlantic-blue: #0076A8;
+  --bright-cyan: #00C1D5;
+  --soft-plum: #9B7FB8;
+  --fresh-mint: #71CC98;
+  --sage: #8BAF9A;
+  --soft-dark: #2D3E50;
+  --warm-gray: #F5F3F0;
+
+  /* Aliases for Tailwind arbitrary value syntax: bg-(--brand-blue) etc. */
+  --brand-blue: var(--nu-blue);
+  --b-cyan: var(--bright-cyan);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-sans);
+  --font-serif: var(--font-serif);
+
+  --color-brand-blue: var(--nu-blue);
+  --color-atlantic-blue: var(--atlantic-blue);
+  --color-bright-cyan: var(--bright-cyan);
+  --color-soft-plum: var(--soft-plum);
+  --color-fresh-mint: var(--fresh-mint);
+  --color-sage: var(--sage);
+  --color-soft-dark: var(--soft-dark);
+  --color-warm-gray: var(--warm-gray);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+}
