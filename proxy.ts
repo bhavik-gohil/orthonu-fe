@@ -12,7 +12,7 @@ export function proxy(req: NextRequest) {
     process.env.APP_ENV === "prod" ||
     hostname.includes(".orthonu.com");
 
-  // 1. Local setup / normal routing fallback
+  // Local setup — skip all subdomain logic
   if (!isDeployedEnv) {
     return NextResponse.next();
   }
@@ -26,33 +26,27 @@ export function proxy(req: NextRequest) {
   const isAdmin = hostname === ADMIN_DOMAIN;
   const isMain = hostname === MAIN_DOMAIN;
 
-  // SHOP subdomain
-  if (isShop) {
-    // Don't rewrite if already prefixed with /shop (avoids /shop/shop)
-    if (!pathname.startsWith("/shop")) {
-      return NextResponse.rewrite(
-        new URL(`/shop${pathname}${url.search}`, req.url),
-      );
-    }
-    return NextResponse.next();
+  // SHOP subdomain — Nginx already rewrites / → /shop/ internally.
+  // If a frontend <Link href="/shop/..."> causes /shop to appear in the URL,
+  // redirect to strip it so URLs stay clean.
+  if (isShop && pathname.startsWith("/shop")) {
+    const stripped = pathname.slice("/shop".length) || "/";
+    return NextResponse.redirect(
+      new URL(`${stripped}${url.search}`, `https://${SHOP_DOMAIN}`),
+    );
   }
 
-  // ADMIN subdomain
-  if (isAdmin) {
-    // Don't rewrite if already prefixed with /admin (avoids /admin/admin)
-    if (!pathname.startsWith("/admin")) {
-      return NextResponse.rewrite(
-        new URL(`/admin${pathname}${url.search}`, req.url),
-      );
-    }
-    return NextResponse.next();
+  // ADMIN subdomain — same logic as shop
+  if (isAdmin && pathname.startsWith("/admin")) {
+    const stripped = pathname.slice("/admin".length) || "/";
+    return NextResponse.redirect(
+      new URL(`${stripped}${url.search}`, `https://${ADMIN_DOMAIN}`),
+    );
   }
 
   // MAIN SITE — redirect /shop and /admin to their subdomains
   if (isMain) {
     if (pathname.startsWith("/shop")) {
-      // /shop/cart → newtestshop.orthonu.com/cart
-      // /shop      → newtestshop.orthonu.com/
       const stripped = pathname.slice("/shop".length) || "/";
       return NextResponse.redirect(
         new URL(`${stripped}${url.search}`, `https://${SHOP_DOMAIN}`),
@@ -67,6 +61,7 @@ export function proxy(req: NextRequest) {
     }
   }
 
+  // Everything else — let Nginx + Next.js handle normally
   return NextResponse.next();
 }
 
