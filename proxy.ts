@@ -22,11 +22,26 @@ export function proxy(req: NextRequest) {
   const ADMIN_DOMAIN = process.env.ADMIN_DOMAIN;
   const MAIN_DOMAIN = process.env.MAIN_DOMAIN;
 
+  const isShop = hostname === SHOP_DOMAIN;
+  const isAdmin = hostname === ADMIN_DOMAIN;
   const isMain = hostname === MAIN_DOMAIN;
 
-  // MAIN SITE ONLY — redirect /shop and /admin to their subdomains
-  // Nginx already handles the subdomain → internal path rewriting,
-  // so the proxy does NOT touch requests on shop/admin subdomains.
+  // SHOP subdomain — internally rewrite to /shop/...
+  // NextResponse.rewrite() does NOT change the browser URL bar
+  if (isShop && !pathname.startsWith("/shop")) {
+    return NextResponse.rewrite(
+      new URL(`/shop${pathname}${url.search}`, req.url),
+    );
+  }
+
+  // ADMIN subdomain — internally rewrite to /admin/...
+  if (isAdmin && !pathname.startsWith("/admin")) {
+    return NextResponse.rewrite(
+      new URL(`/admin${pathname}${url.search}`, req.url),
+    );
+  }
+
+  // MAIN SITE — redirect /shop and /admin to their subdomains
   if (isMain) {
     if (pathname.startsWith("/shop")) {
       const stripped = pathname.slice("/shop".length) || "/";
@@ -43,7 +58,6 @@ export function proxy(req: NextRequest) {
     }
   }
 
-  // Everything else — let Nginx + Next.js handle normally
   return NextResponse.next();
 }
 
