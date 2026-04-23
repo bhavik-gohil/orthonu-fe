@@ -4,9 +4,8 @@ const nextConfig: NextConfig = {
   images: {
     remotePatterns: [
       {
-        protocol: 'http',
-        hostname: 'localhost',
-        port: '3100',
+        protocol: 'https',
+        hostname: 'api.orthonu.com',
         pathname: '/**',
       },
     ],
