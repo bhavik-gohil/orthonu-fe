@@ -76,12 +76,14 @@ export function makeSlug(name: string): string {
 }
 
 // Media URL helper
-export const MEDIA_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3100";
+export const MEDIA_BASE_URL = (process.env.NEXT_PUBLIC_API_URL || "http://localhost:3100").replace(/\/$/, "");
 
 export function mediaUrl(path: string): string {
     if (!path) return "";
     if (path.startsWith("http")) return path;
-    return `${MEDIA_BASE_URL}${path}`;
+    // Ensure path starts with a single slash
+    const normalizedPath = path.startsWith("/") ? path : `/${path}`;
+    return `${MEDIA_BASE_URL}${normalizedPath}`;
 }
 
 // Product Grouping
