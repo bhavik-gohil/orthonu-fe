@@ -2,9 +2,9 @@
 
 echo "Starting deployment for Frontend..."
 
-# Build the Docker image
+# Build the Docker image with BuildKit enabled for cache mounts
 echo "Building image 'fe'..."
-docker build -t fe .
+DOCKER_BUILDKIT=1 docker build -t fe .
 
 # Stop and remove the existing container if it exists
 echo "Stopping and removing existing container..."
