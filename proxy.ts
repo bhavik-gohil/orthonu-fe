@@ -7,7 +7,6 @@ export function proxy(req: NextRequest) {
   const pathname = url.pathname;
 
   // Environment Check
-  // We apply these rules if APP_ENV is TEST or PROD, or if the hostname is a deployed domain
   const isDeployedEnv =
     process.env.APP_ENV === "test" ||
     process.env.APP_ENV === "prod" ||
@@ -19,10 +18,6 @@ export function proxy(req: NextRequest) {
   }
 
   // --- DOMAIN CONFIGURATION ---
-  // You can set these in your .env file for PROD:
-  // SHOP_DOMAIN=shop.orthonu.com
-  // ADMIN_DOMAIN=console.orthonu.com
-  // MAIN_DOMAIN=orthonu.com
   const SHOP_DOMAIN = process.env.SHOP_DOMAIN;
   const ADMIN_DOMAIN = process.env.ADMIN_DOMAIN;
   const MAIN_DOMAIN = process.env.MAIN_DOMAIN;
@@ -31,43 +26,44 @@ export function proxy(req: NextRequest) {
   const isAdmin = hostname === ADMIN_DOMAIN;
   const isMain = hostname === MAIN_DOMAIN;
 
-  // Safeguard against /shop/shop loops
-  if (pathname.startsWith("/shop/shop")) {
-    return NextResponse.rewrite(
-      new URL(pathname.replace("/shop/shop", "/shop"), req.url),
-    );
-  }
-
-  if (pathname.startsWith("/admin/admin")) {
-    return NextResponse.rewrite(
-      new URL(pathname.replace("/admin/admin", "/admin"), req.url),
-    );
-  }
-
-  // SHOP
+  // SHOP subdomain
   if (isShop) {
-    return NextResponse.rewrite(
-      new URL(`/shop${pathname}${url.search}`, req.url),
-    );
+    // Don't rewrite if already prefixed with /shop (avoids /shop/shop)
+    if (!pathname.startsWith("/shop")) {
+      return NextResponse.rewrite(
+        new URL(`/shop${pathname}${url.search}`, req.url),
+      );
+    }
+    return NextResponse.next();
   }
 
-  // ADMIN
+  // ADMIN subdomain
   if (isAdmin) {
-    return NextResponse.rewrite(
-      new URL(`/admin${pathname}${url.search}`, req.url),
-    );
+    // Don't rewrite if already prefixed with /admin (avoids /admin/admin)
+    if (!pathname.startsWith("/admin")) {
+      return NextResponse.rewrite(
+        new URL(`/admin${pathname}${url.search}`, req.url),
+      );
+    }
+    return NextResponse.next();
   }
 
-  // MAIN SITE redirects
+  // MAIN SITE — redirect /shop and /admin to their subdomains
   if (isMain) {
     if (pathname.startsWith("/shop")) {
-      const newPath = pathname.replace("/shop", "") || "/";
-      return NextResponse.redirect(new URL(newPath, `https://${SHOP_DOMAIN}`));
+      // /shop/cart → newtestshop.orthonu.com/cart
+      // /shop      → newtestshop.orthonu.com/
+      const stripped = pathname.slice("/shop".length) || "/";
+      return NextResponse.redirect(
+        new URL(`${stripped}${url.search}`, `https://${SHOP_DOMAIN}`),
+      );
     }
 
     if (pathname.startsWith("/admin")) {
-      const newPath = pathname.replace("/admin", "") || "/";
-      return NextResponse.redirect(new URL(newPath, `https://${ADMIN_DOMAIN}`));
+      const stripped = pathname.slice("/admin".length) || "/";
+      return NextResponse.redirect(
+        new URL(`${stripped}${url.search}`, `https://${ADMIN_DOMAIN}`),
+      );
     }
   }
 
