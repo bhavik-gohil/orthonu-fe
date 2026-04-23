@@ -114,7 +114,7 @@ export default function ProductDetailPage() {
             );
             const bundled = found.bundleItems
               .map((bi) =>
-                allProducts.find((p) => p.id === bi.bundledProductId),
+                allProducts.find((p) => p.id === bi.productRefId),
               )
               .filter(Boolean) as Product[];
             setBundleProducts(bundled);
