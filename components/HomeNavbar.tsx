@@ -62,7 +62,7 @@ export default function HomeNavbar() {
         </Link>
 
         {/* Desktop centre links */}
-        <div className="hidden md:flex items-center gap-10 font-semibold text-sm tracking-[0.05em] text-white">
+        <div className="hidden md:flex absolute left-1/2 -translate-x-1/2 items-center gap-10 font-semibold text-sm tracking-[0.05em] text-white">
           <Link href="/about" className="hover:text-white/70 transition-colors">
             About
           </Link>
@@ -86,6 +86,7 @@ export default function HomeNavbar() {
           </a>
           <Link
             href="/shop"
+            target="_blank"
             className="px-6 py-2.5 bg-white text-brand-blue rounded-full hover:bg-zinc-100 transition-all font-semibold"
           >
             Shop Solutions
@@ -127,6 +128,7 @@ export default function HomeNavbar() {
           </a>
           <Link
             href="/shop"
+            target="_blank"
             onClick={() => setMobileOpen(false)}
             className="block font-semibold text-brand-blue bg-white w-fit px-4 py-1.5 rounded-lg"
           >

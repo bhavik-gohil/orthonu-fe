@@ -372,6 +372,7 @@ export default function Home() {
                         <div className="flex-1 h-px bg-zinc-200" />
                         <Link
                           href="/shop"
+                          target="_blank"
                           className="text-[10px] font-bold tracking-[0.3em] transition-colors flex items-center gap-2"
                           style={{ color: accentColor }}
                         >
@@ -380,7 +381,7 @@ export default function Home() {
                       </div>
                       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
                         {group.products.slice(0, 4).map((product) => (
-                          <ProductCard key={product.id} product={product} />
+                          <ProductCard key={product.id} product={product} hrefPrefix="/shop" linkTarget="_blank" />
                         ))}
                       </div>
                     </div>

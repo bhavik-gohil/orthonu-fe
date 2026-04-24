@@ -24,6 +24,14 @@ export default function ShopNavbar() {
   const [categories, setCategories] = useState<Category[]>([]);
   const [openMenu, setOpenMenu] = useState<string | null>(null);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [shopPrefix, setShopPrefix] = useState("/shop");
+
+  useEffect(() => {
+    const host = window.location.hostname;
+    if (host === "newtestshop.orthonu.com" || host === "shop.orthonu.com") {
+      setShopPrefix("");
+    }
+  }, []);
   const { totalItems } = useCart();
   const { user, logout } = useAuth();
 
@@ -40,8 +48,8 @@ export default function ShopNavbar() {
     <nav className="sticky top-0 z-50 w-full bg-brand-blue font-sans shadow-xl shadow-brand-blue/10 border-b border-white/5">
       <div className="max-w-[1440px] mx-auto px-6 md:px-16 flex items-center justify-between h-20 md:h-28">
         {/* Logo Area */}
-        <Link
-          href="/shop"
+        <a
+          href={shopPrefix || "/"}
           className="hover:opacity-90 transition-all duration-500 shrink-0 group"
         >
           <div className="relative">
@@ -54,7 +62,7 @@ export default function ShopNavbar() {
               priority
             />
           </div>
-        </Link>
+        </a>
 
         {/* Desktop Navigation */}
         <div className="hidden md:flex items-center gap-12 text-sm font-semibold tracking-wide text-white">
@@ -93,12 +101,12 @@ export default function ShopNavbar() {
                         </p>
                       </div>
                       <div className="pt-2">
-                        <Link
-                          href={`/shop?category=${encodeURIComponent(cat.productCategory)}`}
+                        <a
+                          href={`${shopPrefix}/?category=${encodeURIComponent(cat.productCategory)}`.replace('//', '/')}
                           className="inline-flex items-center gap-3 px-6 py-3 bg-brand-blue text-white rounded-xl text-[10px] font-black tracking-widest uppercase shadow-lg shadow-brand-blue/20 hover:shadow-2xl hover:-translate-y-0.5 active:scale-95 transition-all"
                         >
                           Explore Collection
-                        </Link>
+                        </a>
                       </div>
                     </div>
                   </div>
@@ -107,12 +115,12 @@ export default function ShopNavbar() {
             );
           })}
           {shouldShowProfessionalLink && (
-            <Link
-              href="/shop/register?professional=yes"
+            <a
+              href={`${shopPrefix}/register?professional=yes`}
               className="flex items-center gap-2 hover:text-white transition-all duration-300 py-8 relative group"
             >
               For Professional
-            </Link>
+            </a>
           )}
         </div>
 
@@ -121,8 +129,8 @@ export default function ShopNavbar() {
           {/* For Professional Button */}
 
           {/* Shopping Bag */}
-          <Link
-            href="/shop/cart"
+          <a
+            href={`${shopPrefix}/cart`}
             className="relative p-3.5 text-white hover:bg-white/10 border border-white/5 rounded-full transition-all duration-500 group shadow-lg shadow-black/5"
           >
             <ShoppingBag
@@ -135,7 +143,7 @@ export default function ShopNavbar() {
                 {totalItems}
               </span>
             )}
-          </Link>
+          </a>
 
           {/* Account Icon Dropdown */}
           <div className="relative group">
@@ -158,8 +166,8 @@ export default function ShopNavbar() {
                         {user.email}
                       </p>
                     </div>
-                    <Link
-                      href="/shop/account"
+                    <a
+                      href={`${shopPrefix}/account`}
                       className="flex items-center gap-4 px-6 py-4 text-[11px] font-black uppercase tracking-widest text-soft-dark hover:bg-zinc-50 rounded-xl transition-all group"
                     >
                       <UserCircle
@@ -167,7 +175,7 @@ export default function ShopNavbar() {
                         className="text-brand-blue group-hover:scale-110 transition-transform"
                       />
                       Account Hub
-                    </Link>
+                    </a>
                     <div className="border-t border-zinc-100 mt-2 pt-2">
                       <button
                         onClick={() => logout()}
@@ -191,19 +199,19 @@ export default function ShopNavbar() {
                         Please Login to continue
                       </p>
                     </div>
-                    <Link
-                      href="/shop/login"
+                    <a
+                      href={`${shopPrefix}/login`}
                       className="flex items-center justify-center gap-3 mx-2 my-2 py-3 bg-brand-blue text-white rounded-full text-sm font-bold tracking-wide shadow-lg shadow-brand-blue/20 hover:shadow-xl hover:-translate-y-0.5 transition-all"
                     >
                       <LogIn size={16} /> Login
-                    </Link>
+                    </a>
                     <div className="text-center py-2 text-sm font-bold text-zinc-400">
-                      <Link
-                        href="/shop/register"
+                      <a
+                        href={`${shopPrefix}/register`}
                         className="text-brand-blue underline decoration-brand-blue/20 hover:decoration-brand-blue transition-all"
                       >
                         Create Account
-                      </Link>
+                      </a>
                     </div>
                   </>
                 )}
@@ -233,28 +241,28 @@ export default function ShopNavbar() {
               Categories
             </p>
             {categories.map((cat) => (
-              <Link
+              <a
                 key={cat.id}
-                href={`/shop?category=${encodeURIComponent(cat.productCategory)}`}
+                href={`${shopPrefix}/?category=${encodeURIComponent(cat.productCategory)}`.replace('//', '/')}
                 onClick={() => setMobileOpen(false)}
                 className="flex text-lg font-black text-white py-4 border-b border-white/5 active:scale-95 transition-all items-center justify-between"
               >
                 {cat.productCategory}
                 <ChevronDown size={16} className="-rotate-90 text-white/40" />
-              </Link>
+              </a>
             ))}
           </div>
 
           {shouldShowProfessionalLink && (
             <div className="pt-6 border-t border-white/5">
-              <Link
-                href="/shop/register?professional=yes"
+              <a
+                href={`${shopPrefix}/register?professional=yes`}
                 onClick={() => setMobileOpen(false)}
                 className="flex text-lg font-black text-white py-4 border-b border-white/5 active:scale-95 transition-all items-center justify-between"
               >
                 For Professional
                 <ChevronDown size={16} className="-rotate-90 text-white/40" />
-              </Link>
+              </a>
             </div>
           )}
 
@@ -264,13 +272,13 @@ export default function ShopNavbar() {
             </p>
             {user ? (
               <div className="grid grid-cols-2 gap-3">
-                <Link
-                  href="/shop/account"
+                <a
+                  href={`${shopPrefix}/account`}
                   onClick={() => setMobileOpen(false)}
                   className="flex items-center justify-center gap-2 py-4 bg-white/10 rounded-2xl text-[10px] font-black uppercase tracking-widest text-white"
                 >
                   Hub
-                </Link>
+                </a>
                 <button
                   onClick={() => logout()}
                   className="flex items-center justify-center gap-2 py-4 bg-rose-500/20 rounded-2xl text-[10px] font-black uppercase tracking-widest text-rose-200"
@@ -279,13 +287,13 @@ export default function ShopNavbar() {
                 </button>
               </div>
             ) : (
-              <Link
-                href="/shop/login"
+              <a
+                href={`${shopPrefix}/login`}
                 onClick={() => setMobileOpen(false)}
                 className="block w-full text-center py-5 bg-white text-brand-blue rounded-2xl text-[11px] font-black uppercase tracking-widest shadow-xl"
               >
                 Login
-              </Link>
+              </a>
             )}
           </div>
         </div>
