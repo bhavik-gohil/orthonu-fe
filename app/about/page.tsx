@@ -422,6 +422,7 @@ export default function AboutPage() {
             <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
               <Link
                 href="/shop"
+                target="_blank"
                 className="px-10 py-4 bg-white text-brand-blue font-black text-xs uppercase tracking-widest rounded-xl hover:shadow-2xl hover:-translate-y-0.5 transition-all"
               >
                 Shop Solutions

@@ -10,9 +10,11 @@ import { useState } from "react";
 interface Props {
   product: Product;
   className?: string;
+  hrefPrefix?: string;
+  linkTarget?: string;
 }
 
-export default function ProductCard({ product, className = "" }: Props) {
+export default function ProductCard({ product, className = "", hrefPrefix = "/shop", linkTarget }: Props) {
   const { addItem, loading } = useCart();
   const { user } = useAuth();
   const [adding, setAdding] = useState(false);
@@ -31,7 +33,7 @@ export default function ProductCard({ product, className = "" }: Props) {
   const showProfessionalPricing = isProfessional && professionalPrice != null;
   
   const slug = makeSlug(product.name);
-  const href = `/shop/product/${slug}/${product.uid}`;
+  const href = `${hrefPrefix}/product/${slug}/${product.uid}`;
 
   const handleAddToCart = async (e: React.MouseEvent) => {
     e.preventDefault();
@@ -42,8 +44,9 @@ export default function ProductCard({ product, className = "" }: Props) {
   };
 
   return (
-    <Link
+    <a
       href={href}
+      target={linkTarget}
       className={`group block cursor-pointer transition-all duration-200 hover:-translate-y-[3px] hover:shadow-[0_8px_24px_rgba(0,0,0,0.06)] rounded-2xl overflow-hidden bg-white border border-zinc-100 ${className}`}
     >
       {/* Image Container */}
@@ -123,6 +126,6 @@ export default function ProductCard({ product, className = "" }: Props) {
           )}
         </div>
       </div>
-    </Link>
+    </a>
   );
 }

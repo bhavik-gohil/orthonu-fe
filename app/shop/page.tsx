@@ -59,6 +59,18 @@ function ShopContent() {
     (cat) => cat.productCategory === activeCategory,
   );
 
+  const [shopPrefix, setShopPrefix] = useState("/shop");
+
+  useEffect(() => {
+    // If we are on the deployed shop subdomain, we don't need the /shop prefix for internal links
+    // so the URL stays clean (newtestshop.orthonu.com/product/...)
+    // Locally (localhost), we keep /shop so routing works correctly.
+    const host = window.location.hostname;
+    if (host === "newtestshop.orthonu.com" || host === "shop.orthonu.com") {
+      setShopPrefix("");
+    }
+  }, []);
+
   if (loading) {
     return (
       <div className="flex min-h-[60vh] items-center justify-center">
@@ -77,14 +89,14 @@ function ShopContent() {
       >
         {/* Category Filter Pills */}
         <div className="flex flex-wrap gap-3 pt-4">
-          <Pill as="a" href="/shop" active={!activeCategory}>
+          <Pill as="a" href={shopPrefix || "/"} active={!activeCategory}>
             All
           </Pill>
           {categories.map((cat) => (
             <Pill
               key={cat.id}
               as="a"
-              href={`/shop?category=${encodeURIComponent(cat.productCategory)}`}
+              href={`${shopPrefix}/?category=${encodeURIComponent(cat.productCategory)}`.replace('//', '/')}
               active={activeCategory === cat.productCategory}
             >
               {cat.productCategory}
@@ -136,7 +148,7 @@ function ShopContent() {
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
                 {group.items.map((product) => (
-                  <ProductCard key={product.id} product={product} />
+                  <ProductCard key={product.id} product={product} hrefPrefix={shopPrefix} />
                 ))}
               </div>
             </div>
