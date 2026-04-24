@@ -279,7 +279,7 @@ export default function AboutPage() {
                 {testimonials.map((t) => (
                   <div
                     key={t.id}
-                    className="break-inside-avoid bg-zinc-50 border border-zinc-100 rounded-2xl p-6 space-y-4"
+                    className="break-inside-avoid bg-zinc-50 border border-zinc-100 rounded-3xl p-6 space-y-4"
                   >
                     <Quote size={20} className="text-brand-blue/30" />
                     <p className="text-sm text-soft-dark/80 leading-relaxed italic">
@@ -373,37 +373,39 @@ export default function AboutPage() {
                 {partners.map((p) => (
                   <div
                     key={p.id}
-                    className="bg-white border border-zinc-100 rounded-2xl p-6 space-y-4 hover:border-brand-blue/20 hover:shadow-lg transition-all"
+                    className="bg-white border border-brand-blue/0 rounded-3xl p-6 flex flex-col gap-6 hover:border-brand-blue/20 hover:shadow-xl transition-all"
                   >
-                    <div className="flex items-center gap-4">
-                      <div className="w-16 h-12 rounded-xl overflow-hidden bg-zinc-50 border border-zinc-100 flex items-center justify-center p-1 shrink-0">
-                        {p.logo ? (
-                          <img
-                            src={mediaUrl(p.logo)}
-                            alt={p.name}
-                            className="max-w-full max-h-full object-contain"
-                          />
-                        ) : (
-                          <Handshake size={20} className="text-zinc-300" />
-                        )}
-                      </div>
-                      <h3 className="text-base font-bold text-soft-dark">
+                    <div className="w-full h-32 rounded-xl bg-white flex items-center justify-center p-6 shrink-0">
+                      {p.logo ? (
+                        <img
+                          src={mediaUrl(p.logo)}
+                          alt={p.name}
+                          className="max-w-full max-h-full object-contain"
+                        />
+                      ) : (
+                        <Handshake size={48} className="text-zinc-300" />
+                      )}
+                    </div>
+                    <div className="space-y-3 flex-1 flex flex-col">
+                      <h3 className="text-xl font-bold text-soft-dark text-center sm:text-left">
                         {p.name}
                       </h3>
+                      <p className="text-sm text-soft-dark/70 leading-relaxed flex-1 text-center sm:text-left">
+                        {p.description}
+                      </p>
+                      {p.learnMoreUrl && (
+                        <div className="pt-2 flex justify-center sm:justify-start">
+                          <a
+                            href={p.learnMoreUrl}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="inline-flex items-center gap-1.5 text-sm font-bold text-brand-blue hover:text-atlantic-blue transition-colors"
+                          >
+                            Learn More <ExternalLink size={14} />
+                          </a>
+                        </div>
+                      )}
                     </div>
-                    <p className="text-sm text-soft-dark/70 leading-relaxed">
-                      {p.description}
-                    </p>
-                    {p.learnMoreUrl && (
-                      <a
-                        href={p.learnMoreUrl}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="inline-flex items-center gap-1.5 text-xs font-bold text-brand-blue hover:text-atlantic-blue transition-colors"
-                      >
-                        Learn More <ExternalLink size={12} />
-                      </a>
-                    )}
                   </div>
                 ))}
               </div>
