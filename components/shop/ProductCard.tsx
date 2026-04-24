@@ -14,7 +14,12 @@ interface Props {
   linkTarget?: string;
 }
 
-export default function ProductCard({ product, className = "", hrefPrefix = "/shop", linkTarget }: Props) {
+export default function ProductCard({
+  product,
+  className = "",
+  hrefPrefix = "/shop",
+  linkTarget,
+}: Props) {
   const { addItem, loading } = useCart();
   const { user } = useAuth();
   const [adding, setAdding] = useState(false);
@@ -28,10 +33,10 @@ export default function ProductCard({ product, className = "", hrefPrefix = "/sh
   const professionalPrice = product.prices.find(
     (p) => p.userType === "professional",
   )?.price;
-  
-  const isProfessional = user?.userType === 'professional';
+
+  const isProfessional = user?.userType === "professional";
   const showProfessionalPricing = isProfessional && professionalPrice != null;
-  
+
   const slug = makeSlug(product.name);
   const href = `${hrefPrefix}/product/${slug}/${product.uid}`;
 
@@ -74,7 +79,7 @@ export default function ProductCard({ product, className = "", hrefPrefix = "/sh
         )}
 
         {/* Variant Indicator */}
-        {product.variantCount && product.variantCount > 1 && (
+        {(product?.variantCount || 0) > 1 && (
           <div className="absolute top-4 right-4">
             <span className="text-[9px] font-black uppercase tracking-widest text-brand-blue bg-white px-2 py-1 rounded-full shadow-sm border border-brand-blue/20">
               {product.variantCount} Options
@@ -85,8 +90,8 @@ export default function ProductCard({ product, className = "", hrefPrefix = "/sh
 
       {/* Color Divider */}
       <div
-        className="h-[3px] group-hover:h-[4px] w-full"
-        style={{ backgroundColor: product.color || '#7BD2F6' }}
+        className="h-[4px] group-hover:h-[5px] w-full"
+        style={{ backgroundColor: product.color || "#7BD2F6" }}
       />
 
       {/* Info Container */}
