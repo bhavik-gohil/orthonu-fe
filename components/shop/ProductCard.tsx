@@ -90,7 +90,7 @@ export default function ProductCard({
 
       {/* Color Divider */}
       <div
-        className="h-[4px] group-hover:h-[5px] w-full"
+        className="h-[4px] w-full"
         style={{ backgroundColor: product.color || "#7BD2F6" }}
       />
 
