@@ -39,6 +39,12 @@ function ColorSwatch({ color }: { color: string | null }) {
 // ─────────────────────────────────────────────────────────────
 // Types
 // ─────────────────────────────────────────────────────────────
+export interface ColorItem {
+    id: number;
+    color: string;
+    colorName: string;
+}
+
 interface GroupItem {
     id: number;
     groupName: string;
@@ -78,6 +84,8 @@ export default function ProductGroupsPage() {
     const [addingProduct, setAddingProduct] = useState(false);
     const [confirmDeleteGroupId, setConfirmDeleteGroupId] = useState<number | null>(null);
     const [confirmDeleteItemId, setConfirmDeleteItemId] = useState<number | null>(null);
+
+    const [colors, setColors] = useState<ColorItem[]>([]);
 
     // ── Data Fetching ──────────────────────────────────────
     const fetchGroups = useCallback(async () => {
@@ -121,7 +129,16 @@ export default function ProductGroupsPage() {
     }, [allProducts.length]);
 
     useEffect(() => {
-        fetchGroups();
+        const init = async () => {
+            fetchGroups();
+            try {
+                const colorsData = await apiCall("GET", "/colors");
+                setColors(colorsData);
+            } catch {
+                /* ignore */
+            }
+        };
+        init();
     }, [fetchGroups]);
 
     const selectGroup = (group: ProductGroup) => {
@@ -282,21 +299,24 @@ export default function ProductGroupsPage() {
                                 placeholder="Collection name…"
                                 className="w-full text-sm border border-zinc-200 rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-brand-blue/30"
                             />
-                            <input
-                                value={newColor}
-                                onChange={(e) => setNewColor(e.target.value)}
-                                placeholder="Hex color, e.g. #3B82F6 (optional)"
-                                className="w-full text-sm border border-zinc-200 rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-brand-blue/30"
-                            />
-                            {newColor && (
-                                <div className="flex items-center gap-2">
-                                    <span
-                                        className="w-5 h-5 rounded-full border border-black/10"
-                                        style={{ backgroundColor: newColor }}
+                            <div className="relative">
+                                <select
+                                    value={newColor}
+                                    onChange={(e) => setNewColor(e.target.value)}
+                                    className="w-full text-sm border border-zinc-200 rounded-xl px-3 py-2 appearance-none pr-10 focus:outline-none focus:ring-2 focus:ring-brand-blue/30 cursor-pointer"
+                                >
+                                    <option value="">No Color (Optional)</option>
+                                    {colors.map((c) => (
+                                        <option key={c.id} value={c.color}>
+                                            {c.colorName}
+                                        </option>
+                                    ))}
+                                </select>
+                                    <div
+                                        className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-6 rounded-md border border-zinc-200"
+                                        style={{ backgroundColor: newColor || "transparent" }}
                                     />
-                                    <span className="text-xs text-zinc-500">Preview</span>
-                                </div>
-                            )}
+                            </div>
                             {createError && <p className="text-xs text-red-500">{createError}</p>}
                             <div className="flex gap-2">
                                 <button
@@ -345,12 +365,24 @@ export default function ProductGroupsPage() {
                                                 onChange={(e) => setEditName(e.target.value)}
                                                 className="w-full text-sm border border-zinc-200 rounded-xl px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-brand-blue/30"
                                             />
-                                            <input
-                                                value={editColor}
-                                                onChange={(e) => setEditColor(e.target.value)}
-                                                placeholder="Hex color (optional)"
-                                                className="w-full text-sm border border-zinc-200 rounded-xl px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-brand-blue/30"
-                                            />
+                                            <div className="relative">
+                                                <select
+                                                    value={editColor}
+                                                    onChange={(e) => setEditColor(e.target.value)}
+                                                    className="w-full text-sm border border-zinc-200 rounded-xl px-3 py-1.5 appearance-none pr-10 focus:outline-none focus:ring-2 focus:ring-brand-blue/30 cursor-pointer"
+                                                >
+                                                    <option value="">No Color (Optional)</option>
+                                                    {colors.map((c) => (
+                                                        <option key={c.id} value={c.color}>
+                                                            {c.colorName}
+                                                        </option>
+                                                    ))}
+                                                </select>
+                                                <div
+                                                    className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-5 rounded-md border border-zinc-200"
+                                                    style={{ backgroundColor: editColor || "transparent" }}
+                                                />
+                                            </div>
                                             <div className="flex gap-2">
                                                 <button
                                                     onClick={() => handleSaveEdit(group)}
