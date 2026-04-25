@@ -1,0 +1,23 @@
+name: Auto PR from dev to master
+
+on:
+  push:
+    branches:
+      - dev
+
+jobs:
+  create-pull-request:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v6
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          base: master
+          head: dev
+          title: "Auto PR: dev → master"
+          body: "This PR was automatically created after a push to dev."
