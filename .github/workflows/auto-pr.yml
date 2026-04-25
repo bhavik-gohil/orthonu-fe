@@ -5,16 +5,20 @@ on:
     branches:
       - dev
 
+permissions:
+  contents: write
+  pull-requests: write
+
 jobs:
   create-pr:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Create PR
+      - name: Create PR if not exists
         run: |
+          gh pr list --base master --head dev --state open | grep . || \
           gh pr create \
             --base master \
             --head dev \
