@@ -72,7 +72,7 @@ export default function ProductDetailPage() {
   const [loading, setLoading] = useState(true);
   const [activeImage, setActiveImage] = useState(0);
   const { items, addItem, updateQuantity, removeItem, loading: cartLoading } = useCart();
-  const { user } = useAuth();
+  const { user, loading: authLoading } = useAuth();
 
   useEffect(() => {
     if (!uid) {
@@ -111,10 +111,10 @@ export default function ProductDetailPage() {
                 ).then((results) => results.filter(Boolean) as Product[])
               : Promise.resolve([]);
 
-          const [productVariants, bundled] = await Promise.all([variantPromise, bundlePromise]);
+          const [productVariants, bundled] = (await Promise.all([variantPromise, bundlePromise])) as [Product[], Product[]];
 
           // Sort variants with default variant first
-          const allVariants = productVariants.sort((a, b) => {
+          const allVariants = productVariants.sort((a: Product, b: Product) => {
             if (a.isDefaultVariant) return -1;
             if (b.isDefaultVariant) return 1;
             return 0;
@@ -217,6 +217,7 @@ export default function ProductDetailPage() {
   
   const isProfessional = user?.userType === 'professional';
   const showProfessionalPricing = isProfessional && professionalPrice != null;
+  const isGuest = !authLoading && !user;
   
   const allMedia = standardMedia;
 
@@ -382,7 +383,7 @@ export default function ProductDetailPage() {
             {/* Add to Cart with Quantity Controls */}
             <div className="flex flex-col gap-3 pt-4">
               {quantityInCart === 0 ? (
-                <div className={`grid grid-cols-1 ${!user ? 'sm:grid-cols-2' : ''} gap-3`}>
+                <div className={`grid grid-cols-1 ${isGuest ? 'sm:grid-cols-2' : ''} gap-3`}>
                   <button
                     onClick={handleAddToCart}
                     disabled={cartLoading}
@@ -396,7 +397,7 @@ export default function ProductDetailPage() {
                       </>
                     )}
                   </button>
-                  {!user && (
+                  {isGuest && (
                     <Link
                       href="/shop/register?professional=yes"
                       className="w-full flex items-center justify-center gap-2 py-3 rounded-2xl font-bold text-xs tracking-[0.05em] bg-white text-brand-blue border-2 border-brand-blue hover:bg-brand-blue/5 hover:shadow-md transition-all text-center"
@@ -434,7 +435,7 @@ export default function ProductDetailPage() {
                     </button>
                   </div>
 
-                  <div className={`grid grid-cols-1 ${!user ? 'sm:grid-cols-2' : ''} gap-3`}>
+                  <div className={`grid grid-cols-1 ${isGuest ? 'sm:grid-cols-2' : ''} gap-3`}>
                     <Link
                       href="/shop/cart"
                       className="w-full flex items-center justify-center gap-3 py-3 rounded-2xl font-bold text-xs tracking-[0.05em] bg-brand-blue text-white hover:bg-atlantic-blue hover:shadow-xl hover:shadow-brand-blue/30 hover:-translate-y-0.5 transition-all shadow-lg shadow-brand-blue/20"
@@ -443,7 +444,7 @@ export default function ProductDetailPage() {
                       Checkout
                       <ArrowRight size={14} strokeWidth={3} />
                     </Link>
-                    {!user && (
+                    {isGuest && (
                       <Link
                         href="/shop/register?professional=yes"
                         className="w-full flex items-center justify-center gap-2 py-3 rounded-2xl font-bold text-xs tracking-[0.05em] bg-white text-brand-blue border-2 border-brand-blue hover:bg-brand-blue/5 hover:shadow-md transition-all text-center"
