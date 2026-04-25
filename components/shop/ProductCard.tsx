@@ -49,7 +49,7 @@ export default function ProductCard({
   };
 
   return (
-    <a
+    <Link
       href={href}
       target={linkTarget}
       className={`group block cursor-pointer transition-all duration-200 hover:-translate-y-[3px] hover:shadow-[0_8px_24px_rgba(0,0,0,0.06)] rounded-2xl overflow-hidden bg-white border border-zinc-100 ${className}`}
@@ -131,6 +131,6 @@ export default function ProductCard({
           )}
         </div>
       </div>
-    </a>
+    </Link>
   );
 }
