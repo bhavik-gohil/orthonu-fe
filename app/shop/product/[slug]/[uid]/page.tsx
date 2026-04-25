@@ -60,7 +60,6 @@ const Skeleton = ({ className }: { className?: string }) => (
 
 const ProductSkeleton = () => (
   <div className="flex flex-col min-h-screen font-sans bg-warm-gray">
-    <ShopNavbar />
     <main className="flex-1 max-w-7xl mx-auto w-full px-6 md:px-12 pt-4 pb-2 space-y-3 md:py-6 md:space-y-6">
       {/* Breadcrumb Skeleton */}
       <div className="flex items-center gap-2 mb-4">
