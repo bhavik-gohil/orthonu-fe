@@ -126,7 +126,7 @@ export default function OtpVerification({ email, type, onSuccess, onBack }: OtpV
                             key={index}
                             type="text"
                             maxLength={1}
-                            ref={(el) => (inputRefs.current[index] = el)}
+                            ref={(el) => { inputRefs.current[index] = el }}
                             value={data}
                             onChange={(e) => handleChange(e.target, index)}
                             onKeyDown={(e) => handleKeyDown(e, index)}
