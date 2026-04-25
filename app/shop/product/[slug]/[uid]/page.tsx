@@ -94,33 +94,23 @@ export default function ProductDetailPage() {
           setProduct(found);
           setSelectedVariant(found); // Initially select the current product
 
-          // Fetch variants and bundle items concurrently
-          const variantPromise = found.variantId
-            ? apiCall("GET", `/shop/variants/${found.variantId}`).catch((err) => {
-                console.error("Failed to fetch variants:", err);
-                return [found];
+          // Use the variants already included in the response, or fallback to the product itself
+          const allVariants = (found.variants && found.variants.length > 0)
+            ? found.variants.sort((a: Product, b: Product) => {
+                if (a.isDefaultVariant) return -1;
+                if (b.isDefaultVariant) return 1;
+                return 0;
               })
-            : Promise.resolve([found]);
-
-          const bundlePromise =
-            found.isBundle && found.bundleItems && found.bundleItems.length > 0
-              ? Promise.all(
-                  found.bundleItems.map((bi) =>
-                    apiCall("GET", `/shop/products/${bi.productRefId}`).catch(() => null)
-                  )
-                ).then((results) => results.filter(Boolean) as Product[])
-              : Promise.resolve([]);
-
-          const [productVariants, bundled] = (await Promise.all([variantPromise, bundlePromise])) as [Product[], Product[]];
-
-          // Sort variants with default variant first
-          const allVariants = productVariants.sort((a: Product, b: Product) => {
-            if (a.isDefaultVariant) return -1;
-            if (b.isDefaultVariant) return 1;
-            return 0;
-          });
+            : [found];
           setVariants(allVariants);
-          setBundleProducts(bundled);
+
+          // Use bundled products already included in the response
+          if (found.isBundle && found.bundleItems) {
+            const bundled = found.bundleItems
+              .map((item: any) => item.product)
+              .filter(Boolean) as Product[];
+            setBundleProducts(bundled);
+          }
         } else {
           setProduct(null);
           setVariants([]);
