@@ -1,6 +1,8 @@
 import Link from "next/link";
 import Image from "next/image";
 
+// test
+
 export default function Footer() {
   return (
     <footer className="mt-auto py-7 md:py-10 px-6 bg-white border-t border-zinc-200">
