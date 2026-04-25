@@ -147,7 +147,7 @@ function ContentRenderer({ blocks }: { blocks: BlogContentBlock[] }) {
 // ─────────────────────────────────────────────────────────────
 // Product Card
 // ─────────────────────────────────────────────────────────────
-function ProductCard({ product }: { product: Product }) {
+function ProductCard({ product, shopUrl }: { product: Product; shopUrl: string }) {
     const { addItem } = useCart();
     const [adding, setAdding] = useState(false);
 
@@ -420,7 +420,7 @@ export default function BlogDetailPage({
                             ) : products.length > 0 ? (
                                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                                     {products.map((p) => (
-                                        <ProductCard key={p.id} product={p} />
+                                        <ProductCard key={p.id} product={p} shopUrl={shopUrl} />
                                     ))}
                                 </div>
                             ) : (
