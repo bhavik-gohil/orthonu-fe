@@ -117,7 +117,7 @@ function ShopContent() {
             </div>
             <div className="relative aspect-video rounded-2xl overflow-hidden bg-zinc-50">
               <img
-                src={`${process.env.NEXT_PUBLIC_API_URL}${activeCategoryInfo.image}`}
+                src={mediaUrl(activeCategoryInfo.image)}
                 alt={activeCategoryInfo.productCategory}
                 className="w-full h-full object-cover"
               />
