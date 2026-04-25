@@ -54,6 +54,70 @@ function toYoutubeEmbed(url: string): string {
   return url;
 }
 
+const Skeleton = ({ className }: { className?: string }) => (
+  <div className={`animate-pulse bg-zinc-200/60 rounded-lg ${className}`} />
+);
+
+const ProductSkeleton = () => (
+  <div className="flex flex-col min-h-screen font-sans bg-warm-gray">
+    <ShopNavbar />
+    <main className="flex-1 max-w-7xl mx-auto w-full px-6 md:px-12 pt-4 pb-2 space-y-3 md:py-6 md:space-y-6">
+      {/* Breadcrumb Skeleton */}
+      <div className="flex items-center gap-2 mb-4">
+        <Skeleton className="h-3 w-12" />
+        <Skeleton className="h-2 w-2 rounded-full" />
+        <Skeleton className="h-3 w-20" />
+        <Skeleton className="h-2 w-2 rounded-full" />
+        <Skeleton className="h-3 w-32" />
+      </div>
+
+      <div className="md:flex gap-4 lg:gap-24 items-start">
+        {/* Media Gallery Skeleton */}
+        <div className="space-y-6">
+          <Skeleton className="h-56 w-full md:h-96 md:w-96 rounded-3xl" />
+          <div className="flex gap-3">
+            <Skeleton className="h-16 w-16 rounded-xl" />
+            <Skeleton className="h-16 w-16 rounded-xl" />
+            <Skeleton className="h-16 w-16 rounded-xl" />
+          </div>
+        </div>
+
+        {/* Product Info Skeleton */}
+        <div className="flex-1 space-y-6 mt-3">
+          <div className="flex gap-2">
+            <Skeleton className="h-5 w-24 rounded-full" />
+            <Skeleton className="h-5 w-16 rounded-full" />
+          </div>
+          <div className="space-y-2">
+            <Skeleton className="h-10 w-3/4 md:w-1/2" />
+            <Skeleton className="h-10 w-1/2 md:w-1/3" />
+          </div>
+          <div className="space-y-2">
+            <Skeleton className="h-4 w-full" />
+            <Skeleton className="h-4 w-full" />
+            <Skeleton className="h-4 w-2/3" />
+          </div>
+          <Skeleton className="h-8 w-24 mt-4" />
+          
+          <div className="pt-4 grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <Skeleton className="h-12 rounded-2xl" />
+            <Skeleton className="h-12 rounded-2xl" />
+          </div>
+
+          <div className="space-y-4 pt-8">
+            <Skeleton className="h-px w-full" />
+            <div className="space-y-2">
+              <Skeleton className="h-3 w-full" />
+              <Skeleton className="h-3 w-full" />
+              <Skeleton className="h-3 w-4/5" />
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+);
+
 export default function ProductDetailPage() {
   const params = useParams();
   const pathname = usePathname();
@@ -170,11 +234,7 @@ export default function ProductDetailPage() {
   };
 
   if (loading) {
-    return (
-      <div className="flex min-h-screen items-center justify-center bg-warm-gray">
-        <Loader2 className="animate-spin text-brand-blue" size={36} />
-      </div>
-    );
+    return <ProductSkeleton />;
   }
 
   if (!product) {
