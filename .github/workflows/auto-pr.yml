@@ -1,0 +1,28 @@
+name: Auto PR dev → master
+
+on:
+  push:
+    branches:
+      - dev
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  create-pr:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Create PR if not exists
+        run: |
+          gh pr list --base master --head dev --state open | grep . || \
+          gh pr create \
+            --base master \
+            --head dev \
+            --title "Auto PR: dev → master" \
+            --body "Auto-created PR from dev to master"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
