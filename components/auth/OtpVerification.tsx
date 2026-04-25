@@ -107,7 +107,7 @@ export default function OtpVerification({ email, type, onSuccess, onBack }: OtpV
 
     return (
         <div className="w-full max-w-md mx-auto animate-in fade-in zoom-in duration-300 relative overflow-hidden">
-            <div className={`flex flex-col items-center text-center space-y-4 bg-white p-12 rounded-3xl transition-all duration-500 ${isSuccess ? "scale-95 opacity-50 blur-sm pointer-events-none" : ""}`}>
+            <div className={`flex flex-col items-center text-center space-y-4 bg-white p-8 rounded-3xl transition-all duration-500 ${isSuccess ? "scale-95 opacity-50 blur-sm pointer-events-none" : ""}`}>
                 <div className="w-16 h-16 bg-brand-blue/10 rounded-2xl flex items-center justify-center text-brand-blue">
                     <ShieldCheck size={32} />
                 </div>
