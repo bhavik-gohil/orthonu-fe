@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/lib/AuthContext";
 import { ShoppingBag, ArrowRight } from "lucide-react";
+import { getShopUrl } from "@/lib/subdomains";
 
 interface CartSummaryProps {
     subtotal: number;
@@ -18,9 +19,9 @@ export default function CartSummary({ subtotal, itemCount }: CartSummaryProps) {
     const handleCheckout = (e: React.MouseEvent) => {
         e.preventDefault();
         if (!user) {
-            router.push("/shop/register?redirect=/shop/cart");
+            router.push(getShopUrl("/register?redirect=/cart"));
         } else {
-            router.push("/shop/cart/checkout");
+            router.push(getShopUrl("/cart/checkout"));
         }
     };
 
@@ -67,7 +68,7 @@ export default function CartSummary({ subtotal, itemCount }: CartSummaryProps) {
                 </button>
                 {!user && (
                     <Link
-                        href="/shop/register?professional=yes"
+                        href={getShopUrl("/register?professional=yes")}
                         className="w-full flex items-center justify-center gap-3 py-3 bg-white text-brand-blue border-2 border-brand-blue font-bold text-xs tracking-wide rounded-xl hover:bg-brand-blue/5 hover:shadow-md hover:-translate-y-0.5 transition-all"
                     >
                         Buy Now - Professional
@@ -75,7 +76,7 @@ export default function CartSummary({ subtotal, itemCount }: CartSummaryProps) {
                 )}
 
                 <Link
-                    href="/shop"
+                    href={getShopUrl()}
                     className="w-full flex items-center justify-center py-4 text-[10px] font-bold  tracking-[0.3em] text-soft-dark/60 hover:text-brand-blue transition-colors"
                 >
                     Continue Shopping

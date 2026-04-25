@@ -3,6 +3,7 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from "react";
 import { apiCall } from "./api-client";
 import { useRouter } from "next/navigation";
+import { getShopUrl } from "./subdomains";
 
 interface User {
     id: number;
@@ -107,7 +108,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         return await apiCall("POST", "/auth/resend-otp", otpData);
     };
 
-    const logout = async (redirectPath: string = "/shop") => {
+    const logout = async (redirectPath: string = getShopUrl()) => {
         console.log("Logging out...");
         await apiCall("POST", "/auth/logout");
         setUser(null);

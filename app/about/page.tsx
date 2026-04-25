@@ -7,6 +7,7 @@ import { apiCall, API_BASE_URL } from "@/lib/api-client";
 import HomeNavbar from "@/components/HomeNavbar";
 import Footer from "@/components/Footer";
 import { Quote, User, Handshake, ExternalLink, Loader2 } from "lucide-react";
+import { getShopUrl } from "@/lib/subdomains";
 
 interface Testimonial {
   id: number;
@@ -421,15 +422,15 @@ export default function AboutPage() {
             </h2>
             <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
               <Link
-                href="/shop"
+                href={getShopUrl()}
                 target="_blank"
-                className="px-10 py-4 bg-white text-brand-blue font-black text-xs uppercase tracking-widest rounded-xl hover:shadow-2xl hover:-translate-y-0.5 transition-all"
+                className="px-10 py-4 bg-white text-brand-blue font-bold text-sm tracking-wide rounded-4xl hover:shadow-3xl hover:-translate-y-0.5 transition-all"
               >
                 Shop Solutions
               </Link>
               <Link
                 href="/#partner-with-us"
-                className="px-10 py-4 bg-white/10 border border-white/20 text-white font-black text-xs uppercase tracking-widest rounded-xl hover:bg-white/20 transition-all"
+                className="px-10 py-4 bg-white/10 border border-white/20 text-white font-bold text-sm tracking-wide rounded-4xl hover:bg-white/20 transition-all"
               >
                 Partner With Us
               </Link>
