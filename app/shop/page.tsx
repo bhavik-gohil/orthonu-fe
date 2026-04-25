@@ -11,6 +11,7 @@ import PageHeader from "@/components/ui/PageHeader";
 import Pill from "@/components/ui/Pill";
 import Card from "@/components/ui/Card";
 import Container from "@/components/ui/Container";
+import Link from "next/link";
 
 function ShopContent() {
   const [products, setProducts] = useState<Product[]>([]);
@@ -89,13 +90,13 @@ function ShopContent() {
       >
         {/* Category Filter Pills */}
         <div className="flex flex-wrap gap-3 pt-4">
-          <Pill as="a" href={shopPrefix || "/"} active={!activeCategory}>
+          <Pill as={Link} href={shopPrefix || "/"} active={!activeCategory}>
             All
           </Pill>
           {categories.map((cat) => (
             <Pill
               key={cat.id}
-              as="a"
+              as={Link}
               href={`${shopPrefix}/?category=${encodeURIComponent(cat.productCategory)}`.replace('//', '/')}
               active={activeCategory === cat.productCategory}
             >

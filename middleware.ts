@@ -1,10 +1,29 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
-export function proxy(req: NextRequest) {
+// Pages that should be accessible from any subdomain without being rewritten to /shop or /admin
+const PUBLIC_PAGES = [
+  "/privacy-policy",
+  "/terms-of-use",
+  "/shipping-policy",
+  "/refund-and-returns-policy",
+  "/ccpa-opt-out",
+  "/community-guidelines",
+  "/about",
+  "/contact",
+  "/test-contact",
+  "/resources"
+];
+
+export function middleware(req: NextRequest) {
   const url = req.nextUrl;
   const hostname = req.headers.get("host") || "";
   const pathname = url.pathname;
+
+  // Skip middleware for public pages to allow them to resolve from root regardless of subdomain
+  if (PUBLIC_PAGES.some(path => pathname === path || pathname.startsWith(path + "/"))) {
+    return NextResponse.next();
+  }
 
   // Environment Check
   const isDeployedEnv =
@@ -27,7 +46,6 @@ export function proxy(req: NextRequest) {
   const isMain = hostname === MAIN_DOMAIN;
 
   // SHOP subdomain — internally rewrite to /shop/...
-  // NextResponse.rewrite() does NOT change the browser URL bar
   if (isShop && !pathname.startsWith("/shop")) {
     return NextResponse.rewrite(
       new URL(`/shop${pathname}${url.search}`, req.url),
