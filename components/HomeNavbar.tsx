@@ -62,13 +62,16 @@ export default function HomeNavbar() {
         </Link>
 
         {/* Desktop centre links */}
-        <div className="hidden md:flex absolute left-1/2 -translate-x-1/2 items-center gap-10 font-semibold text-sm tracking-[0.05em] text-white">
-          <Link href="/about" className="hover:text-white/70 transition-colors">
+        <div className="hidden md:flex absolute left-1/2 -translate-x-1/2 items-center gap-6 font-semibold text-sm tracking-[0.05em] text-white">
+          <Link
+            href="/about"
+            className="hover:bg-zinc-50/10 px-3 py-1 rounded-3xl transition-all duration-300"
+          >
             About
           </Link>
           <Link
             href="/resources"
-            className="hover:text-white/70 transition-colors"
+            className="hover:bg-zinc-50/10 px-3 py-1 rounded-3xl transition-all duration-300"
           >
             Resources
           </Link>

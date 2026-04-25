@@ -65,7 +65,7 @@ export default function ShopNavbar() {
         </a>
 
         {/* Desktop Navigation */}
-        <div className="hidden md:flex items-center gap-12 text-sm font-semibold tracking-wide text-white">
+        <div className="hidden md:flex items-center gap-2 text-sm font-semibold tracking-wide text-white">
           {categories.map((cat, i) => {
             const isOpen = openMenu === cat.productCategory;
             return (
@@ -75,16 +75,22 @@ export default function ShopNavbar() {
                 onMouseEnter={() => setOpenMenu(cat.productCategory)}
                 onMouseLeave={() => setOpenMenu(null)}
               >
-                <button className="flex items-center gap-2 hover:text-white transition-all duration-300 py-8 relative group">
-                  <span className="relative z-10">{cat.productCategory}</span>
+                <a
+                  className="flex items-center gap-2 relative group hover:bg-zinc-50/10 px-3 py-1 rounded-3xl transition-all duration-300"
+                  href={`${shopPrefix}/?category=${encodeURIComponent(cat.productCategory)}`.replace(
+                    "//",
+                    "/",
+                  )}
+                >
+                  <span className="relative z-10 ">{cat.productCategory}</span>
                   <ChevronDown
                     size={11}
-                    className={`transition-transform duration-500 ${isOpen ? "rotate-180 text-white" : "text-white/40"}`}
+                    className={`transition-transform duration-500 ${isOpen ? "rotate-180 text-white" : "text-white/70"}`}
                   />
-                  <div
-                    className={`absolute bottom-6 left-0 h-0.5 bg-white transition-all duration-500 rounded-full ${isOpen ? "w-full" : "w-0"}`}
-                  />
-                </button>
+                  {/* <div
+                    className={`absolute bottom-6 left-0 h-0.5 bg-white transition-all duration-500 rounded-full w-0 group-hover:w-full`}
+                  /> */}
+                </a>
 
                 {isOpen && (
                   <div className="absolute top-[80%] left-1/2 -translate-x-1/2 mt-2 w-[420px] bg-white rounded-4xl shadow-[0_40px_100px_-20px_rgba(0,0,0,0.15)] border border-zinc-100 p-10 text-left z-50 animate-in fade-in slide-in-from-top-4 duration-500">
@@ -102,7 +108,10 @@ export default function ShopNavbar() {
                       </div>
                       <div className="pt-2">
                         <a
-                          href={`${shopPrefix}/?category=${encodeURIComponent(cat.productCategory)}`.replace('//', '/')}
+                          href={`${shopPrefix}/?category=${encodeURIComponent(cat.productCategory)}`.replace(
+                            "//",
+                            "/",
+                          )}
                           className="inline-flex items-center gap-3 px-6 py-3 bg-brand-blue text-white rounded-xl text-[10px] font-black tracking-widest uppercase shadow-lg shadow-brand-blue/20 hover:shadow-2xl hover:-translate-y-0.5 active:scale-95 transition-all"
                         >
                           Explore Collection
@@ -117,9 +126,12 @@ export default function ShopNavbar() {
           {shouldShowProfessionalLink && (
             <a
               href={`${shopPrefix}/register?professional=yes`}
-              className="flex items-center gap-2 hover:text-white transition-all duration-300 py-8 relative group"
+              className="flex items-center gap-2 relative group hover:bg-zinc-50/10 px-3 py-1 rounded-3xl transition-all duration-300"
             >
               For Professional
+              {/* <div
+                className={`absolute bottom-6 left-0 h-0.5 bg-white transition-all duration-500 rounded-full w-0 group-hover:w-full`}
+              /> */}
             </a>
           )}
         </div>
@@ -243,7 +255,10 @@ export default function ShopNavbar() {
             {categories.map((cat) => (
               <a
                 key={cat.id}
-                href={`${shopPrefix}/?category=${encodeURIComponent(cat.productCategory)}`.replace('//', '/')}
+                href={`${shopPrefix}/?category=${encodeURIComponent(cat.productCategory)}`.replace(
+                  "//",
+                  "/",
+                )}
                 onClick={() => setMobileOpen(false)}
                 className="flex text-lg font-black text-white py-4 border-b border-white/5 active:scale-95 transition-all items-center justify-between"
               >
