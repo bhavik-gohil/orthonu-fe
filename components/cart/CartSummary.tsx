@@ -64,6 +64,14 @@ export default function CartSummary({ subtotal, itemCount }: CartSummaryProps) {
                     Proceed to Checkout
                     <ArrowRight size={14} strokeWidth={3} />
                 </button>
+                {!user && (
+                    <Link
+                        href="/shop/register?professional=yes"
+                        className="w-full flex items-center justify-center gap-3 py-5 bg-white text-brand-blue border-2 border-brand-blue font-black text-[11px] uppercase tracking-widest rounded-xl hover:bg-brand-blue/5 hover:shadow-md hover:-translate-y-0.5 transition-all"
+                    >
+                        Buy Now - Professional
+                    </Link>
+                )}
 
                 <Link
                     href="/shop"
