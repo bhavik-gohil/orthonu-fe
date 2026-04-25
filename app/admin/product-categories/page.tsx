@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { apiCall, apiUpload } from "@/lib/api-client";
+import { mediaUrl } from "@/lib/types";
 import { Trash2, Plus, Loader2, ChevronLeft, Edit2, X, Save, FolderTree } from "lucide-react";
 import Section from "@/components/ui/Section";
 import Card from "@/components/ui/Card";
@@ -252,7 +253,7 @@ export default function ProductCategoriesAdmin() {
                                 {imagePreview && (
                                     <div className="relative w-full h-40 rounded-xl overflow-hidden border border-zinc-200 mt-3">
                                         <img
-                                            src={imagePreview.startsWith('blob:') ? imagePreview : `${process.env.NEXT_PUBLIC_API_URL}${imagePreview}`}
+                                            src={imagePreview.startsWith('blob:') ? imagePreview : mediaUrl(imagePreview)}
                                             alt="Preview"
                                             className="w-full h-full object-cover"
                                         />
@@ -308,7 +309,7 @@ export default function ProductCategoriesAdmin() {
                                             {category.image && (
                                                 <div className="w-20 h-20 rounded-lg overflow-hidden border border-zinc-200 shrink-0">
                                                     <img
-                                                        src={`${process.env.NEXT_PUBLIC_API_URL}${category.image}`}
+                                                        src={mediaUrl(category.image)}
                                                         alt={category.productCategory}
                                                         className="w-full h-full object-cover"
                                                     />

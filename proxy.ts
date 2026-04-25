@@ -2,12 +2,7 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
 // Pages that should be accessible from any subdomain without being rewritten to /shop or /admin
-const PUBLIC_PAGES = [
-  "/about",
-  "/contact",
-  "/test-contact",
-  "/resources"
-];
+const PUBLIC_PAGES = ["/about", "/contact", "/test-contact", "/resources"];
 
 export function proxy(req: NextRequest) {
   const url = req.nextUrl;
@@ -15,15 +10,17 @@ export function proxy(req: NextRequest) {
   const pathname = url.pathname;
 
   // Skip middleware for public pages to allow them to resolve from root regardless of subdomain
-  if (PUBLIC_PAGES.some(path => pathname === path || pathname.startsWith(path + "/"))) {
+  if (
+    PUBLIC_PAGES.some(
+      (path) => pathname === path || pathname.startsWith(path + "/"),
+    )
+  ) {
     return NextResponse.next();
   }
 
-  // Environment Check
-  const isDeployedEnv =
-    process.env.APP_ENV === "test" ||
-    process.env.APP_ENV === "prod" ||
-    hostname.includes(".orthonu.com");
+  // Environment Check - Using the NEXT_PUBLIC variables you added to .env
+  const APP_ENV = process.env.NEXT_PUBLIC_APP_ENV;
+  const isDeployedEnv = APP_ENV === "test" || APP_ENV === "prod";
 
   // Local setup — skip all subdomain logic
   if (!isDeployedEnv) {
@@ -31,13 +28,17 @@ export function proxy(req: NextRequest) {
   }
 
   // --- DOMAIN CONFIGURATION ---
-  const SHOP_DOMAIN = process.env.SHOP_DOMAIN;
-  const ADMIN_DOMAIN = process.env.ADMIN_DOMAIN;
-  const MAIN_DOMAIN = process.env.MAIN_DOMAIN;
+  // Using the exact NEXT_PUBLIC_ variables from your updated .env
+  const MAIN_DOMAIN = process.env.NEXT_PUBLIC_MAIN_DOMAIN;
+  const SHOP_DOMAIN = process.env.NEXT_PUBLIC_SHOP_DOMAIN;
+  const ADMIN_DOMAIN = process.env.NEXT_PUBLIC_ADMIN_DOMAI;
 
-  const isShop = hostname === SHOP_DOMAIN;
-  const isAdmin = hostname === ADMIN_DOMAIN;
-  const isMain = hostname === MAIN_DOMAIN;
+  // Strip port from hostname if present
+  const cleanHostname = hostname.split(":")[0];
+
+  const isShop = cleanHostname === SHOP_DOMAIN;
+  const isAdmin = cleanHostname === ADMIN_DOMAIN;
+  const isMain = cleanHostname === MAIN_DOMAIN;
 
   // SHOP subdomain — internally rewrite to /shop/...
   if (isShop && !pathname.startsWith("/shop")) {
