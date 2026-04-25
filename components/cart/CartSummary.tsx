@@ -18,7 +18,7 @@ export default function CartSummary({ subtotal, itemCount }: CartSummaryProps) {
     const handleCheckout = (e: React.MouseEvent) => {
         e.preventDefault();
         if (!user) {
-            router.push("/shop/login?redirect=/shop/cart");
+            router.push("/shop/register?redirect=/shop/cart");
         } else {
             router.push("/shop/cart/checkout");
         }
@@ -26,13 +26,13 @@ export default function CartSummary({ subtotal, itemCount }: CartSummaryProps) {
 
     return (
         <div className="bg-white rounded-2xl border border-zinc-100 shadow-lg p-8 space-y-6 sticky top-24">
-            <h2 className="text-[10px] font-black uppercase tracking-widest text-soft-dark text-opacity-60">
+            <h2 className="text-[11px] font-black  tracking-wide text-soft-dark text-opacity-60">
                 Order Summary
             </h2>
 
             <div className="space-y-4 py-4 border-y border-zinc-100">
                 <div className="flex justify-between items-center">
-                    <span className="text-sm font-medium text-soft-dark/60">
+                    <span className="text-sm font-medium text-soft-dark/70">
                         Subtotal ({itemCount} {itemCount === 1 ? 'item' : 'items'})
                     </span>
                     <span className="text-lg font-bold text-soft-dark">
@@ -40,14 +40,14 @@ export default function CartSummary({ subtotal, itemCount }: CartSummaryProps) {
                     </span>
                 </div>
 
-                <div className="flex justify-between items-center text-[11px] text-soft-dark/40">
+                <div className="flex justify-between items-center text-[11px] text-soft-dark/60">
                     <span>Tax</span>
                     <span>Calculated at checkout</span>
                 </div>
             </div>
 
             <div className="flex justify-between items-center pt-2">
-                <span className="text-[10px] font-black uppercase tracking-widest text-soft-dark text-opacity-60">
+                <span className="text-[11px] font-black  tracking-wide text-soft-dark text-opacity-60">
                     Total
                 </span>
                 <span className="text-3xl font-black text-brand-blue">
@@ -58,16 +58,17 @@ export default function CartSummary({ subtotal, itemCount }: CartSummaryProps) {
             <div className="space-y-3 pt-4">
                 <button
                     onClick={handleCheckout}
-                    className="w-full flex items-center justify-center gap-3 py-5 bg-brand-blue text-white font-black text-[11px] uppercase tracking-widest rounded-xl hover:bg-atlantic-blue hover:shadow-xl hover:shadow-brand-blue/30 hover:-translate-y-0.5 transition-all shadow-lg shadow-brand-blue/20"
+                    className="w-full flex items-center justify-center gap-3 py-3 bg-brand-blue text-white font-bold text-xs tracking-wide rounded-xl hover:bg-atlantic-blue hover:shadow-xl hover:shadow-brand-blue/30 hover:-translate-y-0.5 transition-all shadow-lg shadow-brand-blue/20"
                 >
                     <ShoppingBag size={18} strokeWidth={2.5} />
-                    Proceed to Checkout
+                    {user ? "Proceed to Checkout" : "Register to Checkout"}
+                    
                     <ArrowRight size={14} strokeWidth={3} />
                 </button>
                 {!user && (
                     <Link
                         href="/shop/register?professional=yes"
-                        className="w-full flex items-center justify-center gap-3 py-5 bg-white text-brand-blue border-2 border-brand-blue font-black text-[11px] uppercase tracking-widest rounded-xl hover:bg-brand-blue/5 hover:shadow-md hover:-translate-y-0.5 transition-all"
+                        className="w-full flex items-center justify-center gap-3 py-3 bg-white text-brand-blue border-2 border-brand-blue font-bold text-xs tracking-wide rounded-xl hover:bg-brand-blue/5 hover:shadow-md hover:-translate-y-0.5 transition-all"
                     >
                         Buy Now - Professional
                     </Link>
@@ -75,7 +76,7 @@ export default function CartSummary({ subtotal, itemCount }: CartSummaryProps) {
 
                 <Link
                     href="/shop"
-                    className="w-full flex items-center justify-center py-4 text-[10px] font-bold uppercase tracking-[0.3em] text-soft-dark/60 hover:text-brand-blue transition-colors"
+                    className="w-full flex items-center justify-center py-4 text-[10px] font-bold  tracking-[0.3em] text-soft-dark/60 hover:text-brand-blue transition-colors"
                 >
                     Continue Shopping
                 </Link>
