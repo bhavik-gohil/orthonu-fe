@@ -15,7 +15,7 @@ const PUBLIC_PAGES = [
   "/resources"
 ];
 
-export function middleware(req: NextRequest) {
+export function proxy(req: NextRequest) {
   const url = req.nextUrl;
   const hostname = req.headers.get("host") || "";
   const pathname = url.pathname;
