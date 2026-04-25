@@ -5,12 +5,14 @@ import Link from "next/link";
 import Image from "next/image";
 import { Menu, X } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
+import { getShopUrl } from "@/lib/subdomains";
 
 export default function HomeNavbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const pathname = usePathname();
   const router = useRouter();
   const isHome = pathname === "/";
+  const shopUrl = getShopUrl();
 
   // On home page: scroll to section if hash present on load
   useEffect(() => {
@@ -88,7 +90,7 @@ export default function HomeNavbar() {
             Partner with Us
           </a>
           <Link
-            href="/shop"
+            href={shopUrl}
             target="_blank"
             className="px-6 py-2.5 bg-white text-brand-blue rounded-full hover:bg-zinc-100 transition-all font-semibold"
           >
@@ -130,7 +132,7 @@ export default function HomeNavbar() {
             Partner with Us
           </a>
           <Link
-            href="/shop"
+            href={shopUrl}
             target="_blank"
             onClick={() => setMobileOpen(false)}
             className="block font-semibold text-brand-blue bg-white w-fit px-4 py-1.5 rounded-lg"

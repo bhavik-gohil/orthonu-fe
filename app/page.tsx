@@ -18,11 +18,13 @@ import { apiCall } from "@/lib/api-client";
 import Section from "@/components/ui/Section";
 import Footer from "@/components/Footer";
 import PartnerWithUsForm from "@/components/forms/PartnerWithUsForm";
+import { getShopUrl } from "@/lib/subdomains";
 
 
 export default function Home() {
   const [productGroups, setProductGroups] = useState<ProductGroupWithProducts[]>([]);
   const [loading, setLoading] = useState(true);
+  const shopUrl = getShopUrl();
 
   // Fetch product groups (incl. their products) from the new API
   useEffect(() => {
@@ -97,23 +99,59 @@ export default function Home() {
               captured revenue.
             </p>
 
-            {/* DETECT PREVENT HEAL Pillars */}
-            <div className="pt-8 space-y-8">
-              {/* Mobile: Vertical Stack with Timeline */}
-              <div className="flex flex-col md:hidden space-y-0 max-w-sm mx-auto">
-                {/* DETECT - Mobile */}
-                <div className="relative">
-                  <div className="flex items-start space-x-4 text-left">
-                    <div className="shrink-0 relative">
-                      <div className="w-10 h-10 rounded-full bg-brand-blue flex items-center justify-center z-10 relative">
-                        <Search size={20} className="text-white" />
-                      </div>
-                      {/* Timeline line extending to next pillar */}
-                      <div className="absolute top-10 left-1/2 w-0.5 h-38 bg-brand-blue/30 -translate-x-0.5"></div>
+            {/* CTA Buttons */}
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4 animate-in fade-in slide-in-from-bottom-8 duration-1000 delay-200">
+              <Link
+                href={shopUrl}
+                target="_blank"
+                className="group relative px-8 py-4 bg-brand-blue text-white rounded-full font-bold text-sm tracking-widest uppercase transition-all hover:bg-atlantic-blue hover:shadow-[0_0_30px_rgba(30,174,219,0.3)] hover:-translate-y-1 overflow-hidden"
+              >
+                <span className="relative z-10 flex items-center gap-2">
+                  Shop Solutions
+                  <ChevronRight size={18} className="group-hover:translate-x-1 transition-transform" />
+                </span>
+                <div className="absolute inset-0 bg-linear-to-r from-white/0 via-white/10 to-white/0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
+              </Link>
+              <a
+                href="#partner-with-us"
+                className="px-8 py-4 bg-white text-soft-dark border border-zinc-200 rounded-full font-bold text-sm tracking-widest uppercase transition-all hover:bg-zinc-50 hover:border-zinc-300"
+              >
+                Partner with Us
+              </a>
+            </div>
+          </div>
+
+          {/* Abstract Floating Elements */}
+          <div className="absolute top-1/4 -left-12 w-64 h-64 bg-brand-blue/5 rounded-full blur-3xl animate-pulse" />
+          <div className="absolute bottom-1/4 -right-12 w-96 h-96 bg-soft-plum/5 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }} />
+        </section>
+
+        {/* DETECT PREVENT HEAL Section */}
+        <section className="py-32 bg-white relative overflow-hidden">
+          <div className="max-w-7xl mx-auto px-6 md:px-12 relative z-10">
+            <div className="space-y-24">
+              <div className="text-center space-y-4 max-w-3xl mx-auto">
+                <h2 className="text-4xl md:text-5xl font-black text-soft-dark uppercase tracking-tight">
+                  The Closed-Loop <br />
+                  <span className="text-brand-blue">System</span>
+                </h2>
+                <p className="text-lg text-soft-dark/60 font-medium">
+                  We don't just provide products; we provide a methodology that
+                  bridges the gap between diagnosis and treatment.
+                </p>
+              </div>
+
+              {/* Pillars Grid - Mobile Version */}
+              <div className="md:hidden grid grid-cols-1 gap-12">
+                {/* DETECT */}
+                <div className="space-y-6">
+                  <div className="flex items-center gap-6">
+                    <div className="w-16 h-16 rounded-2xl bg-brand-blue flex items-center justify-center shrink-0 shadow-lg shadow-brand-blue/20">
+                      <Search size={32} className="text-white" />
                     </div>
-                    <div className="flex-1 pt-1 pb-8">
-                      <div className="mb-2">
-                        <span className="text-xs font-bold tracking-widest text-brand-blue">
+                    <div>
+                      <div className="mb-1">
+                        <span className="text-[10px] font-black uppercase tracking-widest text-brand-blue">
                           Early Warning System
                         </span>
                       </div>
@@ -130,19 +168,15 @@ export default function Home() {
                   </div>
                 </div>
 
-                {/* PREVENT - Mobile */}
-                <div className="relative">
-                  <div className="flex items-start space-x-4 text-left">
-                    <div className="shrink-0 relative">
-                      <div className="w-10 h-10 rounded-full bg-atlantic-blue flex items-center justify-center z-10 relative">
-                        <ShieldCheck size={20} className="text-white" />
-                      </div>
-                      {/* Timeline line extending to next pillar */}
-                      <div className="absolute top-10 left-1/2 w-0.5 h-38 bg-atlantic-blue/30 -translate-x-0.5"></div>
+                {/* PREVENT */}
+                <div className="space-y-6">
+                  <div className="flex items-center gap-6">
+                    <div className="w-16 h-16 rounded-2xl bg-atlantic-blue flex items-center justify-center shrink-0 shadow-lg shadow-atlantic-blue/20">
+                      <ShieldCheck size={32} className="text-white" />
                     </div>
-                    <div className="flex-1 pt-1 pb-8">
-                      <div className="mb-2">
-                        <span className="text-xs font-bold tracking-widest text-atlantic-blue">
+                    <div>
+                      <div className="mb-1">
+                        <span className="text-[10px] font-black uppercase tracking-widest text-atlantic-blue">
                           Microbiome Reset
                         </span>
                       </div>
@@ -158,19 +192,15 @@ export default function Home() {
                   </div>
                 </div>
 
-                {/* HEAL - Mobile */}
-                <div className="relative">
-                  <div className="flex items-start space-x-4 text-left">
-                    <div className="shrink-0 relative">
-                      <div className="w-10 h-10 rounded-full bg-bright-cyan flex items-center justify-center z-10 relative">
-                        <HeartPulse size={20} className="text-white" />
-                      </div>
-                      {/* Timeline line extending to next pillar */}
-                      <div className="absolute top-10 left-1/2 w-0.5 h-38 bg-bright-cyan/30 -translate-x-0.5"></div>
+                {/* HEAL */}
+                <div className="space-y-6">
+                  <div className="flex items-center gap-6">
+                    <div className="w-16 h-16 rounded-2xl bg-bright-cyan flex items-center justify-center shrink-0 shadow-lg shadow-bright-cyan/20">
+                      <HeartPulse size={32} className="text-white" />
                     </div>
-                    <div className="flex-1 pt-1 pb-8">
-                      <div className="mb-2">
-                        <span className="text-xs font-bold  tracking-widest text-bright-cyan">
+                    <div>
+                      <div className="mb-1">
+                        <span className="text-[10px] font-black uppercase tracking-widest text-bright-cyan">
                           Tissue Regeneration
                         </span>
                       </div>
@@ -186,17 +216,15 @@ export default function Home() {
                   </div>
                 </div>
 
-                {/* MONITOR - Mobile */}
-                <div className="relative">
-                  <div className="flex items-start space-x-4 text-left">
-                    <div className="shrink-0">
-                      <div className="w-10 h-10 rounded-full bg-soft-plum flex items-center justify-center">
-                        <Activity size={20} className="text-white" />
-                      </div>
+                {/* MONITOR */}
+                <div className="space-y-6">
+                  <div className="flex items-center gap-6">
+                    <div className="w-16 h-16 rounded-2xl bg-soft-plum flex items-center justify-center shrink-0 shadow-lg shadow-soft-plum/20">
+                      <Activity size={32} className="text-white" />
                     </div>
-                    <div className="flex-1 pt-1">
-                      <div className="mb-2">
-                        <span className="text-xs font-bold  tracking-widest text-soft-plum">
+                    <div>
+                      <div className="mb-1">
+                        <span className="text-[10px] font-black uppercase tracking-widest text-soft-plum">
                           Continuous Care
                         </span>
                       </div>
@@ -371,7 +399,7 @@ export default function Home() {
                         </div>
                         <div className="flex-1 h-px bg-zinc-200" />
                         <Link
-                          href="/shop"
+                          href={shopUrl}
                           target="_blank"
                           className="text-[10px] font-bold tracking-[0.3em] transition-colors flex items-center gap-2"
                           style={{ color: accentColor }}
@@ -381,7 +409,7 @@ export default function Home() {
                       </div>
                       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
                         {group.products.slice(0, 4).map((product) => (
-                          <ProductCard key={product.id} product={product} hrefPrefix="/shop" linkTarget="_blank" />
+                          <ProductCard key={product.id} product={product} hrefPrefix={shopUrl} linkTarget="_blank" />
                         ))}
                       </div>
                     </div>

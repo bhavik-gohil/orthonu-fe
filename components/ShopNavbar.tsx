@@ -18,6 +18,7 @@ import { apiCall } from "@/lib/api-client";
 import { useCart } from "@/lib/CartContext";
 import { useAuth } from "@/lib/AuthContext";
 import { Category } from "@/lib/types";
+import { isSubdomainEnvironment } from "@/lib/subdomains";
 
 export default function ShopNavbar() {
   const pathname = usePathname();
@@ -27,8 +28,7 @@ export default function ShopNavbar() {
   const [shopPrefix, setShopPrefix] = useState("/shop");
 
   useEffect(() => {
-    const host = window.location.hostname;
-    if (host === "newtestshop.orthonu.com" || host === "shop.orthonu.com") {
+    if (isSubdomainEnvironment()) {
       setShopPrefix("");
     }
   }, []);

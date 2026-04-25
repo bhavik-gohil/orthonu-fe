@@ -9,6 +9,7 @@ import { Product, Category, mediaUrl } from "@/lib/types";
 import Image from "next/image";
 import PageHeader from "@/components/ui/PageHeader";
 import Pill from "@/components/ui/Pill";
+import { isSubdomainEnvironment } from "@/lib/subdomains";
 import Card from "@/components/ui/Card";
 import Container from "@/components/ui/Container";
 import Link from "next/link";
@@ -63,11 +64,7 @@ function ShopContent() {
   const [shopPrefix, setShopPrefix] = useState("/shop");
 
   useEffect(() => {
-    // If we are on the deployed shop subdomain, we don't need the /shop prefix for internal links
-    // so the URL stays clean (newtestshop.orthonu.com/product/...)
-    // Locally (localhost), we keep /shop so routing works correctly.
-    const host = window.location.hostname;
-    if (host === "newtestshop.orthonu.com" || host === "shop.orthonu.com") {
+    if (isSubdomainEnvironment()) {
       setShopPrefix("");
     }
   }, []);

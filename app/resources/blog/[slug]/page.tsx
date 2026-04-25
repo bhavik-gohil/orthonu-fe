@@ -18,6 +18,7 @@ import {
 import { mediaUrl, makeSlug } from "@/lib/types";
 import { useCart } from "@/lib/CartContext";
 import { notFound } from "next/navigation";
+import { getShopUrl } from "@/lib/subdomains";
 
 // ─────────────────────────────────────────────────────────────
 // Helpers
@@ -169,7 +170,7 @@ function ProductCard({ product }: { product: Product }) {
     return (
         <div className="group flex flex-col bg-white rounded-2xl border border-zinc-100 hover:border-brand-blue/30 hover:shadow-xl hover:shadow-brand-blue/5 transition-all duration-300 overflow-hidden">
             {/* Image */}
-            <Link href={`/shop/product/${slug}`}>
+            <Link href={getShopUrl(`/product/${slug}`)}>
                 <div className="relative h-48 bg-zinc-50 overflow-hidden">
                     {imgSrc ? (
                         <img
@@ -187,7 +188,7 @@ function ProductCard({ product }: { product: Product }) {
 
             {/* Info */}
             <div className="p-4 flex flex-col gap-2 flex-1">
-                <Link href={`/shop/product/${slug}`}>
+                <Link href={getShopUrl(`/product/${slug}`)}>
                     <h4 className="text-sm font-black text-soft-dark group-hover:text-brand-blue transition-colors leading-snug">
                         {product.name}
                     </h4>
@@ -395,7 +396,7 @@ export default function BlogDetailPage({
                                     </h2>
                                 </div>
                                 <Link
-                                    href="/shop"
+                                    href={getShopUrl()}
                                     className="text-sm font-bold text-brand-blue flex items-center gap-1.5 hover:gap-2.5 transition-all duration-200"
                                 >
                                     Shop All <ArrowRight size={14} />
@@ -421,7 +422,7 @@ export default function BlogDetailPage({
                                 <div className="text-center py-10 text-zinc-400 text-sm">
                                     <p>Products coming soon.</p>
                                     <Link
-                                        href="/shop"
+                                        href={getShopUrl()}
                                         className="mt-3 inline-flex items-center gap-1.5 text-brand-blue font-bold text-sm hover:gap-2.5 transition-all duration-200"
                                     >
                                         Browse the Shop <ArrowRight size={14} />
