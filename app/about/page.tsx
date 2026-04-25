@@ -39,6 +39,11 @@ export default function AboutPage() {
   const [boardMembers, setBoardMembers] = useState<BoardMember[]>([]);
   const [partners, setPartners] = useState<Partner[]>([]);
   const [loadingContent, setLoadingContent] = useState(true);
+  const [shopUrl, setShopUrl] = useState("/shop");
+
+  useEffect(() => {
+    setShopUrl(getShopUrl());
+  }, []);
 
   useEffect(() => {
     Promise.all([
@@ -422,9 +427,9 @@ export default function AboutPage() {
             </h2>
             <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
               <Link
-                href={getShopUrl()}
+                href={shopUrl}
                 target="_blank"
-                className="px-10 py-4 bg-white text-brand-blue font-bold text-sm tracking-wide rounded-4xl hover:shadow-3xl hover:-translate-y-0.5 transition-all"
+                className="px-10 py-4 bg-white text-brand-blue font-black text-xs uppercase tracking-widest rounded-xl hover:shadow-2xl hover:-translate-y-0.5 transition-all"
               >
                 Shop Solutions
               </Link>
