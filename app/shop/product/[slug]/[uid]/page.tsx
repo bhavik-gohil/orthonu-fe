@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useParams } from "next/navigation";
+import { useParams, usePathname } from "next/navigation";
 import { apiCall } from "@/lib/api-client";
 import { Product, mediaUrl } from "@/lib/types";
 import { useCart } from "@/lib/CartContext";
@@ -56,7 +56,15 @@ function toYoutubeEmbed(url: string): string {
 
 export default function ProductDetailPage() {
   const params = useParams();
-  const uid = params?.uid as string;
+  const pathname = usePathname();
+  
+  // Fallback to extract uid from pathname if useParams fails due to proxy rewrite
+  let uid = params?.uid as string;
+  if (!uid && pathname) {
+    const parts = pathname.split('/').filter(Boolean);
+    uid = parts[parts.length - 1] as string;
+  }
+
   const [product, setProduct] = useState<Product | null>(null);
   const [variants, setVariants] = useState<Product[]>([]);
   const [selectedVariant, setSelectedVariant] = useState<Product | null>(null);
@@ -67,7 +75,10 @@ export default function ProductDetailPage() {
   const { user } = useAuth();
 
   useEffect(() => {
-    if (!uid) return;
+    if (!uid) {
+      setLoading(false);
+      return;
+    }
 
     const fetchProduct = async () => {
       try {
@@ -83,46 +94,38 @@ export default function ProductDetailPage() {
           setProduct(found);
           setSelectedVariant(found); // Initially select the current product
 
-          // If product has variants or is part of a variant group, fetch all variants
-          if (found.variantId) {
-            try {
-              const productVariants: Product[] = await apiCall("GET", `/shop/variants/${found.variantId}`);
-              // Sort with default variant first
-              const allVariants = productVariants.sort((a, b) => {
-                if (a.isDefaultVariant) return -1;
-                if (b.isDefaultVariant) return 1;
-                return 0;
-              });
-              setVariants(allVariants);
-            } catch (err) {
-              console.error("Failed to fetch variants:", err);
-              setVariants([found]); // Fallback to just current product
-            }
-          } else {
-            setVariants([found]); // No variants, just current product
-          }
+          // Fetch variants and bundle items concurrently
+          const variantPromise = found.variantId
+            ? apiCall("GET", `/shop/variants/${found.variantId}`).catch((err) => {
+                console.error("Failed to fetch variants:", err);
+                return [found];
+              })
+            : Promise.resolve([found]);
 
-          // If it's a bundle, fetch the bundled products
-          if (
-            found.isBundle &&
-            found.bundleItems &&
-            found.bundleItems.length > 0
-          ) {
-            const allProducts: Product[] = await apiCall(
-              "GET",
-              "/shop/products",
-            );
-            const bundled = found.bundleItems
-              .map((bi) =>
-                allProducts.find((p) => p.id === bi.productRefId),
-              )
-              .filter(Boolean) as Product[];
-            setBundleProducts(bundled);
-          }
+          const bundlePromise =
+            found.isBundle && found.bundleItems && found.bundleItems.length > 0
+              ? Promise.all(
+                  found.bundleItems.map((bi) =>
+                    apiCall("GET", `/shop/products/${bi.productRefId}`).catch(() => null)
+                  )
+                ).then((results) => results.filter(Boolean) as Product[])
+              : Promise.resolve([]);
+
+          const [productVariants, bundled] = await Promise.all([variantPromise, bundlePromise]);
+
+          // Sort variants with default variant first
+          const allVariants = productVariants.sort((a, b) => {
+            if (a.isDefaultVariant) return -1;
+            if (b.isDefaultVariant) return 1;
+            return 0;
+          });
+          setVariants(allVariants);
+          setBundleProducts(bundled);
         } else {
           setProduct(null);
           setVariants([]);
           setSelectedVariant(null);
+          setBundleProducts([]);
         }
       } catch (error) {
         console.error("Failed to fetch product:", error);
@@ -379,19 +382,29 @@ export default function ProductDetailPage() {
             {/* Add to Cart with Quantity Controls */}
             <div className="flex flex-col gap-3 pt-4">
               {quantityInCart === 0 ? (
-                <button
-                  onClick={handleAddToCart}
-                  disabled={cartLoading}
-                  className="w-full flex items-center justify-center gap-3 py-3 rounded-2xl font-bold text-xs tracking-[0.05em] bg-brand-blue text-white hover:bg-atlantic-blue hover:shadow-xl hover:shadow-brand-blue/30 hover:-translate-y-0.5 transition-all disabled:opacity-50 shadow-lg shadow-brand-blue/20 cursor-pointer"
-                >
-                  {cartLoading ? (
-                    <Loader2 size={18} className="animate-spin" />
-                  ) : (
-                    <>
-                      <ShoppingBag size={18} strokeWidth={2.5} /> Add to Cart
-                    </>
+                <div className={`grid grid-cols-1 ${!user ? 'sm:grid-cols-2' : ''} gap-3`}>
+                  <button
+                    onClick={handleAddToCart}
+                    disabled={cartLoading}
+                    className="w-full flex items-center justify-center gap-3 py-3 rounded-2xl font-bold text-xs tracking-[0.05em] bg-brand-blue text-white hover:bg-atlantic-blue hover:shadow-xl hover:shadow-brand-blue/30 hover:-translate-y-0.5 transition-all disabled:opacity-50 shadow-lg shadow-brand-blue/20 cursor-pointer"
+                  >
+                    {cartLoading ? (
+                      <Loader2 size={18} className="animate-spin" />
+                    ) : (
+                      <>
+                        <ShoppingBag size={18} strokeWidth={2.5} /> Add to Cart
+                      </>
+                    )}
+                  </button>
+                  {!user && (
+                    <Link
+                      href="/shop/register?professional=yes"
+                      className="w-full flex items-center justify-center gap-2 py-3 rounded-2xl font-bold text-xs tracking-[0.05em] bg-white text-brand-blue border-2 border-brand-blue hover:bg-brand-blue/5 hover:shadow-md transition-all text-center"
+                    >
+                      Buy Now - Professional
+                    </Link>
                   )}
-                </button>
+                </div>
               ) : (
                 <>
                   <div className="flex items-center justify-between gap-4 py-3 px-6 rounded-2xl bg-white border-2 border-brand-blue">
@@ -421,14 +434,24 @@ export default function ProductDetailPage() {
                     </button>
                   </div>
 
-                  <Link
-                    href="/shop/cart"
-                    className="w-full flex items-center justify-center gap-3 py-3 rounded-2xl font-bold text-xs tracking-[0.05em] bg-brand-blue text-white hover:bg-atlantic-blue hover:shadow-xl hover:shadow-brand-blue/30 hover:-translate-y-0.5 transition-all shadow-lg shadow-brand-blue/20"
-                  >
-                    <ShoppingBag size={16} strokeWidth={2.5} />
-                    Checkout
-                    <ArrowRight size={14} strokeWidth={3} />
-                  </Link>
+                  <div className={`grid grid-cols-1 ${!user ? 'sm:grid-cols-2' : ''} gap-3`}>
+                    <Link
+                      href="/shop/cart"
+                      className="w-full flex items-center justify-center gap-3 py-3 rounded-2xl font-bold text-xs tracking-[0.05em] bg-brand-blue text-white hover:bg-atlantic-blue hover:shadow-xl hover:shadow-brand-blue/30 hover:-translate-y-0.5 transition-all shadow-lg shadow-brand-blue/20"
+                    >
+                      <ShoppingBag size={16} strokeWidth={2.5} />
+                      Checkout
+                      <ArrowRight size={14} strokeWidth={3} />
+                    </Link>
+                    {!user && (
+                      <Link
+                        href="/shop/register?professional=yes"
+                        className="w-full flex items-center justify-center gap-2 py-3 rounded-2xl font-bold text-xs tracking-[0.05em] bg-white text-brand-blue border-2 border-brand-blue hover:bg-brand-blue/5 hover:shadow-md transition-all text-center"
+                      >
+                        Buy Now - Professional
+                      </Link>
+                    )}
+                  </div>
                 </>
               )}
             </div>
