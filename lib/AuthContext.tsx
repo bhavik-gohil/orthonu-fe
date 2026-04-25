@@ -36,10 +36,12 @@ interface User {
 interface AuthContextType {
     user: User | null;
     loading: boolean;
-    login: (credentials: any) => Promise<void>;
+    login: (credentials: any) => Promise<any>;
     register: (data: any) => Promise<any>;
     logout: (redirectPath?: string) => Promise<void>;
     refreshUser: () => Promise<void>;
+    verifyOtp: (data: { email: string, code: string, type: 'registration' | 'admin_login' }) => Promise<any>;
+    resendOtp: (data: { email: string, type: 'registration' | 'admin_login' }) => Promise<any>;
 }
 
 const AuthContext = createContext<AuthContextType>({
@@ -49,6 +51,8 @@ const AuthContext = createContext<AuthContextType>({
     register: async () => { },
     logout: async (redirectPath?: string) => { },
     refreshUser: async () => { },
+    verifyOtp: async () => { },
+    resendOtp: async () => { },
 });
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
@@ -77,19 +81,30 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const login = async (credentials: any) => {
         console.log("Attempting login...");
         const data = await apiCall("POST", "/auth/login", credentials);
-        console.log("Login success, user data:", data.user);
-        setUser(data.user);
-        // Redirect is handled by the calling page's useEffect
+        if (data.user) {
+            console.log("Login success, user data:", data.user);
+            setUser(data.user);
+        }
+        return data;
     };
 
     const register = async (userData: any) => {
         console.log("Registering user...");
         const data = await apiCall("POST", "/auth/register", userData);
-        if (data.user && data.user.status === 'active') {
+        // Only auto-login if verified and active
+        if (data.user && data.user.isVerified && data.user.status === 'active') {
             console.log("Registration success, auto-logging in:", data.user);
             setUser(data.user);
         }
         return data;
+    };
+
+    const verifyOtp = async (otpData: { email: string, code: string, type: 'registration' | 'admin_login' }) => {
+        return await apiCall("POST", "/auth/verify-otp", otpData);
+    };
+
+    const resendOtp = async (otpData: { email: string, type: 'registration' | 'admin_login' }) => {
+        return await apiCall("POST", "/auth/resend-otp", otpData);
     };
 
     const logout = async (redirectPath: string = "/shop") => {
@@ -103,7 +118,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     };
 
     return (
-        <AuthContext.Provider value={{ user, loading, login, register, logout, refreshUser: fetchMe }}>
+        <AuthContext.Provider value={{ 
+            user, 
+            loading, 
+            login, 
+            register, 
+            logout, 
+            refreshUser: fetchMe,
+            verifyOtp,
+            resendOtp
+        }}>
             {children}
         </AuthContext.Provider>
     );

@@ -20,6 +20,7 @@ import Alert from "@/components/ui/Alert";
 import Toggle from "@/components/ui/Toggle";
 import Card from "@/components/ui/Card";
 import Container from "@/components/ui/Container";
+import OtpVerification from "@/components/auth/OtpVerification";
 
 export default function RegisterPage() {
   return (
@@ -49,6 +50,8 @@ function RegisterForm() {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [loading, setLoading] = useState(false);
+  const [showOtp, setShowOtp] = useState(false);
+  const [emailForOtp, setEmailForOtp] = useState("");
   const { register, user } = useAuth();
   const searchParams = useSearchParams();
 
@@ -111,7 +114,10 @@ function RegisterForm() {
 
     try {
       const res = await register(formData);
-      if (res.message && formData.userType === "professional") {
+      if (res.status === "PENDING_VERIFICATION") {
+        setEmailForOtp(formData.email);
+        setShowOtp(true);
+      } else if (res.message && formData.userType === "professional") {
         setSuccess(res.message);
       } else {
         window.location.href = "/shop";
@@ -139,10 +145,22 @@ function RegisterForm() {
             </p>
           </div>
 
-          <Alert type="error" message={error} />
-          <Alert type="success" message={success} />
+          {showOtp ? (
+            <OtpVerification 
+              email={emailForOtp} 
+              type="registration" 
+              onSuccess={() => {
+                // The cookie is already set by the backend, so a refresh will log them in
+                window.location.href = "/shop";
+              }}
+              onBack={() => setShowOtp(false)}
+            />
+          ) : (
+            <>
+              <Alert type="error" message={error} />
+              <Alert type="success" message={success} />
 
-          {!success && (
+              {!success && (
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="grid grid-cols-1 gap-4">
                 <Input
@@ -236,16 +254,16 @@ function RegisterForm() {
             </form>
           )}
 
-          {!success && (
-            <p className="text-center text-zinc-500 font-medium text-sm">
-              Already have an account?{" "}
-              <Link
-                href="/shop/login"
-                className="text-brand-blue hover:underline font-bold"
-              >
-                Sign in
-              </Link>
-            </p>
+              <p className="text-center text-zinc-500 font-medium text-sm">
+                Already have an account?{" "}
+                <Link
+                  href="/shop/login"
+                  className="text-brand-blue hover:underline font-bold"
+                >
+                  Sign in
+                </Link>
+              </p>
+            </>
           )}
 
           {success && (
