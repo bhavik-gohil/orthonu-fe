@@ -12,7 +12,11 @@ export default function HomeNavbar() {
   const pathname = usePathname();
   const router = useRouter();
   const isHome = pathname === "/";
-  const shopUrl = getShopUrl();
+  const [shopUrl, setShopUrl] = useState("/shop");
+
+  useEffect(() => {
+    setShopUrl(getShopUrl());
+  }, []);
 
   // On home page: scroll to section if hash present on load
   useEffect(() => {

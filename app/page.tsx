@@ -24,7 +24,11 @@ import { getShopUrl } from "@/lib/subdomains";
 export default function Home() {
   const [productGroups, setProductGroups] = useState<ProductGroupWithProducts[]>([]);
   const [loading, setLoading] = useState(true);
-  const shopUrl = getShopUrl();
+  const [shopUrl, setShopUrl] = useState("/shop");
+
+  useEffect(() => {
+    setShopUrl(getShopUrl());
+  }, []);
 
   // Fetch product groups (incl. their products) from the new API
   useEffect(() => {
