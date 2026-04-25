@@ -3,12 +3,6 @@ import type { NextRequest } from "next/server";
 
 // Pages that should be accessible from any subdomain without being rewritten to /shop or /admin
 const PUBLIC_PAGES = [
-  "/privacy-policy",
-  "/terms-of-use",
-  "/shipping-policy",
-  "/refund-and-returns-policy",
-  "/ccpa-opt-out",
-  "/community-guidelines",
   "/about",
   "/contact",
   "/test-contact",
