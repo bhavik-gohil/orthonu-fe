@@ -11,12 +11,14 @@ import Button from "@/components/ui/Button";
 import Alert from "@/components/ui/Alert";
 import Card from "@/components/ui/Card";
 import Container from "@/components/ui/Container";
+import OtpVerification from "@/components/auth/OtpVerification";
 
 function LoginForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [showOtp, setShowOtp] = useState(false);
   const { login, user } = useAuth();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -36,7 +38,10 @@ function LoginForm() {
     setLoading(true);
     setError("");
     try {
-      await login({ email, password });
+      const data = await login({ email, password });
+      if (data.status === "NOT_VERIFIED") {
+        setShowOtp(true);
+      }
     } catch (err: any) {
       const msg = err?.response?.data?.message || err.message || "Invalid email or password";
       setError(msg);
@@ -44,6 +49,21 @@ function LoginForm() {
       setLoading(false);
     }
   };
+
+  if (showOtp) {
+    return (
+      <div className="bg-white p-12 rounded-3xl">
+        <OtpVerification 
+        email={email} 
+        type="registration" 
+        onSuccess={() => {
+          window.location.href = redirect;
+        }}
+        onBack={() => setShowOtp(false)}
+      />
+      </div>
+    );
+  }
 
   return (
     <Card className="w-full max-w-md space-y-8" padding="medium">

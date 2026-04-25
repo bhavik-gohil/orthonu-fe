@@ -11,12 +11,14 @@ import Alert from "@/components/ui/Alert";
 import Card from "@/components/ui/Card";
 import Section from "@/components/ui/Section";
 import Container from "@/components/ui/Container";
+import OtpVerification from "@/components/auth/OtpVerification";
 
 export default function AdminLogin() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [showOtp, setShowOtp] = useState(false);
   const router = useRouter();
 
   const handleLogin = async (e: React.FormEvent) => {
@@ -25,14 +27,33 @@ export default function AdminLogin() {
     setLoading(true);
 
     try {
-      await apiCall("POST", "admin/login", { email, password });
-      router.push("/admin");
+      const data = await apiCall("POST", "admin/login", { email, password });
+      if (data.requireOtp) {
+        setShowOtp(true);
+      } else {
+        router.push("/admin");
+      }
     } catch (err: any) {
       setError(err.response?.data?.message || "Invalid email or password.");
     } finally {
       setLoading(false);
     }
   };
+
+  if (showOtp) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-zinc-50/50">
+        <OtpVerification 
+          email={email} 
+          type="admin_login" 
+          onSuccess={() => {
+            window.location.href = "/admin";
+          }}
+          onBack={() => setShowOtp(false)}
+        />
+      </div>
+    );
+  }
 
   return (
     <Section className="min-h-screen flex items-center justify-center p-0 bg-zinc-50/50 relative overflow-hidden">
