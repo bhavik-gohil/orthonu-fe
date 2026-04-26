@@ -252,13 +252,13 @@ export default function Home() {
                 Oral Intelligence Layer™
               </h2>
               <div className="flex items-center justify-center gap-3">
-                <span className="h-px w-6 bg-atlantic-blue" />
+                {/* <span className="h-px w-6 bg-atlantic-blue" /> */}
                 <span className="text-[11px] font-bold tracking-wide text-atlantic-blue">
                   A closed-loop clinical + commercial system that turns every
                   diagnosis into immediate patient value, standardized care, and
                   captured revenue.
                 </span>
-                <span className="h-px w-6 bg-atlantic-blue" />
+                {/* <span className="h-px w-6 bg-atlantic-blue" /> */}
               </div>
             </div>
 
