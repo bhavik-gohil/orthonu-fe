@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { apiCall, API_BASE_URL } from "@/lib/api-client";
 import HomeNavbar from "@/components/HomeNavbar";
@@ -48,6 +49,12 @@ export default function AboutPage() {
   const [partners, setPartners] = useState<Partner[]>([]);
   const [loadingContent, setLoadingContent] = useState(true);
   const [shopUrl, setShopUrl] = useState("/shop");
+  const router = useRouter();
+
+  const handlePartnerClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    router.push("/#partner-with-us");
+  };
 
   useEffect(() => {
     setShopUrl(getShopUrl());
@@ -461,6 +468,7 @@ export default function AboutPage() {
               </Link>
               <a
                 href="#partner-with-us"
+                onClick={handlePartnerClick}
                 className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-4 bg-warm-gray text-soft-dark border border-warm-gray rounded-full font-semibold text-sm tracking-wide transition-all hover:border-brand-blue hover:text-atlantic-blue"
               >
                 Partner with Us
