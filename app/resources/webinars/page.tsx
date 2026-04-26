@@ -3,6 +3,7 @@ import Image from "next/image";
 import HomeNavbar from "@/components/HomeNavbar";
 import Footer from "@/components/Footer";
 import { ChevronLeft, ChevronRight, PlayCircle } from "lucide-react";
+import HeroSection from "@/components/ui/HeroSection";
 
 // ─── Webinar data ─────────────────────────────────────────────────────────────
 // Update youtubeId per webinar when real recordings are available.
@@ -37,33 +38,12 @@ export default function WebinarsPage() {
 
       <main className="flex-1">
         {/* Hero */}
-        <section className="bg-brand-blue text-white py-20 md:py-24 px-6 relative overflow-hidden">
-          <div
-            className="absolute inset-0 opacity-10"
-            style={{
-              backgroundImage:
-                "radial-gradient(circle at 70% 50%, white 0%, transparent 55%)",
-            }}
-          />
-          <div className="relative max-w-5xl mx-auto space-y-4">
-            <Link
-              href="/resources"
-              className="inline-flex items-center gap-2 text-white/60 hover:text-white text-xs font-bold uppercase tracking-widest transition-colors"
-            >
-              <ChevronLeft size={14} /> Resources
-            </Link>
-            <p className="text-[10px] font-black uppercase tracking-[0.5em] text-white/50">
-              Education
-            </p>
-            <h1 className="text-5xl md:text-6xl font-black tracking-tight">
-              Webinars
-            </h1>
-            <p className="text-white/70 text-lg font-medium max-w-xl">
-              Expert-led sessions on orthodontic innovation, patient care, and
-              the future of oral self-care.
-            </p>
-          </div>
-        </section>
+        <HeroSection
+          breadcrumb={{ label: "Resources", href: "/resources" }}
+          category="Education"
+          title="Webinars"
+          subtitle="Expert-led sessions on orthodontic innovation, patient care, and the future of oral self-care."
+        />
 
         {/* Webinar cards */}
         <section className="py-16 px-6">

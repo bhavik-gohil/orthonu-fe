@@ -53,10 +53,24 @@ export default function HomeNavbar() {
     setMobileOpen(false);
   };
 
+  const handleLogoClick = (e: React.MouseEvent) => {
+    if (isHome) {
+      e.preventDefault();
+      if (window.location.hash) {
+        window.history.pushState(null, "", "/");
+      }
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  };
+
   return (
     <nav className="sticky top-0 z-50 w-full bg-brand-blue/95 backdrop-blur-md border-b border-white/10 font-sans shadow-lg shadow-brand-blue/20">
       <div className="max-w-7xl mx-auto px-6 md:px-12 py-4 flex items-center justify-between">
-        <Link href="/" className="hover:opacity-80 transition-opacity shrink-0">
+        <Link 
+          href="/" 
+          onClick={handleLogoClick}
+          className="hover:opacity-80 transition-opacity shrink-0"
+        >
           <Image
             src="/logo-nu-white.png"
             alt="OrthoNu"

@@ -2,6 +2,7 @@ import Link from "next/link";
 import HomeNavbar from "@/components/HomeNavbar";
 import Footer from "@/components/Footer";
 import { FileText, Video, BookOpen, Newspaper, Radio } from "lucide-react";
+import HeroSection from "@/components/ui/HeroSection";
 
 const resources = [
   {
@@ -48,19 +49,11 @@ export default function ResourcesPage() {
 
       <main className="flex-1">
         {/* Hero */}
-        <section className="bg-brand-blue text-white py-20 md:py-28 px-6 text-center">
-          <div className="max-w-2xl mx-auto space-y-4">
-            <p className="text-[10px] font-black uppercase tracking-[0.5em] text-white/50">
-              Knowledge Hub
-            </p>
-            <h1 className="text-5xl md:text-6xl font-black tracking-tight">
-              Resources
-            </h1>
-            <p className="text-white/70 text-lg font-medium">
-              Clinical insights, research, and educational content for orthodontic professionals.
-            </p>
-          </div>
-        </section>
+        <HeroSection
+          category="Knowledge Hub"
+          title="Resources"
+          subtitle="Clinical insights, research, and educational content for orthodontic professionals."
+        />
 
         {/* Cards */}
         <section className="py-20 px-6">
@@ -68,18 +61,16 @@ export default function ResourcesPage() {
             {resources.map(({ href, icon, label, description, available }) => {
               const card = (
                 <div
-                  className={`group relative flex flex-col items-center text-center gap-5 p-8 bg-white rounded-2xl border transition-all duration-300 ${
-                    available
+                  className={`group relative flex flex-col items-center text-center gap-5 p-8 bg-white rounded-2xl border transition-all duration-300 ${available
                       ? "border-zinc-100 hover:border-brand-blue/30 hover:shadow-xl hover:shadow-brand-blue/5 cursor-pointer"
                       : "border-zinc-100 opacity-60 cursor-not-allowed"
-                  }`}
+                    }`}
                 >
                   <div
-                    className={`w-16 h-16 rounded-2xl flex items-center justify-center transition-all duration-300 ${
-                      available
+                    className={`w-16 h-16 rounded-2xl flex items-center justify-center transition-all duration-300 ${available
                         ? "bg-brand-blue/5 text-brand-blue group-hover:bg-brand-blue group-hover:text-white"
                         : "bg-zinc-100 text-zinc-400"
-                    }`}
+                      }`}
                   >
                     {icon}
                   </div>

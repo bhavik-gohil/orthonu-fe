@@ -16,6 +16,7 @@ import {
   ChevronRight,
 } from "lucide-react";
 import { getShopUrl } from "@/lib/subdomains";
+import HeroSection from "@/components/ui/HeroSection";
 
 interface Testimonial {
   id: number;
@@ -81,25 +82,10 @@ export default function AboutPage() {
 
       <main className="flex-1">
         {/* ── Hero ─────────────────────────────────────────────────── */}
-        <section className="bg-brand-blue text-white py-20 md:py-28 px-6 text-center">
-          <div
-            className="absolute inset-0 opacity-10"
-            style={{
-              backgroundImage:
-                "radial-gradient(circle at 70% 50%, white 0%, transparent 60%)",
-            }}
-          />
-          <div className="relative max-w-4xl mx-auto text-center space-y-6">
-            <h1 className="text-5xl md:text-6xl font-black tracking-tight">
-              About OrthoNu<span className="text-white/40">®</span>
-            </h1>
-            <p className="text-lg md:text-xl text-white/70 font-medium leading-relaxed max-w-2xl mx-auto">
-              Created by an orthodontist for orthodontists — the first company
-              focused on driving innovation in oral care to support both patient
-              experience and practice efficiencies.
-            </p>
-          </div>
-        </section>
+        <HeroSection
+          title="About OrthoNu"
+          subtitle="Created by an orthodontist for orthodontists — the first company focused on driving innovation in oral care to support both patient experience and practice efficiencies."
+        />
 
         {/* ── About Text ───────────────────────────────────────────── */}
         <section className="py-20 px-6">
@@ -453,7 +439,6 @@ export default function AboutPage() {
             <h2 className="text-4xl font-black">
               The time is now to prepare your practice for patient needs.
             </h2>
-            {/* CTA row — original buttons kept */}
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-12">
               <Link
                 href={shopUrl}
