@@ -126,7 +126,7 @@ function ShopContent() {
                   as={Link}
                   href={shopPrefix || "/"}
                   active={!activeCategory}
-                  className="px-6 py-2.5 text-[10px] font-black uppercase tracking-widest"
+                  className="px-3 py-1.5 text-[9px] font-black uppercase tracking-widest"
                 >
                   All
                 </Pill>
@@ -139,7 +139,7 @@ function ShopContent() {
                       "/",
                     )}
                     active={activeCategory === cat.productCategory}
-                    className="px-6 py-2.5 text-[10px] font-black uppercase tracking-widest"
+                    className="px-3 py-1.5 text-[9px] font-black uppercase tracking-widest"
                   >
                     {cat.productCategory}
                   </Pill>
@@ -149,11 +149,14 @@ function ShopContent() {
 
             {/* Right: Featured Image */}
             <div className="order-1 lg:order-2 relative flex justify-center lg:justify-end">
-              <div className="relative w-full max-w-lg lg:max-w-none rounded-3xl overflow-hidden shadow-2xl shadow-atlantic-blue/10 bg-white aspect-video">
-                <img
-                  src={activeCategory && activeCategoryInfo ? mediaUrl(activeCategoryInfo.image) : "/oral-relief-kitz2-updated-1200x714.png"}
+              <div className="relative w-full max-w-lg lg:max-w-none rounded-3xl overflow-hidden shadow-2xl shadow-atlantic-blue/10 bg-white">
+                <Image
+                  src={activeCategory && activeCategoryInfo?.image ? mediaUrl(activeCategoryInfo.image) : "/oral-relief-kitz2-updated-1200x714.png"}
                   alt={activeCategory && activeCategoryInfo ? activeCategoryInfo.productCategory : "OrthoNu Solutions"}
-                  className="w-full h-full object-cover"
+                  width={1200}
+                  height={714}
+                  className="w-full h-auto object-cover aspect-video"
+                  priority
                 />
               </div>
               <div className="absolute -z-10 -bottom-8 -right-8 w-72 h-72 bg-brand-blue/10 rounded-full blur-3xl pointer-events-none" />
