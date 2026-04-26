@@ -146,11 +146,23 @@ export default function Home() {
         ───────────────────────────────────────────────────────────── */}
         <section className="relative bg-cloud-blue overflow-hidden">
           {/* Decorative right-side wash */}
-          <div className="absolute inset-0 pointer-events-none">
+          {/* <div className="absolute inset-0 pointer-events-none">
             <div className="absolute top-0 right-0 w-full lg:w-1/2 h-full bg-brand-blue/[0.04]" />
             <div className="absolute -bottom-32 -left-32 w-96 h-96 bg-brand-blue/5 rounded-full blur-3xl" />
             <div className="absolute -top-20 right-1/4 w-64 h-64 bg-soft-plum/5 rounded-full blur-3xl" />
-          </div>
+          </div> */}
+          {/* Sophisticated pastel mesh background */}
+          <div
+            className="absolute inset-0 pointer-events-none opacity-[0.6]"
+            style={{
+              background: `
+            radial-gradient(ellipse at 20% 20%, rgba(176,224,226,0.4) 0%, transparent 50%),
+            radial-gradient(ellipse at 80% 80%, rgba(228,213,237,0.35) 0%, transparent 50%),
+            radial-gradient(ellipse at 60% 30%, rgba(157,213,239,0.3) 0%, transparent 40%),
+            linear-gradient(135deg, #f0f8f9 0%, #FFF 40%, #f8f4fb 70%, #f0f9f5 100%)
+          `,
+            }}
+          />
 
           <div className="relative z-10 max-w-7xl mx-auto px-6 md:px-10 lg:px-12 w-full py-16 md:py-20 lg:py-24">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center">

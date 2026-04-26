@@ -53,10 +53,24 @@ export default function HomeNavbar() {
     setMobileOpen(false);
   };
 
+  const handleLogoClick = (e: React.MouseEvent) => {
+    if (isHome) {
+      e.preventDefault();
+      if (window.location.hash) {
+        window.history.pushState(null, "", "/");
+      }
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  };
+
   return (
     <nav className="sticky top-0 z-50 w-full bg-brand-blue/95 backdrop-blur-md border-b border-white/10 font-sans shadow-lg shadow-brand-blue/20">
       <div className="max-w-7xl mx-auto px-6 md:px-12 py-4 flex items-center justify-between">
-        <Link href="/" className="hover:opacity-80 transition-opacity shrink-0">
+        <Link 
+          href="/" 
+          onClick={handleLogoClick}
+          className="hover:opacity-80 transition-opacity shrink-0"
+        >
           <Image
             src="/logo-nu-white.png"
             alt="OrthoNu"
@@ -68,34 +82,34 @@ export default function HomeNavbar() {
         </Link>
 
         {/* Desktop centre links */}
-        <div className="hidden lg:flex absolute left-1/2 -translate-x-1/2 items-center font-semibold text-sm tracking-[0.08em] text-white">
+        <div className="hidden md:flex absolute left-1/2 -translate-x-1/2 items-center font-semibold text-xs md:text-xs lg:text-sm tracking-[0.08em] text-white">
           <Link
             href="/about"
-            className="hover:bg-atlantic-blue/10 px-4 py-2 rounded-3xl transition-all duration-300"
+            className="hover:bg-atlantic-blue/10 py-2 px-2 md:px-4 rounded-3xl transition-all duration-300"
           >
             About
           </Link>
           <Link
             href="/resources"
-            className="hover:bg-atlantic-blue/10 px-4 py-2 rounded-3xl transition-all duration-300"
+            className="hover:bg-atlantic-blue/10 py-2 px-2 md:px-4 rounded-3xl transition-all duration-300"
           >
             Resources
           </Link>
           <a
             href="/#partner-with-us"
             onClick={handlePartnerClick}
-            className="hover:bg-atlantic-blue/10 px-4 py-2 rounded-3xl transition-all duration-300"
+            className="hover:bg-atlantic-blue/10 py-2 px-2 md:px-4 rounded-3xl transition-all duration-300"
           >
             Partner with Us
           </a>
         </div>
 
         {/* Desktop right actions */}
-        <div className="hidden lg:flex flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-3 pt-1">
+        <div className="hidden md:flex flex-col sm:flex-row items-center justify-center md:justify-start gap-3 pt-1 text-xs md:text-xs lg:text-sm">
           <Link
             href={shopUrl}
             target="_blank"
-            className="group w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 bg-warm-gray text-atlantic-blue border border-warm-gray hover:border-atlantic-blue hover:text-warm-gray rounded-full font-semibold text-sm tracking-wide hover:bg-atlantic-blue hover:shadow-lg hover:shadow-brand-blue/20 hover:-translate-y-0.5 transition-all duration-300"
+            className="group w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 bg-warm-gray text-atlantic-blue border border-warm-gray hover:border-atlantic-blue hover:text-warm-gray rounded-full font-semibold tracking-wide hover:bg-atlantic-blue hover:shadow-lg hover:shadow-brand-blue/20 hover:-translate-y-0.5 transition-all duration-300"
           >
             Shop Solutions
             <ChevronRight
@@ -107,7 +121,7 @@ export default function HomeNavbar() {
 
         <button
           onClick={() => setMobileOpen(!mobileOpen)}
-          className="lg:hidden p-2.5 text-white"
+          className="md:hidden p-2.5 text-white"
         >
           {mobileOpen ? <X size={20} /> : <Menu size={20} />}
         </button>
@@ -115,11 +129,11 @@ export default function HomeNavbar() {
 
       {/* Mobile menu */}
       {mobileOpen && (
-        <div className="lg:hidden border-t border-white/10 px-6 py-8 space-y-1 text-sm bg-brand-blue">
+        <div className="md:hidden border-white/10 px-6 space-y-1 text-sm bg-brand-blue">
           <Link
             href="/about"
             onClick={() => setMobileOpen(false)}
-            className="flex items-center justify-between font-semibold text-white py-3.5 border-b border-white/10 hover:text-white/70 transition-colors"
+            className="flex items-center justify-between font-semibold text-white py-3.5 border-b border-t border-white/10 hover:text-white/70 transition-colors"
           >
             About
           </Link>
@@ -138,12 +152,12 @@ export default function HomeNavbar() {
           >
             Partner with Us
           </a>
-          <div className="pt-4">
-            <div className="block flex-col sm:flex-row items-center justify-center lg:justify-start gap-3 pt-1">
+          <div className="py-3.5 pb-4.5">
+            <div className="block flex-col sm:flex-row items-center justify-center md:justify-start gap-3">
               <Link
                 href={shopUrl}
                 target="_blank"
-                className="group w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 bg-warm-gray text-soft-dark border border-warm-gray hover:border-atlantic-blue hover:text-warm-gray rounded-full font-semibold text-sm tracking-wide transition-all hover:bg-atlantic-blue hover:shadow-lg hover:shadow-brand-blue/20 hover:-translate-y-0.5 duration-30"
+                className="group w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 bg-warm-gray text-soft-dark border border-warm-gray hover:border-atlantic-blue hover:text-warm-gray rounded-full font-semibold text-sm tracking-wide transition-all hover:bg-atlantic-blue hover:shadow-lg hover:shadow-brand-blue/20 hover:-translate-y-0.5 duration-300"
               >
                 Shop Solutions
                 <ChevronRight
@@ -152,15 +166,6 @@ export default function HomeNavbar() {
                 />
               </Link>
             </div>
-
-            {/* <Link
-              href={shopUrl}
-              target="_blank"
-              onClick={() => setMobileOpen(false)}
-              className="block w-full text-center font-bold text-brand-blue bg-white px-6 py-3.5 rounded-full text-sm tracking-wide hover:bg-zinc-50 transition-colors"
-            >
-              Shop Solutions
-            </Link> */}
           </div>
         </div>
       )}

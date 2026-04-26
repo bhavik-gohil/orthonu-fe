@@ -16,6 +16,7 @@ import {
   Users,
   Award,
 } from "lucide-react";
+import HeroSection from "@/components/ui/HeroSection";
 
 const inputCls =
   "w-full px-4 py-3 border border-zinc-200 rounded-xl bg-white text-sm text-soft-dark placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-brand-blue/30 focus:border-brand-blue transition-colors";
@@ -77,37 +78,12 @@ export default function WhitePaperPage() {
 
       <main className="flex-1">
         {/* ── Hero ─────────────────────────────────────────────────────── */}
-        <section className="bg-brand-blue text-white py-20 md:py-28 px-6 relative overflow-hidden">
-          <div
-            className="absolute inset-0 opacity-10"
-            style={{
-              backgroundImage:
-                "radial-gradient(circle at 80% 50%, white 0%, transparent 55%)",
-            }}
-          />
-          <div className="relative max-w-5xl mx-auto grid md:grid-cols-2 gap-12 items-center">
-            <div className="space-y-6">
-              <Link
-                href="/resources"
-                className="inline-flex items-center gap-2 text-white/60 hover:text-white text-xs font-bold uppercase tracking-widest transition-colors"
-              >
-                <ChevronLeft size={14} /> Resources
-              </Link>
-              <div className="space-y-2">
-                <p className="text-lg font-extrabold tracking-wide text-white/50">
-                  OrthoNu® White Paper:
-                </p>
-                <h1 className="text-4xl md:text-5xl font-black tracking-tight leading-tight">
-                  Revolutionizing Oral Self-Care
-                </h1>
-                <p className="text-xl text-white/80 font-medium">
-                  How Orthodontists Are Redefining Comfort, Prevention, and
-                  Patient Experience
-                </p>
-              </div>
-            </div>
-          </div>
-        </section>
+        <HeroSection
+          breadcrumb={{ label: "Resources", href: "/resources" }}
+          category="OrthoNu® White Paper"
+          title="Revolutionizing Oral Self-Care"
+          subtitle="How Orthodontists Are Redefining Comfort, Prevention, and Patient Experience"
+        />
 
         {/* ── Banner image below hero ───────────────────────────────────── */}
         <div className="flex w-full  justify-center  pt-16 px-4">
