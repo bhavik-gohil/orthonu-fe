@@ -418,7 +418,6 @@ export default function Home() {
               {/* Text */}
               <div className="space-y-5 text-center lg:text-left">
                 <div className="flex items-center justify-center lg:justify-start gap-3">
-                  <span className="h-px w-6 bg-atlantic-blue hidden lg:block" />
                   <span className="text-[11px] font-bold tracking-[0.18em] uppercase text-atlantic-blue">
                     Our Mission
                   </span>

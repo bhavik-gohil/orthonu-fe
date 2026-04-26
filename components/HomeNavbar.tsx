@@ -68,7 +68,7 @@ export default function HomeNavbar() {
         </Link>
 
         {/* Desktop centre links */}
-        <div className="hidden md:flex absolute left-1/2 -translate-x-1/2 items-center font-semibold text-sm tracking-[0.08em] text-white">
+        <div className="hidden lg:flex absolute left-1/2 -translate-x-1/2 items-center font-semibold text-sm tracking-[0.08em] text-white">
           <Link
             href="/about"
             className="hover:bg-atlantic-blue/10 px-4 py-2 rounded-3xl transition-all duration-300"
@@ -81,10 +81,17 @@ export default function HomeNavbar() {
           >
             Resources
           </Link>
+          <a
+            href="/#partner-with-us"
+            onClick={handlePartnerClick}
+            className="hover:bg-atlantic-blue/10 px-4 py-2 rounded-3xl transition-all duration-300"
+          >
+            Partner with Us
+          </a>
         </div>
 
         {/* Desktop right actions */}
-        <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-3 pt-1">
+        <div className="hidden lg:flex flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-3 pt-1">
           <Link
             href={shopUrl}
             target="_blank"
@@ -96,17 +103,11 @@ export default function HomeNavbar() {
               className="group-hover:translate-x-0.5 transition-transform"
             />
           </Link>
-          <a
-            href="#partner-with-us"
-            className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3  text-warm-gray border border-brand-blue hover:border-warm-gray rounded-full font-semibold text-sm tracking-wide transition-all  duration-300"
-          >
-            Partner with Us
-          </a>
         </div>
 
         <button
           onClick={() => setMobileOpen(!mobileOpen)}
-          className="md:hidden p-2.5 text-white"
+          className="lg:hidden p-2.5 text-white"
         >
           {mobileOpen ? <X size={20} /> : <Menu size={20} />}
         </button>
@@ -114,7 +115,7 @@ export default function HomeNavbar() {
 
       {/* Mobile menu */}
       {mobileOpen && (
-        <div className="md:hidden border-t border-white/10 px-6 py-8 space-y-1 text-sm bg-brand-blue">
+        <div className="lg:hidden border-t border-white/10 px-6 py-8 space-y-1 text-sm bg-brand-blue">
           <Link
             href="/about"
             onClick={() => setMobileOpen(false)}
@@ -138,14 +139,28 @@ export default function HomeNavbar() {
             Partner with Us
           </a>
           <div className="pt-4">
-            <Link
+            <div className="block flex-col sm:flex-row items-center justify-center lg:justify-start gap-3 pt-1">
+              <Link
+                href={shopUrl}
+                target="_blank"
+                className="group w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 bg-warm-gray text-soft-dark border border-warm-gray hover:border-atlantic-blue hover:text-warm-gray rounded-full font-semibold text-sm tracking-wide transition-all hover:bg-atlantic-blue hover:shadow-lg hover:shadow-brand-blue/20 hover:-translate-y-0.5 duration-30"
+              >
+                Shop Solutions
+                <ChevronRight
+                  size={16}
+                  className="group-hover:translate-x-0.5 transition-transform"
+                />
+              </Link>
+            </div>
+
+            {/* <Link
               href={shopUrl}
               target="_blank"
               onClick={() => setMobileOpen(false)}
               className="block w-full text-center font-bold text-brand-blue bg-white px-6 py-3.5 rounded-full text-sm tracking-wide hover:bg-zinc-50 transition-colors"
             >
               Shop Solutions
-            </Link>
+            </Link> */}
           </div>
         </div>
       )}
