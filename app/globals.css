@@ -14,6 +14,7 @@
   --sage: #8BAF9A;
   --soft-dark: #2D3E50;
   --warm-gray: #F5F3F0;
+  --cloud-blue: #F5FAFD;
 
   /* Aliases for Tailwind arbitrary value syntax: bg-(--brand-blue) etc. */
   --brand-blue: var(--nu-blue);
@@ -34,6 +35,7 @@
   --color-sage: var(--sage);
   --color-soft-dark: var(--soft-dark);
   --color-warm-gray: var(--warm-gray);
+  --color-cloud-blue: var(--cloud-blue);
 }
 
 body {

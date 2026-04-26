@@ -3,7 +3,7 @@ import Image from "next/image";
 
 export default function Footer() {
   return (
-    <footer className="mt-auto py-7 md:py-10 px-6 bg-white border-t border-zinc-200">
+    <footer className="mt-auto py-7 md:py-10 px-6 bg-cloud-blue border-t-2 border-atlantic-blue/15">
       <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-start md:items-center gap-12">
         <div className="flex mx-auto md:mx-0">
           <Image src="/logo-nu.png" alt="OrthoNu" width={100} height={22} />
@@ -64,13 +64,13 @@ export default function Footer() {
             </div>
             <Link
               href="/contact"
-              className="px-6 py-2.5 bg-brand-blue text-white rounded-full hover:bg-atlantic-blue transition-all font-semibold mb-1 md:mb-0"
+                className="group w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-4 bg-brand-blue text-white rounded-full font-semibold text-sm tracking-wide transition-all hover:bg-atlantic-blue hover:shadow-lg hover:shadow-brand-blue/20 hover:-translate-y-0.5"
             >
               Contact Us
             </Link>
           </div>
 
-          <div className="flex flex-col md:flex-row gap-4 w-full border-t-2 border-brand-blue/50">
+          <div className="flex flex-col md:flex-row gap-4 w-full border-t border-atlantic-blue/15">
             <div className="w-full">
               <div className="flex flex-col lg:flex-row gap-2 lg:gap-4 text-xs pb-3 pt-4 text-atlantic-blue/60 justify-center items-center">
                 <Link
