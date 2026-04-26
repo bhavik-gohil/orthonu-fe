@@ -115,11 +115,11 @@ export default function HomeNavbar() {
 
       {/* Mobile menu */}
       {mobileOpen && (
-        <div className="lg:hidden border-t border-white/10 px-6 py-8 space-y-1 text-sm bg-brand-blue">
+        <div className="lg:hidden border-white/10 px-6 space-y-1 text-sm bg-brand-blue">
           <Link
             href="/about"
             onClick={() => setMobileOpen(false)}
-            className="flex items-center justify-between font-semibold text-white py-3.5 border-b border-white/10 hover:text-white/70 transition-colors"
+            className="flex items-center justify-between font-semibold text-white py-3.5 border-b border-t border-white/10 hover:text-white/70 transition-colors"
           >
             About
           </Link>
@@ -138,12 +138,12 @@ export default function HomeNavbar() {
           >
             Partner with Us
           </a>
-          <div className="pt-4">
-            <div className="block flex-col sm:flex-row items-center justify-center lg:justify-start gap-3 pt-1">
+          <div className="py-3.5 pb-4.5">
+            <div className="block flex-col sm:flex-row items-center justify-center lg:justify-start gap-3">
               <Link
                 href={shopUrl}
                 target="_blank"
-                className="group w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 bg-warm-gray text-soft-dark border border-warm-gray hover:border-atlantic-blue hover:text-warm-gray rounded-full font-semibold text-sm tracking-wide transition-all hover:bg-atlantic-blue hover:shadow-lg hover:shadow-brand-blue/20 hover:-translate-y-0.5 duration-30"
+                className="group w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 bg-warm-gray text-soft-dark border border-warm-gray hover:border-atlantic-blue hover:text-warm-gray rounded-full font-semibold text-sm tracking-wide transition-all hover:bg-atlantic-blue hover:shadow-lg hover:shadow-brand-blue/20 hover:-translate-y-0.5 duration-300"
               >
                 Shop Solutions
                 <ChevronRight
@@ -152,15 +152,6 @@ export default function HomeNavbar() {
                 />
               </Link>
             </div>
-
-            {/* <Link
-              href={shopUrl}
-              target="_blank"
-              onClick={() => setMobileOpen(false)}
-              className="block w-full text-center font-bold text-brand-blue bg-white px-6 py-3.5 rounded-full text-sm tracking-wide hover:bg-zinc-50 transition-colors"
-            >
-              Shop Solutions
-            </Link> */}
           </div>
         </div>
       )}
