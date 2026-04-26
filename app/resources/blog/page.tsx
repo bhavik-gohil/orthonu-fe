@@ -56,7 +56,7 @@ export default function BlogPage() {
                 </section>
 
                 {/* ── Category Filter ── */}
-                <section className="border-b border-zinc-200 bg-white sticky top-0 z-10">
+                <section className="border-b border-zinc-200 bg-white/70 sticky top-0 z-10">
                     <div className="max-w-5xl mx-auto px-6 flex items-center gap-2 overflow-x-auto py-3 scrollbar-hide">
                         {CATEGORIES.map(({ label, value }) => (
                             <button
@@ -64,7 +64,7 @@ export default function BlogPage() {
                                 onClick={() => setActiveCategory(value)}
                                 className={`px-4 py-1.5 rounded-full text-sm font-semibold whitespace-nowrap transition-all duration-200 ${activeCategory === value
                                     ? "bg-brand-blue text-white shadow-sm"
-                                    : "bg-zinc-100 text-zinc-500 hover:bg-zinc-200"
+                                    : "bg-warm-gray text-zinc-500 hover:bg-zinc-200 cursor-pointer"
                                     }`}
                             >
                                 {label}

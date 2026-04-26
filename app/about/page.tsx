@@ -6,13 +6,21 @@ import Image from "next/image";
 import { apiCall, API_BASE_URL } from "@/lib/api-client";
 import HomeNavbar from "@/components/HomeNavbar";
 import Footer from "@/components/Footer";
-import { Quote, User, Handshake, ExternalLink, Loader2 } from "lucide-react";
+import {
+  Quote,
+  User,
+  Handshake,
+  ExternalLink,
+  Loader2,
+  ChevronRight,
+} from "lucide-react";
 import { getShopUrl } from "@/lib/subdomains";
 
 interface Testimonial {
   id: number;
   text: string;
   by: string;
+  from?: string;
 }
 interface BoardMember {
   id: number;
@@ -285,15 +293,28 @@ export default function AboutPage() {
                 {testimonials.map((t) => (
                   <div
                     key={t.id}
-                    className="break-inside-avoid bg-zinc-50 border border-zinc-100 rounded-3xl p-6 space-y-4"
+                    className="break-inside-avoid bg-zinc-50 border border-zinc-100 rounded-3xl p-6 space-y-4 hover:border-brand-blue/20 hover:-translate-y-1 transition-all duration-300"
                   >
                     <Quote size={20} className="text-brand-blue/30" />
-                    <p className="text-sm text-soft-dark/80 leading-relaxed italic">
-                      {t.text}
-                    </p>
-                    <p className="text-xs font-bold text-brand-blue">
-                      — {t.by}
-                    </p>
+                    <div className="space-y-4">
+                      <p className="text-sm text-soft-dark/80 leading-relaxed italic">
+                        {t.text}
+                      </p>
+                      <div>
+                        {t.by && (
+                          <p className="text-xs font-bold text-brand-blue">
+                            — {t.by}
+                          </p>
+                        )}
+                        {t.from && (
+                          <p
+                            className={`text-[10px] font-medium text-soft-dark/50 mt-1 ${t.by ? "ml-4" : ""}`}
+                          >
+                            {t.from}
+                          </p>
+                        )}
+                      </div>
+                    </div>
                   </div>
                 ))}
               </div>
@@ -420,25 +441,30 @@ export default function AboutPage() {
         </section>
 
         {/* ── CTA ──────────────────────────────────────────────────── */}
-        <section className="py-20 px-6 bg-brand-blue text-white text-center">
+        <section className="py-20 px-6 bg-brand-blue/10 text-brand-blue text-center">
           <div className="max-w-2xl mx-auto space-y-6">
             <h2 className="text-4xl font-black">
               The time is now to prepare your practice for patient needs.
             </h2>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
+            {/* CTA row — original buttons kept */}
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-12">
               <Link
                 href={shopUrl}
                 target="_blank"
-                className="px-10 py-4 bg-white text-brand-blue font-black text-xs uppercase tracking-widest rounded-xl hover:shadow-2xl hover:-translate-y-0.5 transition-all"
+                className="group w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-4 bg-brand-blue text-white rounded-full font-semibold text-sm tracking-wide transition-all hover:bg-atlantic-blue hover:shadow-lg hover:shadow-brand-blue/20 hover:-translate-y-0.5"
               >
                 Shop Solutions
+                <ChevronRight
+                  size={16}
+                  className="group-hover:translate-x-0.5 transition-transform"
+                />
               </Link>
-              <Link
-                href="/#partner-with-us"
-                className="px-10 py-4 bg-white/10 border border-white/20 text-white font-bold text-sm tracking-wide rounded-4xl hover:bg-white/20 transition-all"
+              <a
+                href="#partner-with-us"
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-4 bg-warm-gray text-soft-dark border border-warm-gray rounded-full font-semibold text-sm tracking-wide transition-all hover:border-brand-blue hover:text-atlantic-blue"
               >
-                Partner With Us
-              </Link>
+                Partner with Us
+              </a>
             </div>
           </div>
         </section>

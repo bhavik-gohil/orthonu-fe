@@ -10,6 +10,7 @@ interface Testimonial {
     id: number;
     text: string;
     by: string;
+    from?: string;
     createdAt: string;
 }
 
@@ -19,7 +20,7 @@ export default function TestimonialsAdmin() {
     const [submitting, setSubmitting] = useState(false);
     const [error, setError] = useState("");
     const [success, setSuccess] = useState("");
-    const [form, setForm] = useState({ text: "", by: "" });
+    const [form, setForm] = useState({ text: "", by: "", from: "" });
 
     const inputCls = "w-full px-4 py-3 border border-zinc-200 rounded-xl bg-white text-sm focus:outline-none focus:ring-2 focus:ring-brand-blue/30 focus:border-brand-blue transition-colors";
 
@@ -40,14 +41,14 @@ export default function TestimonialsAdmin() {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         if (!form.text.trim() || !form.by.trim()) {
-            setError("Both fields are required");
+            setError("Quote and Attribution are required");
             return;
         }
         try {
             setSubmitting(true);
             setError("");
             await apiCall("POST", "/admin/testimonials", form);
-            setForm({ text: "", by: "" });
+            setForm({ text: "", by: "", from: "" });
             setSuccess("Testimonial added!");
             setTimeout(() => setSuccess(""), 3000);
             fetchTestimonials();
@@ -94,16 +95,28 @@ export default function TestimonialsAdmin() {
                                 required
                             />
                         </div>
-                        <div className="space-y-1.5">
-                            <label className="text-xs font-medium text-zinc-500">Attribution *</label>
-                            <input
-                                type="text"
-                                placeholder="e.g. Dr. Jane Smith, ABC Orthodontics"
-                                value={form.by}
-                                onChange={e => setForm(f => ({ ...f, by: e.target.value }))}
-                                className={inputCls}
-                                required
-                            />
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div className="space-y-1.5">
+                                <label className="text-xs font-medium text-zinc-500">Person *</label>
+                                <input
+                                    type="text"
+                                    placeholder="e.g. Dr. Jane Smith"
+                                    value={form.by}
+                                    onChange={e => setForm(f => ({ ...f, by: e.target.value }))}
+                                    className={inputCls}
+                                    required
+                                />
+                            </div>
+                            <div className="space-y-1.5">
+                                <label className="text-xs font-medium text-zinc-500">Organization</label>
+                                <input
+                                    type="text"
+                                    placeholder="e.g. ABC Orthodontics"
+                                    value={form.from}
+                                    onChange={e => setForm(f => ({ ...f, from: e.target.value }))}
+                                    className={inputCls}
+                                />
+                            </div>
                         </div>
                         {error && <p className="text-xs text-rose-500 font-medium">{error}</p>}
                         {success && <p className="text-xs text-emerald-600 font-medium">{success}</p>}
@@ -136,8 +149,11 @@ export default function TestimonialsAdmin() {
                                         <Quote size={18} className="text-brand-blue/30 shrink-0 mt-0.5" />
                                         <div className="flex-1 space-y-2">
                                             <p className="text-sm text-soft-dark/80 leading-relaxed italic">{t.text}</p>
-                                            <p className="text-xs font-bold text-brand-blue">— {t.by}</p>
-                                            <p className="text-[10px] text-zinc-400">{new Date(t.createdAt).toLocaleDateString()}</p>
+                                            <div>
+                                                <p className="text-xs font-bold text-brand-blue">{t.by}</p>
+                                                {t.from && <p className="text-[10px] font-medium text-soft-dark/50">{t.from}</p>}
+                                            </div>
+                                            <p className="text-[10px] text-zinc-300">{new Date(t.createdAt).toLocaleDateString()}</p>
                                         </div>
                                         <button
                                             onClick={() => handleDelete(t.id)}

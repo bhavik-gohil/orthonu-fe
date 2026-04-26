@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { Menu, X } from "lucide-react";
+import { Menu, X, ChevronRight } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
 import { getShopUrl } from "@/lib/subdomains";
 
@@ -54,7 +54,7 @@ export default function HomeNavbar() {
   };
 
   return (
-    <nav className="sticky top-0 z-50 w-full bg-brand-blue border-b border-white/10 font-sans shadow-lg shadow-brand-blue/20">
+    <nav className="sticky top-0 z-50 w-full bg-brand-blue/95 backdrop-blur-md border-b border-white/10 font-sans shadow-lg shadow-brand-blue/20">
       <div className="max-w-7xl mx-auto px-6 md:px-12 py-4 flex items-center justify-between">
         <Link href="/" className="hover:opacity-80 transition-opacity shrink-0">
           <Image
@@ -62,44 +62,46 @@ export default function HomeNavbar() {
             alt="OrthoNu"
             width={120}
             height={26}
-            className="h-15 md:h-20 w-auto brightness-0 invert transition-all group-hover:drop-shadow-[0_0_15px_rgba(255,255,255,0.4)]"
+            className="h-10 md:h-14 w-auto brightness-0 invert transition-all group-hover:drop-shadow-[0_0_15px_rgba(255,255,255,0.4)]"
             priority
           />
         </Link>
 
         {/* Desktop centre links */}
-        <div className="hidden md:flex absolute left-1/2 -translate-x-1/2 items-center gap-6 font-semibold text-sm tracking-[0.05em] text-white">
+        <div className="hidden md:flex absolute left-1/2 -translate-x-1/2 items-center font-semibold text-sm tracking-[0.08em] text-white">
           <Link
             href="/about"
-            className="hover:bg-zinc-50/10 px-3 py-1 rounded-3xl transition-all duration-300"
+            className="hover:bg-atlantic-blue/10 px-4 py-2 rounded-3xl transition-all duration-300"
           >
             About
           </Link>
           <Link
             href="/resources"
-            className="hover:bg-zinc-50/10 px-3 py-1 rounded-3xl transition-all duration-300"
+            className="hover:bg-atlantic-blue/10 px-4 py-2 rounded-3xl transition-all duration-300"
           >
             Resources
           </Link>
         </div>
 
         {/* Desktop right actions */}
-        <div className="hidden md:flex items-center gap-8 font-semibold text-sm tracking-[0.05em] text-white">
-          <a
-            href="/#partner-with-us"
-            onClick={handlePartnerClick}
-            className="hover:text-white/70 transition-colors focus:outline-none focus:ring-2 focus:ring-white/50 focus:ring-offset-2 focus:ring-offset-brand-blue rounded-full px-2 py-1"
-            aria-label="Scroll to Partner with Us form"
-          >
-            Partner with Us
-          </a>
+        <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-3 pt-1">
           <Link
             href={shopUrl}
             target="_blank"
-            className="px-6 py-2.5 bg-white text-brand-blue rounded-full hover:bg-zinc-100 transition-all font-semibold"
+            className="group w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 bg-warm-gray text-soft-dark border border-warm-gray hover:border-atlantic-blue hover:text-warm-gray rounded-full font-semibold text-sm tracking-wide transition-all hover:bg-atlantic-blue hover:shadow-lg hover:shadow-brand-blue/20 hover:-translate-y-0.5 duration-30"
           >
             Shop Solutions
+            <ChevronRight
+              size={16}
+              className="group-hover:translate-x-0.5 transition-transform"
+            />
           </Link>
+          <a
+            href="#partner-with-us"
+            className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3  text-warm-gray border border-brand-blue hover:border-warm-gray rounded-full font-semibold text-sm tracking-wide transition-all  duration-300"
+          >
+            Partner with Us
+          </a>
         </div>
 
         <button
@@ -112,37 +114,39 @@ export default function HomeNavbar() {
 
       {/* Mobile menu */}
       {mobileOpen && (
-        <div className="md:hidden border-t border-white/10 px-6 py-6 space-y-4 text-sm">
+        <div className="md:hidden border-t border-white/10 px-6 py-8 space-y-1 text-sm bg-brand-blue">
           <Link
             href="/about"
             onClick={() => setMobileOpen(false)}
-            className="block font-semibold text-white/80 py-2"
+            className="flex items-center justify-between font-semibold text-white py-3.5 border-b border-white/10 hover:text-white/70 transition-colors"
           >
             About
           </Link>
           <Link
             href="/resources"
             onClick={() => setMobileOpen(false)}
-            className="block font-semibold text-white/80 py-2"
+            className="flex items-center justify-between font-semibold text-white py-3.5 border-b border-white/10 hover:text-white/70 transition-colors"
           >
             Resources
           </Link>
           <a
             href="/#partner-with-us"
             onClick={handlePartnerClick}
-            className="block font-semibold text-white/80 py-2 focus:outline-none focus:ring-2 focus:ring-white/50 rounded"
+            className="flex items-center justify-between font-semibold text-white py-3.5 border-b border-white/10 hover:text-white/70 transition-colors focus:outline-none"
             aria-label="Scroll to Partner with Us form"
           >
             Partner with Us
           </a>
-          <Link
-            href={shopUrl}
-            target="_blank"
-            onClick={() => setMobileOpen(false)}
-            className="block font-semibold text-brand-blue bg-white w-fit px-4 py-1.5 rounded-lg"
-          >
-            Shop Now
-          </Link>
+          <div className="pt-4">
+            <Link
+              href={shopUrl}
+              target="_blank"
+              onClick={() => setMobileOpen(false)}
+              className="block w-full text-center font-bold text-brand-blue bg-white px-6 py-3.5 rounded-full text-sm tracking-wide hover:bg-zinc-50 transition-colors"
+            >
+              Shop Solutions
+            </Link>
+          </div>
         </div>
       )}
     </nav>

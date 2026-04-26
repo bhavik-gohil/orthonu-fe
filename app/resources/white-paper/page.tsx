@@ -372,10 +372,11 @@ export default function WhitePaperPage() {
                           </p>
                         )}
 
+                        {/* <div className="flex w-full justify-center"> */}
                         <button
                           type="submit"
                           disabled={submitting}
-                          className="w-full flex items-center justify-center gap-3 py-3 bg-brand-blue text-white font-black text-xs uppercase tracking-widest rounded-xl hover:bg-atlantic-blue hover:shadow-xl hover:shadow-brand-blue/30 hover:-translate-y-0.5 transition-all shadow-lg shadow-brand-blue/20 disabled:opacity-50"
+                          className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-4 bg-brand-blue text-white rounded-full font-semibold text-sm tracking-wide transition-all hover:bg-atlantic-blue hover:shadow-lg hover:shadow-brand-blue/20 hover:-translate-y-0.5"
                         >
                           {submitting ? (
                             <Loader2 size={16} className="animate-spin" />
@@ -385,6 +386,7 @@ export default function WhitePaperPage() {
                             </>
                           )}
                         </button>
+                        {/* </div> */}
 
                         <p className="text-[10px] text-zinc-400 text-center leading-relaxed">
                           By submitting, you agree to receive occasional updates
@@ -395,7 +397,6 @@ export default function WhitePaperPage() {
                     </div>
                   </div>
                 </div>
-
               )}
             </div>
           </div>

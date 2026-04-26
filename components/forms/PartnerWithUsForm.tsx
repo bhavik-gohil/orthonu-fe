@@ -514,7 +514,9 @@ export default function PartnerWithUsForm({
         <button
           type="submit"
           disabled={isSubmitting}
-          className="mt-8 px-10 py-2.5 text-sm bg-brand-blue text-white rounded-full font-semibold hover:bg-atlantic-blue transition-all disabled:bg-gray-300 disabled:cursor-not-allowed"
+          // className="mt-8 px-10 py-2.5 text-sm bg-brand-blue text-white rounded-full font-semibold hover:bg-atlantic-blue transition-all disabled:bg-gray-300 disabled:cursor-not-allowed"
+                          className="my-8  w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-4 bg-brand-blue text-white rounded-full font-semibold text-sm tracking-wide transition-all hover:bg-atlantic-blue hover:shadow-lg hover:shadow-brand-blue/20 hover:-translate-y-0.5 cursor-pointer"
+
         >
           {isSubmitting ? "Submitting..." : submitButtonText}
         </button>
