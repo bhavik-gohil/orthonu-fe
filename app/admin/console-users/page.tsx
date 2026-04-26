@@ -49,6 +49,11 @@ export default function ManageUsers() {
 
     const handleCreateUser = async (e: React.FormEvent) => {
         e.preventDefault();
+        if (newUserPassword.length < 8) {
+            setSnack({ type: "error", text: "Password must be at least 8 characters long." });
+            return;
+        }
+
         try {
             setCreating(true);
             await apiCall("POST", "/admin/user/create", {

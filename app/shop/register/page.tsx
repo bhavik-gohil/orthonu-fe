@@ -102,6 +102,12 @@ function RegisterForm() {
     setError("");
     setSuccess("");
 
+    if (formData.password.length < 8) {
+      setError("Password must be at least 8 characters long.");
+      setLoading(false);
+      return;
+    }
+
     if (formData.userType === "professional") {
       if (!validateProfessionalEmail(formData.emailProfessional)) {
         setError(
