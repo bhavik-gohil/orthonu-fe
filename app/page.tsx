@@ -1,6 +1,5 @@
 "use client";
-
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import {
@@ -33,6 +32,7 @@ const PILLARS = [
     color: "var(--nu-blue)",
     textClass: "text-brand-blue",
     bgClass: "bg-brand-blue",
+    bgClassSoft: "bg-brand-blue/30",
   },
   {
     icon: ShieldCheck,
@@ -42,6 +42,7 @@ const PILLARS = [
     color: "var(--atlantic-blue)",
     textClass: "text-atlantic-blue",
     bgClass: "bg-atlantic-blue",
+    bgClassSoft: "bg-atlantic-blue/30",
   },
   {
     icon: HeartPulse,
@@ -51,6 +52,7 @@ const PILLARS = [
     color: "var(--bright-cyan)",
     textClass: "text-bright-cyan",
     bgClass: "bg-bright-cyan",
+    bgClassSoft: "bg-bright-cyan/30",
   },
   {
     icon: Activity,
@@ -60,6 +62,7 @@ const PILLARS = [
     color: "var(--soft-plum)",
     textClass: "text-soft-plum",
     bgClass: "bg-soft-plum",
+    bgClassSoft: "bg-soft-plum/30",
   },
 ];
 
@@ -113,6 +116,24 @@ export default function Home() {
     fetchData();
   }, []);
 
+  const scrollToPartner = () => {
+    const element = document.getElementById("partner-with-us");
+    if (!element) return;
+    const navbarHeight = 80; // Approximate
+    const top =
+      element.getBoundingClientRect().top +
+      window.pageYOffset -
+      navbarHeight -
+      20;
+    window.scrollTo({ top, behavior: "smooth" });
+  };
+
+  const handlePartnerClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    window.history.pushState(null, "", "/#partner-with-us");
+    scrollToPartner();
+  };
+
   return (
     <div className="flex flex-col min-h-screen font-sans bg-white text-black">
       <HomeNavbar />
@@ -144,7 +165,7 @@ export default function Home() {
                 </div> */}
 
                 {/* H1 — existing text kept */}
-                <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-soft-dark leading-[1.1] tracking-tight">
+                <h1 className="text-4xl md:text-5xl lg:text-6xl font-black text-soft-dark leading-[1.1] tracking-tight">
                   Precision{" "}
                   <div className="text-transparent bg-clip-text bg-linear-to-r from-brand-blue to-atlantic-blue">
                     Oral Health
@@ -192,6 +213,7 @@ export default function Home() {
                   </Link>
                   <a
                     href="#partner-with-us"
+                    onClick={handlePartnerClick}
                     className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-4 bg-warm-gray text-soft-dark border border-warm-gray rounded-full font-semibold text-sm tracking-wide transition-all hover:border-brand-blue hover:text-atlantic-blue"
                   >
                     Partner with Us
@@ -248,12 +270,12 @@ export default function Home() {
           <div className="max-w-7xl mx-auto px-6 md:px-10 lg:px-12">
             {/* Section header */}
             <div className="text-center space-y-3 mb-12 md:mb-16">
-              <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-soft-dark tracking-tight">
+              <h2 className="text-2xl md:text-3xl lg:text-5xl font-bold text-soft-dark tracking-tight">
                 Oral Intelligence Layer™
               </h2>
-              <div className="flex items-center justify-center gap-3">
+              <div className="flex items-center justify-center gap-3 l">
                 {/* <span className="h-px w-6 bg-atlantic-blue" /> */}
-                <span className="text-[11px] font-bold tracking-wide text-atlantic-blue">
+                <span className="text-xs md:text-sm  tracking-wide text-atlantic-blue max-w-xl md:max-w-3xl">
                   A closed-loop clinical + commercial system that turns every
                   diagnosis into immediate patient value, standardized care, and
                   captured revenue.
@@ -265,42 +287,43 @@ export default function Home() {
             {/* Desktop: horizontal cards | Tablet: 2-col | Mobile: stacked */}
             <div className="pt-8 space-y-8">
               {/* Mobile: Vertical Stack with Timeline */}
-              <div className="flex flex-col md:hidden space-y-0 max-w-sm mx-auto">
+              <div className="flex flex-col lg:hidden space-y-0 max-w-sm mx-auto">
                 {PILLARS.map((pillar, i) => {
                   const Icon = pillar.icon;
                   return (
-                    <div key={pillar.title} className="relative">
+                    <div
+                      key={pillar.title}
+                      className="relative flex items-start space-x-4 text-left"
+                    >
                       {/* Timeline line extending to next pillar */}
                       {i < PILLARS.length - 1 && (
                         <div
-                          className={`absolute top-10 left-5 bottom-0 w-0.5 ${pillar.bgClass}/30 -translate-x-0.5`}
+                          className={`absolute top-10 left-5 w-0.5 bottom-0 ${pillar.bgClassSoft} -translate-x-0.5 z-0`}
                         ></div>
                       )}
-                      <div className="flex items-start space-x-4 text-left">
-                        <div className="shrink-0 relative">
-                          <div
-                            className={`w-10 h-10 rounded-full ${pillar.bgClass} flex items-center justify-center z-10 relative`}
-                          >
-                            <Icon size={20} className="text-white" />
-                          </div>
-                        </div>
+                      <div className="shrink-0 z-10">
                         <div
-                          className={`flex-1 pt-1 ${i < PILLARS.length - 1 ? "pb-8" : ""}`}
+                          className={`w-10 h-10 rounded-full ${pillar.bgClass} flex items-center justify-center shadow-sm`}
                         >
-                          <div className="mb-2">
-                            <span
-                              className={`text-xs font-bold tracking-widest ${pillar.textClass}`}
-                            >
-                              {pillar.label}
-                            </span>
-                          </div>
-                          <h3 className="text-xl font-black text-soft-dark mb-2">
-                            {pillar.title}
-                          </h3>
-                          <p className="text-sm text-soft-dark/70 leading-relaxed">
-                            {pillar.desc}
-                          </p>
+                          <Icon size={20} className="text-white" />
                         </div>
+                      </div>
+                      <div
+                        className={`flex-1 pt-1 ${i < PILLARS.length - 1 ? "pb-12" : ""}`}
+                      >
+                        <div className="mb-2">
+                          <span
+                            className={`text-xs font-bold tracking-widest ${pillar.textClass}`}
+                          >
+                            {pillar.label}
+                          </span>
+                        </div>
+                        <h3 className="text-xl font-black text-soft-dark mb-2">
+                          {pillar.title}
+                        </h3>
+                        <p className="text-sm text-soft-dark/70 leading-relaxed">
+                          {pillar.desc}
+                        </p>
                       </div>
                     </div>
                   );
@@ -308,7 +331,7 @@ export default function Home() {
               </div>
 
               {/* Desktop: Horizontal Layout with Arrows */}
-              <div className="hidden md:flex justify-center gap-2 lg:gap-4 max-w-7xl mx-auto">
+              <div className="hidden lg:flex justify-center gap-2 lg:gap-4 max-w-7xl mx-auto">
                 {PILLARS.map((pillar, i) => {
                   const Icon = pillar.icon;
                   return (
@@ -371,6 +394,7 @@ export default function Home() {
               </Link>
               <a
                 href="#partner-with-us"
+                onClick={handlePartnerClick}
                 className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-4 bg-warm-gray text-soft-dark border border-warm-gray rounded-full font-semibold text-sm tracking-wide transition-all hover:border-brand-blue hover:text-atlantic-blue"
               >
                 Partner with Us
@@ -418,7 +442,7 @@ export default function Home() {
               {/* Text */}
               <div className="space-y-5 text-center lg:text-left">
                 <div className="flex items-center justify-center lg:justify-start gap-3">
-                  <span className="text-[11px] font-bold tracking-[0.18em] uppercase text-atlantic-blue">
+                  <span className="text-xs font-bold tracking-wide text-atlantic-blue">
                     Our Mission
                   </span>
                 </div>
