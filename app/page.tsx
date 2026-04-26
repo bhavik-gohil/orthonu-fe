@@ -165,7 +165,7 @@ export default function Home() {
                 </div> */}
 
                 {/* H1 — existing text kept */}
-                <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-soft-dark leading-[1.1] tracking-tight">
+                <h1 className="text-4xl md:text-5xl lg:text-6xl font-black text-soft-dark leading-[1.1] tracking-tight">
                   Precision{" "}
                   <div className="text-transparent bg-clip-text bg-linear-to-r from-brand-blue to-atlantic-blue">
                     Oral Health
@@ -270,12 +270,12 @@ export default function Home() {
           <div className="max-w-7xl mx-auto px-6 md:px-10 lg:px-12">
             {/* Section header */}
             <div className="text-center space-y-3 mb-12 md:mb-16">
-              <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-soft-dark tracking-tight">
+              <h2 className="text-2xl md:text-3xl lg:text-5xl font-bold text-soft-dark tracking-tight">
                 Oral Intelligence Layer™
               </h2>
-              <div className="flex items-center justify-center gap-3">
+              <div className="flex items-center justify-center gap-3 l">
                 {/* <span className="h-px w-6 bg-atlantic-blue" /> */}
-                <span className="text-[11px] font-bold tracking-wide text-atlantic-blue">
+                <span className="text-xs md:text-sm  tracking-wide text-atlantic-blue max-w-xl md:max-w-3xl">
                   A closed-loop clinical + commercial system that turns every
                   diagnosis into immediate patient value, standardized care, and
                   captured revenue.
@@ -287,7 +287,7 @@ export default function Home() {
             {/* Desktop: horizontal cards | Tablet: 2-col | Mobile: stacked */}
             <div className="pt-8 space-y-8">
               {/* Mobile: Vertical Stack with Timeline */}
-              <div className="flex flex-col md:hidden space-y-0 max-w-sm mx-auto">
+              <div className="flex flex-col lg:hidden space-y-0 max-w-sm mx-auto">
                 {PILLARS.map((pillar, i) => {
                   const Icon = pillar.icon;
                   return (
@@ -331,7 +331,7 @@ export default function Home() {
               </div>
 
               {/* Desktop: Horizontal Layout with Arrows */}
-              <div className="hidden md:flex justify-center gap-2 lg:gap-4 max-w-7xl mx-auto">
+              <div className="hidden lg:flex justify-center gap-2 lg:gap-4 max-w-7xl mx-auto">
                 {PILLARS.map((pillar, i) => {
                   const Icon = pillar.icon;
                   return (
@@ -442,7 +442,7 @@ export default function Home() {
               {/* Text */}
               <div className="space-y-5 text-center lg:text-left">
                 <div className="flex items-center justify-center lg:justify-start gap-3">
-                  <span className="text-[11px] font-bold tracking-[0.18em] uppercase text-atlantic-blue">
+                  <span className="text-xs font-bold tracking-wide text-atlantic-blue">
                     Our Mission
                   </span>
                 </div>

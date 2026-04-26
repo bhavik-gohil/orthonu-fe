@@ -95,7 +95,7 @@ export default function HomeNavbar() {
           <Link
             href={shopUrl}
             target="_blank"
-            className="group w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 bg-warm-gray text-soft-dark border border-warm-gray hover:border-atlantic-blue hover:text-warm-gray rounded-full font-semibold text-sm tracking-wide transition-all hover:bg-atlantic-blue hover:shadow-lg hover:shadow-brand-blue/20 hover:-translate-y-0.5 duration-30"
+            className="group w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 bg-warm-gray text-atlantic-blue border border-warm-gray hover:border-atlantic-blue hover:text-warm-gray rounded-full font-semibold text-sm tracking-wide hover:bg-atlantic-blue hover:shadow-lg hover:shadow-brand-blue/20 hover:-translate-y-0.5 transition-all duration-300"
           >
             Shop Solutions
             <ChevronRight
