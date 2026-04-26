@@ -65,8 +65,8 @@ export default function ProductAdmin() {
       await apiCall("DELETE", `/admin/products/${p.id}`);
       showSnack("success", "Product deleted successfully");
       fetchProducts();
-    } catch (err) {
-      showSnack("error", "Failed to delete product");
+    } catch (err: any) {
+      showSnack("error", err?.response?.data?.message || err?.response?.data?.error || "Failed to delete product");
     }
   };
 

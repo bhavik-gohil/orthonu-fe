@@ -102,6 +102,12 @@ function RegisterForm() {
     setError("");
     setSuccess("");
 
+    if (formData.password.length < 8) {
+      setError("Password must be at least 8 characters long.");
+      setLoading(false);
+      return;
+    }
+
     if (formData.userType === "professional") {
       if (!validateProfessionalEmail(formData.emailProfessional)) {
         setError(
@@ -123,7 +129,11 @@ function RegisterForm() {
         window.location.href = "/shop";
       }
     } catch (err: any) {
-      setError(err.message || "Registration failed. Please try again.");
+      setError(
+        err.response?.data?.message ||
+          err.message ||
+          "Registration failed. Please try again.",
+      );
     } finally {
       setLoading(false);
     }

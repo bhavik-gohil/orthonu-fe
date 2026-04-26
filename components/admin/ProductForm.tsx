@@ -413,7 +413,12 @@ export default function ProductForm({
           : "Product created successfully!";
       onSuccess(successMessage);
     } catch (error: any) {
-      onError(error?.response?.data?.error || "Failed to process request.");
+      onError(
+        error?.response?.data?.message ||
+          error?.response?.data?.error ||
+          error.message ||
+          "Failed to process request.",
+      );
     } finally {
       setSubmitting(false);
     }

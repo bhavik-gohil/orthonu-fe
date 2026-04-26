@@ -50,8 +50,8 @@ export default function CouponsAdmin() {
       setLoading(true);
       const data = await apiCall("GET", "/admin/coupons");
       setCoupons(data);
-    } catch {
-      setError("Failed to load coupons");
+    } catch (err: any) {
+      setError(err?.response?.data?.message || "Failed to load coupons");
     } finally {
       setLoading(false);
     }
@@ -115,7 +115,7 @@ export default function CouponsAdmin() {
       resetForm();
       fetchCoupons();
     } catch (err: any) {
-      setError(err?.response?.data?.error || "Failed to save coupon");
+      setError(err?.response?.data?.message || err?.response?.data?.error || "Failed to save coupon");
     } finally {
       setSubmitting(false);
     }
@@ -125,8 +125,8 @@ export default function CouponsAdmin() {
     try {
       await apiCall("PATCH", `/admin/coupons/${c.id}`, { isActive: !c.isActive });
       fetchCoupons();
-    } catch {
-      setError("Failed to update coupon status");
+    } catch (err: any) {
+      setError(err?.response?.data?.message || "Failed to update coupon status");
     }
   };
 
