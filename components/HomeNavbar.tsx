@@ -85,20 +85,20 @@ export default function HomeNavbar() {
         <div className="hidden md:flex absolute left-1/2 -translate-x-1/2 items-center font-semibold text-xs md:text-xs lg:text-sm tracking-[0.08em] text-white">
           <Link
             href="/about"
-            className="hover:bg-atlantic-blue/10 py-2 px-2 md:px-4 rounded-3xl transition-all duration-300"
+            className="hover:bg-atlantic-blue/10 py-2 md:px-4 rounded-3xl transition-all duration-300"
           >
             About
           </Link>
           <Link
             href="/resources"
-            className="hover:bg-atlantic-blue/10 py-2 px-2 md:px-4 rounded-3xl transition-all duration-300"
+            className="hover:bg-atlantic-blue/10 py-2 md:px-4 rounded-3xl transition-all duration-300"
           >
             Resources
           </Link>
           <a
             href="/#partner-with-us"
             onClick={handlePartnerClick}
-            className="hover:bg-atlantic-blue/10 py-2 px-2 md:px-4 rounded-3xl transition-all duration-300"
+            className="hover:bg-atlantic-blue/10 py-2 md:px-4 rounded-3xl transition-all duration-300"
           >
             Partner with Us
           </a>

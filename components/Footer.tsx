@@ -5,10 +5,10 @@ export default function Footer() {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="mt-auto py-12 px-6 bg-white border-t border-zinc-100 font-sans">
-      <div className="max-w-7xl mx-auto space-y-12">
+    <footer className="mt-auto px-6 bg-white border-t border-zinc-100 font-sans">
+      <div className="max-w-7xl mx-auto">
         {/* Top Section: Logo, Socials, and Contact */}
-        <div className="flex flex-col lg:flex-row items-center justify-between gap-8">
+        <div className="flex flex-col lg:flex-row items-center justify-between gap-6 py-6">
           <div className="flex shrink-0">
             <Image
               src="/orthonu-you-got-this.png"
@@ -83,10 +83,10 @@ export default function Footer() {
         </div>
 
         {/* Bottom Section: Legal and Copyright */}
-        <div className="pt-10 border-t border-zinc-100 space-y-8">
+        <div className="py-6 border-t border-zinc-100 space-y-8">
           <div className="flex flex-col lg:flex-row items-center justify-between gap-8">
             <div className="space-y-5">
-              <div className="flex flex-wrap justify-center lg:justify-start gap-x-8 gap-y-1">
+              <div className="flex flex-col sm:flex-row flex-wrap justify-center items-center lg:justify-start gap-x-8 gap-y-1">
                 <Link
                   href="/terms-of-use"
                   className="text-[11px] font-bold text-atlantic-blue/60 hover:text-brand-blue transition-colors tracking-widest"
@@ -137,14 +137,14 @@ export default function Footer() {
               </div>
             </div>
 
-            <div className="flex shrink-0 grayscale opacity-60 hover:grayscale-0 hover:opacity-100 transition-all duration-500">
+            <div className="flex shrink-0 hover:grayscale-0 hover:opacity-100 transition-all duration-500">
               <a href="https://marislist.com/" target="_blank">
                 <Image
                   src="/marislist.png"
                   alt="Marislist"
                   width={140}
                   height={32}
-                  className="h-16 md:h-20 w-auto"
+                  className="h-20 w-auto"
                 />
               </a>
             </div>
