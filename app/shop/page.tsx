@@ -3,7 +3,7 @@
 import { useEffect, useState, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { apiCall } from "@/lib/api-client";
-import { Loader2 } from "lucide-react";
+import { Loader2, ChevronRight, ChevronLeft } from "lucide-react";
 import ProductCard from "@/components/shop/ProductCard";
 import { Product, Category, mediaUrl } from "@/lib/types";
 import Image from "next/image";
@@ -45,16 +45,16 @@ function ShopContent() {
 
   const grouped = activeCategory
     ? [{ name: activeCategory, items: filtered }].filter(
-        (g) => g.items.length > 0,
-      )
+      (g) => g.items.length > 0,
+    )
     : categories
-        .map((cat) => ({
-          name: cat.productCategory,
-          items: products.filter(
-            (p) => p.productCategory === cat.productCategory,
-          ),
-        }))
-        .filter((g) => g.items.length > 0);
+      .map((cat) => ({
+        name: cat.productCategory,
+        items: products.filter(
+          (p) => p.productCategory === cat.productCategory,
+        ),
+      }))
+      .filter((g) => g.items.length > 0);
 
   // Get active category info
   const activeCategoryInfo = categories.find(
@@ -78,82 +78,121 @@ function ShopContent() {
   }
 
   return (
-    <Container as="main" className="py-24 space-y-32">
-      <PageHeader
-        eyebrow="The OrthoNu Catalog"
-        title={activeCategory ? activeCategory : "The Collection"}
-        subtitle="Explore our range of precision oral health solutions, clinically tested and biologically optimized for modern care."
-        titleSize="extra-large"
-      >
-        {/* Category Filter Pills */}
-        <div className="flex flex-wrap gap-3 pt-4">
-          <Pill as={Link} href={shopPrefix || "/"} active={!activeCategory}>
-            All
-          </Pill>
-          {categories.map((cat) => (
-            <Pill
-              key={cat.id}
-              as={Link}
-              href={`${shopPrefix}/?category=${encodeURIComponent(cat.productCategory)}`.replace('//', '/')}
-              active={activeCategory === cat.productCategory}
-            >
-              {cat.productCategory}
-            </Pill>
-          ))}
-        </div>
-      </PageHeader>
+    <>
+      {/* ── Shop Hero ────────────────────────────────────────────────── */}
+      <section className="relative overflow-hidden bg-white py-16 lg:py-24 px-6 border-b border-zinc-100">
+        {/* Sophisticated pastel mesh background */}
+        <div
+          className="absolute inset-0 pointer-events-none opacity-[0.6]"
+          style={{
+            background: `
+              radial-gradient(ellipse at 20% 20%, rgba(176,224,226,0.4) 0%, transparent 50%),
+              radial-gradient(ellipse at 80% 80%, rgba(228,213,237,0.35) 0%, transparent 50%),
+              radial-gradient(ellipse at 60% 30%, rgba(157,213,239,0.3) 0%, transparent 40%),
+              linear-gradient(135deg, #f0f8f9 0%, #FFF 40%, #f8f4fb 70%, #f0f9f5 100%)
+            `,
+          }}
+        />
 
-      {/* Category Description Banner - Now Dynamic */}
-      {activeCategory && activeCategoryInfo && (
-        <Card>
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            <div className="space-y-6">
-              <h2 className="text-3xl md:text-4xl font-black text-soft-dark tracking-tight leading-tight">
-                {activeCategoryInfo.header}
-              </h2>
-              <p className="text-soft-dark/70 text-base leading-relaxed font-medium">
-                {activeCategoryInfo.text}
-              </p>
-            </div>
-            <div className="relative aspect-video rounded-2xl overflow-hidden bg-zinc-50">
-              <img
-                src={mediaUrl(activeCategoryInfo.image)}
-                alt={activeCategoryInfo.productCategory}
-                className="w-full h-full object-cover"
-              />
-            </div>
-          </div>
-        </Card>
-      )}
-
-      {grouped.length === 0 ? (
-        <div className="text-center py-32 text-soft-dark/40 font-medium text-xl">
-          No products found.
-        </div>
-      ) : (
-        <div className="space-y-40">
-          {grouped.map((group, idx) => (
-            <div key={idx} className="space-y-12">
-              <div className="flex items-center gap-8">
-                <h2 className="text-[10px] font-black tracking-[0.4em] uppercase text-brand-blue bg-brand-blue/10 px-4 py-1.5 rounded-full">
-                  {group.name}
-                </h2>
-                <div className="flex-1 h-px bg-zinc-200" />
-                <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest">
-                  {group.items.length} Product
-                  {group.items.length !== 1 ? "s" : ""}
-                </span>
+        <div className="relative z-10 max-w-7xl mx-auto">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
+            {/* Left: Content */}
+            <div className="space-y-8 order-2 lg:order-1 text-center lg:text-left">
+              <div className="space-y-4">
+                <Link
+                  href="/"
+                  className="inline-flex items-center gap-1 text-soft-dark/40 hover:text-brand-blue text-[10px] font-bold uppercase tracking-[0.2em] transition-colors"
+                >
+                  <ChevronLeft size={12} /> Back to Home
+                </Link>
+                <div className="space-y-3">
+                  <p className="text-[13px] font-bold uppercase tracking-[0.3em] text-atlantic-blue">
+                    OrthoNu® Catalog
+                  </p>
+                  <h1 className="text-3xl md:text-5xl lg:text-6xl font-black text-soft-dark tracking-tight leading-tight">
+                    {activeCategory && activeCategoryInfo ? activeCategoryInfo.header : "The Collection"}
+                  </h1>
+                  <p className="max-w-xl mx-auto lg:mx-0 text-sm md:text-base text-soft-dark/50 font-medium leading-relaxed">
+                    {activeCategory && activeCategoryInfo
+                      ? activeCategoryInfo.text
+                      : "Explore our range of precision oral health solutions, clinically tested and biologically optimized for modern care."}
+                  </p>
+                </div>
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-                {group.items.map((product) => (
-                  <ProductCard key={product.id} product={product} hrefPrefix={shopPrefix} />
+
+              {/* Category Filter Pills */}
+              <div className="flex flex-wrap justify-center lg:justify-start gap-3 pt-2">
+                <Pill
+                  as={Link}
+                  href={shopPrefix || "/"}
+                  active={!activeCategory}
+                  className="px-6 py-2.5 text-[10px] font-black uppercase tracking-widest border-2"
+                >
+                  All
+                </Pill>
+                {categories.map((cat) => (
+                  <Pill
+                    key={cat.id}
+                    as={Link}
+                    href={`${shopPrefix}/?category=${encodeURIComponent(cat.productCategory)}`.replace(
+                      "//",
+                      "/",
+                    )}
+                    active={activeCategory === cat.productCategory}
+                    className="px-6 py-2.5 text-[10px] font-black uppercase tracking-widest border-2"
+                  >
+                    {cat.productCategory}
+                  </Pill>
                 ))}
               </div>
             </div>
-          ))}
+
+            {/* Right: Featured Image */}
+            <div className="order-1 lg:order-2 relative flex justify-center lg:justify-end">
+              <div className="relative w-full max-w-lg lg:max-w-none rounded-3xl overflow-hidden shadow-2xl shadow-atlantic-blue/10 bg-white aspect-video">
+                <img
+                  src={activeCategory && activeCategoryInfo ? mediaUrl(activeCategoryInfo.image) : "/oral-relief-kitz2-updated-1200x714.png"}
+                  alt={activeCategory && activeCategoryInfo ? activeCategoryInfo.productCategory : "OrthoNu Solutions"}
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              <div className="absolute -z-10 -bottom-8 -right-8 w-72 h-72 bg-brand-blue/10 rounded-full blur-3xl pointer-events-none" />
+            </div>
+          </div>
         </div>
-      )}
-    </Container>
+      </section>
+
+      <Container as="main" className="py-24 space-y-32">
+
+        {grouped.length === 0 ? (
+          <div className="text-center py-32 text-soft-dark/40 font-medium text-xl">
+            No products found.
+          </div>
+        ) : (
+          <div className="space-y-40">
+            {grouped.map((group, idx) => (
+              <div key={idx} className="space-y-12">
+                <div className="flex items-center gap-8">
+                  <h2 className="text-[10px] font-black tracking-[0.4em] uppercase text-brand-blue bg-brand-blue/10 px-4 py-1.5 rounded-full">
+                    {group.name}
+                  </h2>
+                  <div className="flex-1 h-px bg-zinc-200" />
+                  <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest">
+                    {group.items.length} Product
+                    {group.items.length !== 1 ? "s" : ""}
+                  </span>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+                  {group.items.map((product) => (
+                    <ProductCard key={product.id} product={product} hrefPrefix={shopPrefix} />
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </Container>
+    </>
   );
 }
 

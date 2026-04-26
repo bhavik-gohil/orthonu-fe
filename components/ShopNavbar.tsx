@@ -76,7 +76,7 @@ export default function ShopNavbar() {
                 onMouseLeave={() => setOpenMenu(null)}
               >
                 <Link
-                  className="flex items-center gap-2 relative group hover:bg-zinc-50/10 px-3 py-1 rounded-3xl transition-all duration-300"
+                  className="flex items-center gap-2 relative group hover:bg-atlantic-blue/10 py-2 md:px-4 rounded-3xl transition-all duration-300"
                   href={`${shopPrefix}/?category=${encodeURIComponent(cat.productCategory)}`.replace(
                     "//",
                     "/",
@@ -96,10 +96,10 @@ export default function ShopNavbar() {
                   <div className="absolute top-[80%] left-1/2 -translate-x-1/2 mt-2 w-[420px] bg-white rounded-4xl shadow-[0_40px_100px_-20px_rgba(0,0,0,0.15)] border border-zinc-100 p-10 text-left z-50 animate-in fade-in slide-in-from-top-4 duration-500">
                     <div className="space-y-6">
                       <div className="space-y-2">
-                        <span className="text-[9px] font-black tracking-[0.3em] text-brand-blue uppercase bg-brand-blue/5 px-3 py-1.5 rounded-full border border-brand-blue/10">
+                        {/* <span className="text-[9px] font-black tracking-[0.3em] text-atlantic-blue uppercase bg-brand-blue/5 px-3 py-1.5 rounded-full border border-brand-blue/10">
                           Shop {cat.productCategory}
-                        </span>
-                        <h3 className="text-xl font-black text-soft-dark leading-tight tracking-tight pt-2">
+                        </span> */}
+                        <h3 className="text-xl font-black text-soft-dark leading-tight tracking-tight pt-3">
                           {cat.header}
                         </h3>
                         <p className="text-[12px] leading-relaxed text-soft-dark/50 font-medium font-serif italic">
@@ -112,7 +112,7 @@ export default function ShopNavbar() {
                             "//",
                             "/",
                           )}
-                          className="inline-flex items-center gap-3 px-6 py-3 bg-brand-blue text-white rounded-xl text-[10px] font-black tracking-widest uppercase shadow-lg shadow-brand-blue/20 hover:shadow-2xl hover:-translate-y-0.5 active:scale-95 transition-all"
+                          className="inline-flex items-center gap-3 px-6 py-3 bg-brand-blue text-white rounded-full text-[10px] font-black tracking-widest uppercase shadow-lg shadow-brand-blue/20 hover:shadow-2xl hover:bg-atlantic-blue hover:-translate-y-0.5 active:scale-95 transition-all"
                         >
                           Explore Collection
                         </Link>
@@ -126,7 +126,7 @@ export default function ShopNavbar() {
           {shouldShowProfessionalLink && (
             <Link
               href={`${shopPrefix}/register?professional=yes`}
-              className="flex items-center gap-2 relative group hover:bg-zinc-50/10 px-3 py-1 rounded-3xl transition-all duration-300"
+              className="flex items-center gap-2 relative group hover:bg-atlantic-blue/10 py-2 md:px-4 rounded-3xl transition-all duration-300"
             >
               For Professional
               {/* <div
