@@ -41,8 +41,10 @@ interface AuthContextType {
     register: (data: any) => Promise<any>;
     logout: (redirectPath?: string) => Promise<void>;
     refreshUser: () => Promise<void>;
-    verifyOtp: (data: { email: string, code: string, type: 'registration' | 'admin_login' }) => Promise<any>;
-    resendOtp: (data: { email: string, type: 'registration' | 'admin_login' }) => Promise<any>;
+    verifyOtp: (data: { email: string, code: string, type: 'registration' | 'admin_login' | 'password_reset' }) => Promise<any>;
+    resendOtp: (data: { email: string, type: 'registration' | 'admin_login' | 'password_reset' }) => Promise<any>;
+    forgotPassword: (email: string) => Promise<any>;
+    resetPassword: (data: { token: string, newPassword: string }) => Promise<any>;
 }
 
 const AuthContext = createContext<AuthContextType>({
@@ -54,6 +56,8 @@ const AuthContext = createContext<AuthContextType>({
     refreshUser: async () => { },
     verifyOtp: async () => { },
     resendOtp: async () => { },
+    forgotPassword: async () => { },
+    resetPassword: async () => { },
 });
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
@@ -100,12 +104,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         return data;
     };
 
-    const verifyOtp = async (otpData: { email: string, code: string, type: 'registration' | 'admin_login' }) => {
+    const verifyOtp = async (otpData: { email: string, code: string, type: 'registration' | 'admin_login' | 'password_reset' }) => {
         return await apiCall("POST", "/auth/verify-otp", otpData);
     };
 
-    const resendOtp = async (otpData: { email: string, type: 'registration' | 'admin_login' }) => {
+    const resendOtp = async (otpData: { email: string, type: 'registration' | 'admin_login' | 'password_reset' }) => {
         return await apiCall("POST", "/auth/resend-otp", otpData);
+    };
+
+    const forgotPassword = async (email: string) => {
+        return await apiCall("POST", "/auth/forgot-password", { email });
+    };
+
+    const resetPassword = async (data: { token: string, newPassword: string }) => {
+        return await apiCall("POST", "/auth/reset-password", data);
     };
 
     const logout = async (redirectPath: string = getShopUrl()) => {
@@ -127,7 +139,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             logout, 
             refreshUser: fetchMe,
             verifyOtp,
-            resendOtp
+            resendOtp,
+            forgotPassword,
+            resetPassword
         }}>
             {children}
         </AuthContext.Provider>

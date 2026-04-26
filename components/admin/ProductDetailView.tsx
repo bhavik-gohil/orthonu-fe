@@ -54,8 +54,8 @@ export default function ProductDetailView({
             await apiCall("PATCH", `/admin/products/${variantId}/default-variant`);
             showSnack("success", "Default variant updated.");
             onVariantAdded();
-        } catch {
-            showSnack("error", "Failed to update default variant.");
+        } catch (err: any) {
+            showSnack("error", err?.response?.data?.message || err?.response?.data?.error || "Failed to update default variant.");
         } finally {
             setSettingDefault(null);
         }

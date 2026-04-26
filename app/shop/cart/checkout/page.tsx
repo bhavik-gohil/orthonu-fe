@@ -470,20 +470,19 @@ export default function CheckoutPage() {
                   Billing Address
                 </p>
                 {/* Toggle */}
-                <label className="flex items-center gap-2 cursor-pointer select-none">
-                  <span className="text-xs text-zinc-500">Same as shipping</span>
-                  <button
-                    role="switch"
-                    aria-checked={billingSameAsShipping}
-                    onClick={() => setBillingSameAsShipping((v) => !v)}
-                    className={`relative w-10 h-5 rounded-full transition-colors ${billingSameAsShipping ? "bg-brand-blue" : "bg-zinc-300"
-                      }`}
-                  >
-                    <span
-                      className={`absolute top-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform ${billingSameAsShipping ? "translate-x-5" : "translate-x-0.5"
-                        }`}
+                <label className="flex items-center gap-3 cursor-pointer select-none">
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-zinc-400">Same as shipping</span>
+                  <div className="relative">
+                    <input
+                      type="checkbox"
+                      className="sr-only"
+                      checked={billingSameAsShipping}
+                      onChange={() => setBillingSameAsShipping(!billingSameAsShipping)}
                     />
-                  </button>
+                    <div className={`w-9 h-5 rounded-full transition-colors ${billingSameAsShipping ? "bg-brand-blue" : "bg-zinc-200 shadow-inner"}`}>
+                      <div className={`absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full shadow-md transition-transform ${billingSameAsShipping ? "translate-x-4" : "translate-x-0"}`} />
+                    </div>
+                  </div>
                 </label>
               </div>
 

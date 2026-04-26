@@ -28,8 +28,8 @@ export default function ColorsPage() {
             setLoading(true);
             const data = await apiCall("GET", "/colors");
             setColors(data);
-        } catch (err) {
-            setError("Failed to fetch colors");
+        } catch (err: any) {
+            setError(err?.response?.data?.message || "Failed to fetch colors");
         } finally {
             setLoading(false);
         }
@@ -67,8 +67,8 @@ export default function ColorsPage() {
             setNewColor("");
             setNewColorName("");
             fetchColors();
-        } catch (err) {
-            setError("Failed to add color");
+        } catch (err: any) {
+            setError(err?.response?.data?.message || "Failed to add color");
         } finally {
             setSubmitting(false);
         }
@@ -87,8 +87,8 @@ export default function ColorsPage() {
         try {
             await apiCall("DELETE", `/admin/colors/${id}`);
             fetchColors();
-        } catch (err) {
-            setError("Failed to delete color");
+        } catch (err: any) {
+            setError(err?.response?.data?.message || "Failed to delete color");
         }
     };
 

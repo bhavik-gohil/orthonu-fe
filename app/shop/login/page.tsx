@@ -98,6 +98,15 @@ function LoginForm() {
           />
         </div>
 
+        <div className="flex justify-end">
+          <Link
+            href="/shop/forgot-password"
+            className="text-xs font-bold text-zinc-400 hover:text-brand-blue transition-colors"
+          >
+            Forgot password?
+          </Link>
+        </div>
+
         <div className="flex w-full justify-center">
           <Button
             type="submit"

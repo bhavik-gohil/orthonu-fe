@@ -16,6 +16,7 @@ interface CartContextType {
     updateQuantity: (cartItemId: number, quantity: number) => Promise<void>;
     loading: boolean;
     error: string | null;
+    clearError: () => void;
 }
 
 const CartContext = createContext<CartContextType>({
@@ -27,6 +28,7 @@ const CartContext = createContext<CartContextType>({
     updateQuantity: async () => { },
     loading: false,
     error: null,
+    clearError: () => { },
 });
 
 export function CartProvider({ children }: { children: React.ReactNode }) {
@@ -170,9 +172,9 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
                     return updated;
                 });
             }
-        } catch (err) {
+        } catch (err: any) {
             console.error("Add to cart failed:", err);
-            setError("Failed to add item to cart.");
+            setError(err?.response?.data?.message || err?.response?.data?.error || "Failed to add item to cart.");
         } finally {
             setLoading(false);
         }
@@ -192,8 +194,9 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
                     return updated;
                 });
             }
-        } catch (err) {
+        } catch (err: any) {
             console.error("Remove from cart failed:", err);
+            setError(err?.response?.data?.message || err?.response?.data?.error || "Failed to remove item from cart.");
         } finally {
             setLoading(false);
         }
@@ -214,8 +217,9 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
                     return updated;
                 });
             }
-        } catch (err) {
+        } catch (err: any) {
             console.error("Update quantity failed:", err);
+            setError(err?.response?.data?.message || err?.response?.data?.error || "Failed to update quantity.");
         } finally {
             setLoading(false);
         }
@@ -231,6 +235,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
             updateQuantity,
             loading,
             error,
+            clearError: () => setError(null),
         }}>
             {children}
         </CartContext.Provider>

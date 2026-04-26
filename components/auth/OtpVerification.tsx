@@ -6,7 +6,7 @@ import { Loader2, ShieldCheck, Mail } from "lucide-react";
 
 interface OtpVerificationProps {
     email: string;
-    type: 'registration' | 'admin_login';
+    type: 'registration' | 'admin_login' | 'password_reset';
     onSuccess: (data: any) => void;
     onBack: () => void;
 }
@@ -78,7 +78,7 @@ export default function OtpVerification({ email, type, onSuccess, onBack }: OtpV
                 onSuccess(data);
             }, 1500);
         } catch (err: any) {
-            setError(err.message || "Invalid or expired code.");
+            setError(err.response?.data?.message || err.message || "Invalid or expired code.");
             setLoading(false);
         }
     };
@@ -92,7 +92,7 @@ export default function OtpVerification({ email, type, onSuccess, onBack }: OtpV
             setTimer(60);
             setError("");
         } catch (err: any) {
-            setError("Failed to resend code. Please try again.");
+            setError(err.response?.data?.message || "Failed to resend code. Please try again.");
         } finally {
             setResendLoading(false);
         }
@@ -166,7 +166,7 @@ export default function OtpVerification({ email, type, onSuccess, onBack }: OtpV
                             onClick={onBack}
                             className="text-sm font-medium text-zinc-500 hover:text-soft-dark transition-colors"
                         >
-                            Back to {type === 'registration' ? 'Registration' : 'Login'}
+                            Back to {type === 'registration' ? 'Registration' : type === 'password_reset' ? 'Password Reset' : 'Login'}
                         </button>
                     </div>
                 </div>

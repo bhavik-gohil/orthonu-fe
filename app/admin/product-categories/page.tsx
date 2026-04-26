@@ -146,7 +146,7 @@ export default function ProductCategoriesAdmin() {
             resetForm();
             fetchCategories();
         } catch (err: any) {
-            setError(err?.response?.data?.error || "Failed to save category");
+            setError(err?.response?.data?.message || err?.response?.data?.error || "Failed to save category");
         } finally {
             setSubmitting(false);
         }
@@ -158,8 +158,8 @@ export default function ProductCategoriesAdmin() {
         try {
             await apiCall("DELETE", `/admin/product-categories/${id}`);
             fetchCategories();
-        } catch (err) {
-            setError("Failed to delete category");
+        } catch (err: any) {
+            setError(err?.response?.data?.message || err?.response?.data?.error || "Failed to delete category");
         }
     };
 
