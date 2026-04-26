@@ -443,7 +443,7 @@ export default function AboutPage() {
               <Link
                 href={shopUrl}
                 target="_blank"
-                className="group w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-4 bg-brand-blue text-white rounded-full font-semibold text-sm tracking-wide transition-all hover:bg-atlantic-blue hover:shadow-lg hover:shadow-brand-blue/20 hover:-translate-y-0.5"
+                className="group w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-4 bg-brand-blue text-white rounded-full font-extrabold text-sm tracking-wide transition-all hover:bg-atlantic-blue hover:shadow-lg hover:shadow-brand-blue/20 hover:-translate-y-0.5"
               >
                 Shop Solutions
                 <ChevronRight
@@ -454,7 +454,7 @@ export default function AboutPage() {
               <a
                 href="#partner-with-us"
                 onClick={handlePartnerClick}
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-4 bg-warm-gray text-soft-dark border border-warm-gray rounded-full font-semibold text-sm tracking-wide transition-all hover:border-brand-blue hover:text-atlantic-blue"
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-4 bg-warm-gray text-soft-dark border border-warm-gray rounded-full font-extrabold text-sm tracking-wide transition-all hover:border-brand-blue hover:text-atlantic-blue"
               >
                 Partner with Us
               </a>
