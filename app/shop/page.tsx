@@ -106,7 +106,7 @@ function ShopContent() {
                   <ChevronLeft size={12} /> Back to Home
                 </Link>
                 <div className="space-y-3">
-                  <p className="text-[13px] font-bold uppercase tracking-[0.3em] text-atlantic-blue">
+                  <p className="text-[11px] font-bold uppercase tracking-[0.3em] text-atlantic-blue">
                     OrthoNu® Catalog
                   </p>
                   <h1 className="text-3xl md:text-5xl lg:text-6xl font-black text-soft-dark tracking-tight leading-tight">
