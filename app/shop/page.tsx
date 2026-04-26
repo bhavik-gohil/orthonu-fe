@@ -126,7 +126,7 @@ function ShopContent() {
                   as={Link}
                   href={shopPrefix || "/"}
                   active={!activeCategory}
-                  className="px-6 py-2.5 text-[10px] font-black uppercase tracking-widest border-2"
+                  className="px-6 py-2.5 text-[10px] font-black uppercase tracking-widest"
                 >
                   All
                 </Pill>
@@ -139,7 +139,7 @@ function ShopContent() {
                       "/",
                     )}
                     active={activeCategory === cat.productCategory}
-                    className="px-6 py-2.5 text-[10px] font-black uppercase tracking-widest border-2"
+                    className="px-6 py-2.5 text-[10px] font-black uppercase tracking-widest"
                   >
                     {cat.productCategory}
                   </Pill>
