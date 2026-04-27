@@ -232,7 +232,7 @@ export default function Home() {
                   <a
                     href="#partner-with-us"
                     onClick={handlePartnerClick}
-                    className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-4 bg-warm-gray text-soft-dark border border-warm-gray rounded-full font-extrabold text-sm tracking-wide transition-all hover:border-brand-blue hover:text-atlantic-blue"
+                    className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-4 bg-warm-gray text-atlantic-blue border border-warm-gray rounded-full font-extrabold text-sm tracking-wide transition-all hover:border-atlantic-blue hover:text-atlantic-blue"
                   >
                     Partner with Us
                   </a>
@@ -413,7 +413,7 @@ export default function Home() {
               <a
                 href="#partner-with-us"
                 onClick={handlePartnerClick}
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-4 bg-warm-gray text-soft-dark border border-warm-gray rounded-full font-extrabold text-sm tracking-wide transition-all hover:border-brand-blue hover:text-atlantic-blue"
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-4 bg-warm-gray text-atlantic-blue border border-warm-gray rounded-full font-extrabold text-sm tracking-wide transition-all hover:border-brand-blue hover:text-atlantic-blue"
               >
                 Partner with Us
               </a>
@@ -601,7 +601,7 @@ export default function Home() {
                           View All <ChevronRight size={12} />
                         </Link>
                       </div>
-                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-8">
                         {group.products.slice(0, 4).map((product) => (
                           <ProductCard
                             key={product.id}

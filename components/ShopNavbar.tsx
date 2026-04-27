@@ -69,6 +69,20 @@ export default function ShopNavbar() {
 
         {/* Desktop Navigation */}
         <div className="hidden md:flex items-center gap-2 text-xs font-semibold tracking-wide text-white">
+          <Link
+            href={shopPrefix || "/shop"}
+            className={cn(
+              "flex items-center gap-2 text-white relative group py-1.5 md:px-3 rounded-3xl transition-all duration-300",
+              (pathname === shopPrefix ||
+                pathname === "/shop" ||
+                (pathname === "/" && isSubdomainEnvironment())) &&
+                !activeCategory
+                ? "bg-atlantic-blue/10"
+                : "hover:bg-atlantic-blue/10",
+            )}
+          >
+            Home
+          </Link>
           {categories.map((cat, i) => {
             return (
               <div
@@ -81,7 +95,7 @@ export default function ShopNavbar() {
                   className={cn(
                     "flex items-center gap-2 text-white relative group py-1.5 md:px-3 rounded-3xl transition-all duration-300",
                     activeCategory === cat.productCategory
-                      ? "bg-atlantic-blue/20  shadow-sm"
+                      ? "bg-atlantic-blue/10"
                       : "hover:bg-atlantic-blue/10",
                   )}
                   href={`${shopPrefix}/?category=${encodeURIComponent(cat.productCategory)}`.replace(
@@ -102,7 +116,7 @@ export default function ShopNavbar() {
                 "flex items-center gap-2 relative text-white group py-1.5 md:px-3 rounded-3xl transition-all duration-300",
                 searchParams.get("professional") === "yes" ||
                   pathname.includes("register")
-                  ? "bg-atlantic-blue/20 shadow-sm"
+                  ? "bg-atlantic-blue/10"
                   : "hover:bg-atlantic-blue/10",
               )}
             >
@@ -223,8 +237,25 @@ export default function ShopNavbar() {
       {/* Mobile Navigation Overhaul */}
       {mobileOpen && (
         <div className="md:hidden bg-brand-blue px-6 py-6 animate-in slide-in-from-top-10 duration-500 border-t border-white/5">
-          <div className="">
+          <div className="space-y-2">
             <p className="text-[9px] font-black uppercase tracking-widest text-white/40 mb-4">
+              Navigation
+            </p>
+            <Link
+              href={shopPrefix || "/shop"}
+              onClick={() => setMobileOpen(false)}
+              className={cn(
+                "flex items-center font-semibold py-3.5 px-3 border-b-2 border-white/0 transition-colors text-white text-xs",
+                (pathname === shopPrefix ||
+                  pathname === "/shop" ||
+                  (pathname === "/" && isSubdomainEnvironment())) &&
+                  !activeCategory &&
+                  "bg-warm-gray/15 rounded-xl",
+              )}
+            >
+              Home
+            </Link>
+            <p className="text-[9px] font-black uppercase tracking-widest text-white/40 my-4">
               Categories
             </p>
             {categories.map((cat) => (
@@ -289,23 +320,22 @@ export default function ShopNavbar() {
                 </button>
               </div>
             ) : (
-             <div className="space-y-3">
-               <Link
-                href={`${shopPrefix}/login`}
-                onClick={() => setMobileOpen(false)}
-                className="block w-full text-center py-3.5 bg-warm-gray text-soft-dark rounded-full text-sm font-black tracking-widest"
-              >
-                Login
-              </Link>
-               <Link
-                href={`${shopPrefix}/register`}
-                onClick={() => setMobileOpen(false)}
-                className="block w-full text-center py-3.5 border border-warm-gray text-white rounded-full text-sm font-extrabold tracking-widest"
-              >
-                Register
-              </Link>
-             </div>
-              
+              <div className="space-y-3">
+                <Link
+                  href={`${shopPrefix}/login`}
+                  onClick={() => setMobileOpen(false)}
+                  className="block w-full text-center py-3.5 bg-warm-gray text-atlantic-blue rounded-full text-sm font-black tracking-widest"
+                >
+                  Login
+                </Link>
+                <Link
+                  href={`${shopPrefix}/register`}
+                  onClick={() => setMobileOpen(false)}
+                  className="block w-full text-center py-3.5 border border-warm-gray text-white rounded-full text-sm font-extrabold tracking-widest"
+                >
+                  Register
+                </Link>
+              </div>
             )}
           </div>
         </div>
