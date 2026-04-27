@@ -13,15 +13,18 @@ import {
   LogIn,
   UserCircle,
 } from "lucide-react";
-import { usePathname } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 import { apiCall } from "@/lib/api-client";
 import { useCart } from "@/lib/CartContext";
 import { useAuth } from "@/lib/AuthContext";
 import { Category } from "@/lib/types";
 import { isSubdomainEnvironment } from "@/lib/subdomains";
+import { cn } from "@/lib/utils";
 
 export default function ShopNavbar() {
   const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const activeCategory = searchParams.get("category");
   const [categories, setCategories] = useState<Category[]>([]);
   const [openMenu, setOpenMenu] = useState<string | null>(null);
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -45,8 +48,8 @@ export default function ShopNavbar() {
   }, []);
 
   return (
-    <nav className="sticky top-0 z-50 w-full bg-brand-blue font-sans shadow-xl shadow-brand-blue/10 border-b border-white/5">
-      <div className="max-w-[1440px] mx-auto px-6 md:px-16 flex items-center justify-between h-20 md:h-28">
+    <nav className="sticky top-0 z-50 w-full bg-brand-blue/95 backdrop-blur-md border-b border-white/10 font-sans shadow-lg shadow-brand-blue/20">
+      <div className="max-w-7xl mx-auto px-6 md:px-12 py-4 flex items-center justify-between">
         {/* Logo Area */}
         <Link
           href={shopPrefix || "/"}
@@ -56,18 +59,17 @@ export default function ShopNavbar() {
             <Image
               src="/logo-nu-white.png"
               alt="OrthoNu"
-              width={160}
-              height={32}
-              className="h-10 md:h-20 w-auto brightness-0 invert transition-all group-hover:drop-shadow-[0_0_15px_rgba(255,255,255,0.4)]"
+              width={120}
+              height={26}
+              className="h-10 md:h-14 w-auto brightness-0 invert transition-all group-hover:drop-shadow-[0_0_15px_rgba(255,255,255,0.4)]"
               priority
             />
           </div>
         </Link>
 
         {/* Desktop Navigation */}
-        <div className="hidden md:flex items-center gap-2 text-sm font-semibold tracking-wide text-white">
+        <div className="hidden md:flex items-center gap-2 text-xs font-semibold tracking-wide text-white">
           {categories.map((cat, i) => {
-            const isOpen = openMenu === cat.productCategory;
             return (
               <div
                 key={`cat-${i}`}
@@ -76,62 +78,35 @@ export default function ShopNavbar() {
                 onMouseLeave={() => setOpenMenu(null)}
               >
                 <Link
-                  className="flex items-center gap-2 relative group hover:bg-atlantic-blue/10 py-2 md:px-4 rounded-3xl transition-all duration-300"
+                  className={cn(
+                    "flex items-center gap-2 text-white relative group py-1.5 md:px-3 rounded-3xl transition-all duration-300",
+                    activeCategory === cat.productCategory
+                      ? "bg-atlantic-blue/20  shadow-sm"
+                      : "hover:bg-atlantic-blue/10",
+                  )}
                   href={`${shopPrefix}/?category=${encodeURIComponent(cat.productCategory)}`.replace(
                     "//",
                     "/",
                   )}
                 >
                   <span className="relative z-10 ">{cat.productCategory}</span>
-                  <ChevronDown
-                    size={11}
-                    className={`transition-transform duration-500 ${isOpen ? "rotate-180 text-white" : "text-white/70"}`}
-                  />
-                  {/* <div
-                    className={`absolute bottom-6 left-0 h-0.5 bg-white transition-all duration-500 rounded-full w-0 group-hover:w-full`}
-                  /> */}
                 </Link>
-
-                {isOpen && (
-                  <div className="absolute top-[80%] left-1/2 -translate-x-1/2 mt-2 w-[420px] bg-white rounded-4xl shadow-[0_40px_100px_-20px_rgba(0,0,0,0.15)] border border-zinc-100 p-10 text-left z-50 animate-in fade-in slide-in-from-top-4 duration-500">
-                    <div className="space-y-6">
-                      <div className="space-y-2">
-                        {/* <span className="text-[9px] font-black tracking-[0.3em] text-atlantic-blue uppercase bg-brand-blue/5 px-3 py-1.5 rounded-full border border-brand-blue/10">
-                          Shop {cat.productCategory}
-                        </span> */}
-                        <h3 className="text-xl font-black text-soft-dark leading-tight tracking-tight pt-3">
-                          {cat.header}
-                        </h3>
-                        <p className="text-[12px] leading-relaxed text-soft-dark/50 font-medium font-serif italic">
-                          {cat.text}
-                        </p>
-                      </div>
-                      <div className="pt-2">
-                        <Link
-                          href={`${shopPrefix}/?category=${encodeURIComponent(cat.productCategory)}`.replace(
-                            "//",
-                            "/",
-                          )}
-                          className="inline-flex items-center gap-3 px-6 py-3 bg-brand-blue text-white rounded-full text-[10px] font-black tracking-widest uppercase shadow-lg shadow-brand-blue/20 hover:shadow-2xl hover:bg-atlantic-blue hover:-translate-y-0.5 active:scale-95 transition-all"
-                        >
-                          Explore Collection
-                        </Link>
-                      </div>
-                    </div>
-                  </div>
-                )}
               </div>
             );
           })}
+
           {shouldShowProfessionalLink && (
             <Link
               href={`${shopPrefix}/register?professional=yes`}
-              className="flex items-center gap-2 relative group hover:bg-atlantic-blue/10 py-2 md:px-4 rounded-3xl transition-all duration-300"
+              className={cn(
+                "flex items-center gap-2 relative text-white group py-1.5 md:px-3 rounded-3xl transition-all duration-300",
+                searchParams.get("professional") === "yes" ||
+                  pathname.includes("register")
+                  ? "bg-atlantic-blue/20 shadow-sm"
+                  : "hover:bg-atlantic-blue/10",
+              )}
             >
               For Professional
-              {/* <div
-                className={`absolute bottom-6 left-0 h-0.5 bg-white transition-all duration-500 rounded-full w-0 group-hover:w-full`}
-              /> */}
             </Link>
           )}
         </div>
@@ -247,8 +222,8 @@ export default function ShopNavbar() {
 
       {/* Mobile Navigation Overhaul */}
       {mobileOpen && (
-        <div className="md:hidden bg-brand-blue px-6 py-10 space-y-6 animate-in slide-in-from-top-10 duration-500 border-t border-white/5">
-          <div className="space-y-2">
+        <div className="md:hidden bg-brand-blue px-6 py-6 animate-in slide-in-from-top-10 duration-500 border-t border-white/5">
+          <div className="">
             <p className="text-[9px] font-black uppercase tracking-widest text-white/40 mb-4">
               Categories
             </p>
@@ -260,28 +235,40 @@ export default function ShopNavbar() {
                   "/",
                 )}
                 onClick={() => setMobileOpen(false)}
-                className="flex text-lg font-black text-white py-4 border-b border-white/5 active:scale-95 transition-all items-center justify-between"
+                className={cn(
+                  "flex items-center font-semibold py-3.5 px-3 border-b-2 border-white/0 transition-colors text-white text-xs",
+                  activeCategory === cat.productCategory &&
+                    "bg-warm-gray/15 rounded-xl",
+                )}
               >
                 {cat.productCategory}
-                <ChevronDown size={16} className="-rotate-90 text-white/40" />
+                {/* <ChevronDown
+                  size={16}
+                  className={cn(
+                    "-rotate-90",
+                    activeCategory === cat.productCategory
+                      ? "text-white"
+                      : "text-white/20",
+                  )}
+                /> */}
               </Link>
             ))}
           </div>
 
           {shouldShowProfessionalLink && (
-            <div className="pt-6 border-t border-white/5">
+            <div className="border-t border-white/5">
               <Link
                 href={`${shopPrefix}/register?professional=yes`}
                 onClick={() => setMobileOpen(false)}
-                className="flex text-lg font-black text-white py-4 border-b border-white/5 active:scale-95 transition-all items-center justify-between"
+                className="flex items-center font-semibold py-3.5 px-3 border-b-2 border-white/0 transition-colors text-white text-xs"
               >
                 For Professional
-                <ChevronDown size={16} className="-rotate-90 text-white/40" />
+                {/* <ChevronDown size={16} className="-rotate-90 text-white/40" /> */}
               </Link>
             </div>
           )}
 
-          <div className="pt-6 space-y-4">
+          <div className="space-y-4 mt-4">
             <p className="text-[9px] font-black uppercase tracking-widest text-white/40 mb-4">
               Account
             </p>
@@ -302,13 +289,23 @@ export default function ShopNavbar() {
                 </button>
               </div>
             ) : (
-              <Link
+             <div className="space-y-3">
+               <Link
                 href={`${shopPrefix}/login`}
                 onClick={() => setMobileOpen(false)}
-                className="block w-full text-center py-5 bg-white text-brand-blue rounded-2xl text-[11px] font-black uppercase tracking-widest shadow-xl"
+                className="block w-full text-center py-3.5 bg-warm-gray text-brand-blue rounded-full text-sm font-bold tracking-widest"
               >
                 Login
               </Link>
+               <Link
+                href={`${shopPrefix}/register`}
+                onClick={() => setMobileOpen(false)}
+                className="block w-full text-center py-3.5 border border-warm-gray text-warm-gray rounded-full text-sm font-bold tracking-widest"
+              >
+                Register
+              </Link>
+             </div>
+              
             )}
           </div>
         </div>

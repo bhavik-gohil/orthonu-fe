@@ -6,6 +6,7 @@ import Image from "next/image";
 import { Menu, X, ChevronRight } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
 import { getShopUrl } from "@/lib/subdomains";
+import { cn } from "@/lib/utils";
 
 export default function HomeNavbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -13,19 +14,29 @@ export default function HomeNavbar() {
   const router = useRouter();
   const isHome = pathname === "/";
   const [shopUrl, setShopUrl] = useState("/shop");
+  const [activeHash, setActiveHash] = useState("");
 
   useEffect(() => {
     setShopUrl(getShopUrl());
+
+    const handleHashChange = () => {
+      setActiveHash(window.location.hash);
+    };
+
+    window.addEventListener("hashchange", handleHashChange);
+    // Set initial hash
+    handleHashChange();
+
+    return () => window.removeEventListener("hashchange", handleHashChange);
   }, []);
 
   // On home page: scroll to section if hash present on load
   useEffect(() => {
     if (!isHome) return;
-    const hash = window.location.hash;
-    if (hash === "#partner-with-us") {
+    if (activeHash === "#partner-with-us") {
       scrollToPartner();
     }
-  }, [isHome]);
+  }, [isHome, activeHash]);
 
   function scrollToPartner() {
     const element = document.getElementById("partner-with-us");
@@ -44,7 +55,14 @@ export default function HomeNavbar() {
     e.preventDefault();
     if (isHome) {
       // Already on home — just scroll
-      window.history.pushState(null, "", "/#partner-with-us");
+      const currentPath = window.location.pathname;
+      const targetHash = "#partner-with-us";
+
+      if (window.location.hash !== targetHash) {
+        // Use replaceState with a full path to be absolute about the URL structure
+        window.history.replaceState(null, "", currentPath + targetHash);
+        setActiveHash(targetHash);
+      }
       scrollToPartner();
     } else {
       // Navigate to home with hash; the useEffect above will scroll after load
@@ -57,7 +75,8 @@ export default function HomeNavbar() {
     if (isHome) {
       e.preventDefault();
       if (window.location.hash) {
-        window.history.pushState(null, "", "/");
+        window.history.replaceState(null, "", window.location.pathname);
+        setActiveHash("");
       }
       window.scrollTo({ top: 0, behavior: "smooth" });
     }
@@ -66,8 +85,8 @@ export default function HomeNavbar() {
   return (
     <nav className="sticky top-0 z-50 w-full bg-brand-blue/95 backdrop-blur-md border-b border-white/10 font-sans shadow-lg shadow-brand-blue/20">
       <div className="max-w-7xl mx-auto px-6 md:px-12 py-4 flex items-center justify-between">
-        <Link 
-          href="/" 
+        <Link
+          href="/"
           onClick={handleLogoClick}
           className="hover:opacity-80 transition-opacity shrink-0"
         >
@@ -82,23 +101,39 @@ export default function HomeNavbar() {
         </Link>
 
         {/* Desktop centre links */}
-        <div className="hidden md:flex absolute left-1/2 -translate-x-1/2 items-center font-semibold text-xs md:text-xs lg:text-sm tracking-[0.08em] text-white">
+        <div className="hidden md:flex absolute left-1/2 -translate-x-1/2  space-x-1 items-center font-semibold text-xs tracking-[0.08em] text-white">
           <Link
             href="/about"
-            className="hover:bg-atlantic-blue/10 py-2 md:px-4 rounded-3xl transition-all duration-300"
+            className={cn(
+              "py-1.5 md:px-3 rounded-3xl transition-all duration-300 text-white",
+              pathname.startsWith("/about")
+                ? "bg-atlantic-blue/20  shadow-sm"
+                : "hover:bg-atlantic-blue/10",
+            )}
           >
             About
           </Link>
           <Link
             href="/resources"
-            className="hover:bg-atlantic-blue/10 py-2 md:px-4 rounded-3xl transition-all duration-300"
+            className={cn(
+              "py-1.5 md:px-3 rounded-3xl transition-all duration-300 text-white",
+              pathname.startsWith("/resources")
+                ? "bg-atlantic-blue/20 shadow-sm"
+                : "hover:bg-atlantic-blue/10",
+            )}
           >
             Resources
           </Link>
           <a
             href="/#partner-with-us"
             onClick={handlePartnerClick}
-            className="hover:bg-atlantic-blue/10 py-2 md:px-4 rounded-3xl transition-all duration-300"
+            className={cn(
+              "py-1.5 md:px-3 rounded-3xl transition-all duration-300 text-white",
+              (pathname === "/" || pathname === "") &&
+                activeHash.includes("#partner-with-us")
+                ? "bg-atlantic-blue/20"
+                : "hover:bg-atlantic-blue/10",
+            )}
           >
             Partner with Us
           </a>
@@ -129,25 +164,36 @@ export default function HomeNavbar() {
 
       {/* Mobile menu */}
       {mobileOpen && (
-        <div className="md:hidden border-white/10 px-6 space-y-1 text-sm bg-brand-blue">
+        <div className="md:hidden border-white/10 px-6 space-y-1 text-xs bg-brand-blue">
           <Link
             href="/about"
             onClick={() => setMobileOpen(false)}
-            className="flex items-center justify-between font-semibold text-white py-3.5 border-b border-t border-white/10 hover:text-white/70 transition-colors"
+            className={cn(
+              "flex items-center font-semibold py-3.5 px-3 border-b-2 border-white/0 transition-colors text-white",
+              pathname.startsWith("/about") && "bg-warm-gray/15 rounded-xl",
+            )}
           >
             About
           </Link>
           <Link
             href="/resources"
             onClick={() => setMobileOpen(false)}
-            className="flex items-center justify-between font-semibold text-white py-3.5 border-b border-white/10 hover:text-white/70 transition-colors"
+            className={cn(
+              "flex items-center font-semibold py-3.5 px-3 border-b-2 border-white/0 transition-colors text-white",
+              pathname.startsWith("/resources") && "bg-warm-gray/15 rounded-xl",
+            )}
           >
             Resources
           </Link>
           <a
             href="/#partner-with-us"
             onClick={handlePartnerClick}
-            className="flex items-center justify-between font-semibold text-white py-3.5 border-b border-white/10 hover:text-white/70 transition-colors focus:outline-none"
+            className={cn(
+              "flex items-center font-semibold py-3.5 px-3 border-b-2 border-white/0 transition-colors text-white",
+              (pathname === "/" || pathname === "") &&
+                activeHash.includes("#partner-with-us") &&
+                "bg-warm-gray/15 rounded-xl",
+            )}
             aria-label="Scroll to Partner with Us form"
           >
             Partner with Us

@@ -130,7 +130,13 @@ export default function Home() {
 
   const handlePartnerClick = (e: React.MouseEvent) => {
     e.preventDefault();
-    window.history.pushState(null, "", "/#partner-with-us");
+    const targetHash = "#partner-with-us";
+    const currentPath = window.location.pathname;
+
+    if (window.location.hash !== targetHash) {
+      window.history.replaceState(null, "", currentPath + targetHash);
+      window.dispatchEvent(new HashChangeEvent("hashchange"));
+    }
     scrollToPartner();
   };
 
