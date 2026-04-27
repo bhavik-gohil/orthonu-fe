@@ -93,7 +93,7 @@ export default function Admin() {
                 <p className="text-[10px] font-black uppercase tracking-widest text-soft-dark/40 mb-4">
                   Administration
                 </p>
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                   <DashboardCard href="/admin/console-users" icon={<UserCog size={32} />}
                     title="Console Users" description="Add, edit, or remove console administrators and staff." />
                   <DashboardCard href="/admin/users" icon={<Users size={32} />}
@@ -109,6 +109,8 @@ export default function Admin() {
                     title="Brand Colors" description="Manage the product color palette and packaging accents." />
                   <DashboardCard href="/admin/coupons" icon={<Ticket size={32} />}
                     title="Coupon Codes" description="Create and manage discount coupons for checkout." />
+                  <DashboardCard href="/admin/submissions" icon={<ShieldAlert size={32} />}
+                    title="Form Submissions" description="Review inquiries from Partnership, Contact, and Download forms." />
                 </div>
               </div>
             )}

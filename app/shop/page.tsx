@@ -9,7 +9,7 @@ import { Product, Category, mediaUrl } from "@/lib/types";
 import Image from "next/image";
 import PageHeader from "@/components/ui/PageHeader";
 import Pill from "@/components/ui/Pill";
-import { isSubdomainEnvironment } from "@/lib/subdomains";
+import { isSubdomainEnvironment, getMainUrl } from "@/lib/subdomains";
 import { cn } from "@/lib/utils";
 import Card from "@/components/ui/Card";
 import Container from "@/components/ui/Container";
@@ -102,7 +102,7 @@ function ShopContent() {
               <div className="space-y-8 order-2 lg:order-1 text-center lg:text-left">
                 <div className="space-y-4">
                   <Link
-                    href="/"
+                    href={getMainUrl("/")}
                     className="inline-flex items-center gap-1 text-soft-dark/40 hover:text-brand-blue text-[10px] font-bold uppercase tracking-[0.2em] transition-colors"
                   >
                     <ChevronLeft size={12} /> Back to Home
@@ -125,7 +125,7 @@ function ShopContent() {
               <div className="order-1 lg:order-2 relative flex justify-center lg:justify-end">
                 <div className="relative w-full max-w-lg lg:max-w-none rounded-3xl overflow-hidden shadow-2xl shadow-atlantic-blue/10 bg-white aspect-[1200/714]">
                   <img
-                    src="/oral-relief-kitz2-updated-1200x714.png"
+                    src={getMainUrl("/oral-relief-kitz2-updated-1200x714.png")}
                     alt="OrthoNu Solutions"
                     className="w-full h-full object-cover"
                     loading="eager"
@@ -181,7 +181,7 @@ function ShopContent() {
                   <div className={cn("relative", idx % 2 === 1 ? "lg:order-1" : "lg:order-2")}>
                     <div className="relative aspect-video rounded-4xl overflow-hidden shadow-2xl bg-white">
                       <img
-                        src={cat.image ? mediaUrl(cat.image) : "/oral-relief-kitz2-updated-1200x714.png"}
+                        src={cat.image ? mediaUrl(cat.image) : getMainUrl("/oral-relief-kitz2-updated-1200x714.png")}
                         alt={cat.productCategory}
                         className="w-full h-full object-cover"
                       />
@@ -216,7 +216,7 @@ function ShopContent() {
                       {group.items.length !== 1 ? "s" : ""}
                     </span> */}
                   </div>
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
                     {group.items.map((product) => (
                       <ProductCard key={product.id} product={product} hrefPrefix={shopPrefix} />
                     ))}

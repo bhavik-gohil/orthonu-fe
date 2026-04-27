@@ -93,7 +93,7 @@ export default function ProductCard({
           {/* Category Badge */}
           {product.productCategory && (
             <span
-              className={`text-[9px] font-bold uppercase tracking-[0.2em] px-3 py-1.5 rounded-md bg-[#b0e0e2]/30 text-soft-dark w-fit`}
+              className={`text-[9px] font-bold uppercase tracking-[0.2em] px-3 py-1.5 rounded-md bg-[${product.color}]/30 text-soft-dark w-fit`}
             >
               {product.productCategory}
             </span>

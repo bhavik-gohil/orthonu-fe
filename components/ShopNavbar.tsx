@@ -70,7 +70,7 @@ export default function ShopNavbar() {
         {/* Desktop Navigation */}
         <div className="hidden md:flex items-center gap-2 text-xs font-semibold tracking-wide text-white">
           <Link
-            href={shopPrefix || "/shop"}
+            href={isSubdomainEnvironment() ? "/" : "/shop"}
             className={cn(
               "flex items-center gap-2 text-white relative group py-1.5 md:px-3 rounded-3xl transition-all duration-300",
               (pathname === shopPrefix ||
@@ -242,7 +242,7 @@ export default function ShopNavbar() {
               Navigation
             </p>
             <Link
-              href={shopPrefix || "/shop"}
+              href={isSubdomainEnvironment() ? "/" : "/shop"}
               onClick={() => setMobileOpen(false)}
               className={cn(
                 "flex items-center font-semibold py-3.5 px-3 border-b-2 border-white/0 transition-colors text-white text-xs",
