@@ -1,5 +1,6 @@
 "use client";
 
+import { Suspense } from "react";
 import ShopNavbar from "@/components/ShopNavbar";
 import Footer from "@/components/Footer";
 import { useCart } from "@/lib/CartContext";
@@ -21,7 +22,9 @@ export default function ShopLayout({
                     onDismiss={clearError}
                 />
             )}
-            <ShopNavbar />
+            <Suspense fallback={<div className="h-28 bg-brand-blue" />}>
+                <ShopNavbar />
+            </Suspense>
             <main className="flex-1">
                 {children}
             </main>
