@@ -76,7 +76,7 @@ export default function OtpVerification({ email, type, onSuccess, onBack }: OtpV
             // Wait 1.5 seconds before redirecting
             setTimeout(() => {
                 onSuccess(data);
-            }, 1500);
+            }, 1000);
         } catch (err: any) {
             setError(err.response?.data?.message || err.message || "Invalid or expired code.");
             setLoading(false);

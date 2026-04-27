@@ -124,13 +124,11 @@ function ShopContent() {
               {/* Right: Featured Image */}
               <div className="order-1 lg:order-2 relative flex justify-center lg:justify-end">
                 <div className="relative w-full max-w-lg lg:max-w-none rounded-3xl overflow-hidden shadow-2xl shadow-atlantic-blue/10 bg-white aspect-[1200/714]">
-                  <Image
+                  <img
                     src="/oral-relief-kitz2-updated-1200x714.png"
                     alt="OrthoNu Solutions"
-                    fill
-                    className="object-cover"
-                    priority
-                    unoptimized
+                    className="w-full h-full object-cover"
+                    loading="eager"
                   />
                 </div>
                 <div className="absolute -z-10 -bottom-8 -right-8 w-72 h-72 bg-brand-blue/10 rounded-full blur-3xl pointer-events-none" />
@@ -182,12 +180,10 @@ function ShopContent() {
 
                   <div className={cn("relative", idx % 2 === 1 ? "lg:order-1" : "lg:order-2")}>
                     <div className="relative aspect-video rounded-4xl overflow-hidden shadow-2xl bg-white">
-                      <Image
+                      <img
                         src={cat.image ? mediaUrl(cat.image) : "/oral-relief-kitz2-updated-1200x714.png"}
                         alt={cat.productCategory}
-                        fill
-                        className="object-cover"
-                        unoptimized
+                        className="w-full h-full object-cover"
                       />
                     </div>
                     <div className="absolute -z-10 -top-6 -left-6 w-32 h-32 bg-brand-blue/5 rounded-full blur-2xl" />
