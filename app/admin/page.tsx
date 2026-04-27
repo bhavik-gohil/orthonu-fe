@@ -109,6 +109,8 @@ export default function Admin() {
                     title="Brand Colors" description="Manage the product color palette and packaging accents." />
                   <DashboardCard href="/admin/coupons" icon={<Ticket size={32} />}
                     title="Coupon Codes" description="Create and manage discount coupons for checkout." />
+                  <DashboardCard href="/admin/submissions" icon={<ShieldAlert size={32} />}
+                    title="Form Submissions" description="Review inquiries from Partnership, Contact, and Download forms." />
                 </div>
               </div>
             )}
