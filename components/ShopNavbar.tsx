@@ -293,14 +293,14 @@ export default function ShopNavbar() {
                <Link
                 href={`${shopPrefix}/login`}
                 onClick={() => setMobileOpen(false)}
-                className="block w-full text-center py-3.5 bg-warm-gray text-brand-blue rounded-full text-sm font-bold tracking-widest"
+                className="block w-full text-center py-3.5 bg-warm-gray text-soft-dark rounded-full text-sm font-black tracking-widest"
               >
                 Login
               </Link>
                <Link
                 href={`${shopPrefix}/register`}
                 onClick={() => setMobileOpen(false)}
-                className="block w-full text-center py-3.5 border border-warm-gray text-warm-gray rounded-full text-sm font-bold tracking-widest"
+                className="block w-full text-center py-3.5 border border-warm-gray text-white rounded-full text-sm font-extrabold tracking-widest"
               >
                 Register
               </Link>
