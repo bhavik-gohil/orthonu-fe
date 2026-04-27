@@ -80,7 +80,7 @@ export default function CreateProductPage() {
           products={products}
           onSuccess={(msg) => {
             showSnack("success", msg);
-            setTimeout(() => router.push("/admin/product"), 1500);
+            setTimeout(() => router.push("/admin/product"), 1000);
           }}
           onError={(msg) => showSnack("error", msg)}
           onCancel={() => router.push("/admin/product")}
