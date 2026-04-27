@@ -52,7 +52,7 @@ export default function ProductCard({
     <Link
       href={href}
       target={linkTarget}
-      className={`group block cursor-pointer transition-all duration-200 hover:-translate-y-[3px] hover:shadow-[0_8px_24px_rgba(0,0,0,0.06)] rounded-2xl overflow-hidden bg-white border border-zinc-100 ${className}`}
+      className={`group block cursor-pointer transition-all duration-200 hover:-translate-y-[3px] hover:shadow-[0_8px_24px_rgba(0,0,0,0.06)] rounded-3xl overflow-hidden bg-white border border-zinc-100 shadow ${className}`}
     >
       {/* Image Container */}
       <div className="relative aspect-square bg-[#F3F4F6] flex items-center justify-center overflow-hidden">
@@ -61,29 +61,11 @@ export default function ProductCard({
           <img
             src={mediaUrl(mainImage)}
             alt={product.name}
-            className="w-full h-full object-contain p-4 group-hover:scale-105 transition-transform duration-700"
+            className="w-full h-full object-cover p-4 group-hover:scale-105 transition-transform duration-700"
           />
         ) : (
           <div className="w-full h-full flex items-center justify-center">
             <ShoppingBag size={48} strokeWidth={1} className="text-zinc-300" />
-          </div>
-        )}
-
-        {/* Category Badge */}
-        {product.productCategory && (
-          <div className="absolute top-4 left-4">
-            <span className="text-[9px] font-black uppercase tracking-widest text-white bg-brand-blue px-3 py-1.5 rounded-full shadow-sm">
-              {product.productCategory}
-            </span>
-          </div>
-        )}
-
-        {/* Variant Indicator */}
-        {(product?.variantCount || 0) > 1 && (
-          <div className="absolute top-4 right-4">
-            <span className="text-[9px] font-black uppercase tracking-widest text-brand-blue bg-white px-2 py-1 rounded-full shadow-sm border border-brand-blue/20">
-              {product.variantCount} Options
-            </span>
           </div>
         )}
       </div>
@@ -97,22 +79,42 @@ export default function ProductCard({
       {/* Info Container */}
       <div className="p-3 space-y-3">
         <div className="space-y-1">
-          {product.tag && (
-            <p className="text-[10px] font-bold text-white bg-brand-blue px-1 py-0.5 rounded-sm tracking-normal w-fit">
-              {product.tag}
-            </p>
-          )}
           <h3 className="text-lg font-bold text-soft-dark leading-tight tracking-tight line-clamp-2">
             {product.name}
           </h3>
           {product.intro && (
-            <p className="text-xs text-soft-dark/60 leading-snug line-clamp-2">
+            <p className="text-xs text-soft-dark/70 leading-snug line-clamp-2">
               {product.intro}
             </p>
           )}
         </div>
 
-        <div className="flex items-center justify-between border-t border-zinc-50 pt-2">
+        <div className="flex flex-wrap gap-2">
+          {/* Category Badge */}
+          {product.productCategory && (
+            <span
+              className={`text-[9px] font-bold uppercase tracking-[0.2em] px-3 py-1.5 rounded-md bg-[#b0e0e2]/30 text-soft-dark w-fit`}
+            >
+              {product.productCategory}
+            </span>
+          )}
+
+          {
+            product.tag &&
+            <div className="text-[10px] font-bold tracking-[0.2em] px-3 py-1.5 rounded-full bg-brand-blue/30 text-soft-dark w-fit">
+              {product.tag}
+            </div>
+          }
+
+          {/* Variant Indicator */}
+          {(product?.variantCount || 0) > 1 && (
+            <span className="text-[9px] font-bold uppercase tracking-widest text-atlantic-blue bg-white px-2 py-1 rounded-full shadow-sm border border-atlantic-blue/20">
+              {product.variantCount} Options
+            </span>
+          )}
+        </div>
+
+        <div className="flex items-center justify-between border-t border-zinc-50">
           {showProfessionalPricing ? (
             <div className="flex flex-col">
               <span className="text-sm font-medium text-zinc-400 line-through">
