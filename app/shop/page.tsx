@@ -102,7 +102,7 @@ function ShopContent() {
               <div className="space-y-8 order-2 lg:order-1 text-center lg:text-left">
                 <div className="space-y-4">
                   <Link
-                    href="/"
+                    href={getMainUrl("/")}
                     className="inline-flex items-center gap-1 text-soft-dark/40 hover:text-brand-blue text-[10px] font-bold uppercase tracking-[0.2em] transition-colors"
                   >
                     <ChevronLeft size={12} /> Back to Home
