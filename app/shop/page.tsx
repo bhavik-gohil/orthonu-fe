@@ -149,14 +149,14 @@ function ShopContent() {
 
             {/* Right: Featured Image */}
             <div className="order-1 lg:order-2 relative flex justify-center lg:justify-end">
-              <div className="relative w-full max-w-lg lg:max-w-none rounded-3xl overflow-hidden shadow-2xl shadow-atlantic-blue/10 bg-white">
+              <div className="relative w-full max-w-lg lg:max-w-none rounded-3xl overflow-hidden shadow-2xl shadow-atlantic-blue/10 bg-white aspect-[1200/714]">
                 <Image
                   src={activeCategory && activeCategoryInfo?.image ? mediaUrl(activeCategoryInfo.image) : "/oral-relief-kitz2-updated-1200x714.png"}
                   alt={activeCategory && activeCategoryInfo ? activeCategoryInfo.productCategory : "OrthoNu Solutions"}
-                  width={1200}
-                  height={714}
-                  className="w-full h-auto object-cover aspect-video"
+                  fill
+                  className="object-cover"
                   priority
+                  unoptimized
                 />
               </div>
               <div className="absolute -z-10 -bottom-8 -right-8 w-72 h-72 bg-brand-blue/10 rounded-full blur-3xl pointer-events-none" />
