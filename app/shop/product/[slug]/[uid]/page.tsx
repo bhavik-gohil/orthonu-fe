@@ -271,7 +271,7 @@ export default function ProductDetailPage() {
   const allMedia = standardMedia;
 
   return (
-    <div className="flex flex-col min-h-screen font-sans bg-warm-gray text-soft-dark">
+    <div className="flex flex-col min-h-screen font-sans bg-white text-soft-dark">
       <main className="flex-1 max-w-7xl mx-auto w-full px-6 md:px-12 pt-4 pb-2 space-y-3 md:py-6 md:space-y-6">
         {/* Breadcrumb */}
         <nav className="flex items-center gap-2 text-[10px] font-semibold tracking-[0.15em] text-soft-dark/40">
@@ -380,14 +380,21 @@ export default function ProductDetailPage() {
             {/* Category & Tag */}
             <div className="flex flex-wrap items-center gap-2">
               {selectedVariant?.productCategory && (
-                <span className="text-[9px] font-extrabold tracking-[0.15em] text-brand-blue bg-white/90 backdrop-blur-sm px-2 py-1 rounded-full border border-brand-blue/20">
+                <span
+                  className="text-[9px] font-bold uppercase tracking-[0.15em] px-2 py-1 rounded-md text-soft-dark w-fit"
+                  style={{ 
+                    backgroundColor: selectedVariant.color?.startsWith("#") 
+                      ? `${selectedVariant.color}4D` 
+                      : selectedVariant.color 
+                  }}
+                >
                   {selectedVariant.productCategory}
                 </span>
               )}
               {selectedVariant?.tag && (
-                <p className="text-xs font-semibold bg-brand-blue text-white w-fit px-2 py-0.5 rounded-md">
+                <div className="text-[10px] font-bold tracking-[0.15em] px-2 py-1 rounded-full bg-brand-blue/30 text-soft-dark w-fit">
                   {selectedVariant.tag}
-                </p>
+                </div>
               )}
               {selectedVariant?.isBundle && (
                 <span className="text-[9px] font-bold uppercase tracking-[0.3em] text-fresh-mint bg-fresh-mint/10 px-3 py-1.5 rounded-full flex items-center gap-1">
@@ -398,13 +405,13 @@ export default function ProductDetailPage() {
             </div>
 
             {/* Name */}
-            <h1 className="text-xl md:text-3xl text-brand-blue font-bold ">
+            <h1 className="text-xl md:text-3xl text-atlantic-blue font-bold ">
               {selectedVariant?.name}
             </h1>
 
             {/* Intro */}
             {selectedVariant?.intro && (
-              <p className="text-sm md:text-base text-soft-dark/80 font-medium leading-relaxed">
+              <p className="text-sm md:text-sm text-soft-dark/70 font-medium leading-relaxed">
                 {selectedVariant.intro}
               </p>
             )}
@@ -436,7 +443,7 @@ export default function ProductDetailPage() {
                   <button
                     onClick={handleAddToCart}
                     disabled={cartLoading}
-                    className="w-full flex items-center justify-center gap-3 py-3 rounded-2xl font-bold text-xs tracking-[0.05em] bg-brand-blue text-white hover:bg-atlantic-blue hover:shadow-xl hover:shadow-brand-blue/30 hover:-translate-y-0.5 transition-all disabled:opacity-50 shadow-lg shadow-brand-blue/20 cursor-pointer"
+                    className="w-full flex items-center justify-center gap-3 py-3 rounded-full font-bold text-xs tracking-[0.05em] bg-brand-blue text-white hover:bg-atlantic-blue hover:shadow-xl hover:shadow-brand-blue/30 hover:-translate-y-0.5 transition-all disabled:opacity-50 shadow-lg shadow-brand-blue/20 cursor-pointer"
                   >
                     {cartLoading ? (
                       <Loader2 size={18} className="animate-spin" />
@@ -449,7 +456,7 @@ export default function ProductDetailPage() {
                   {isGuest && (
                     <Link
                       href="/shop/register?professional=yes"
-                      className="w-full flex items-center justify-center gap-2 py-3 rounded-2xl font-bold text-xs tracking-[0.05em] bg-white text-brand-blue border-2 border-brand-blue hover:bg-brand-blue/5 hover:shadow-md transition-all text-center"
+                      className="w-full flex items-center justify-center gap-2 py-4 rounded-full font-bold text-xs tracking-[0.05em] bg-warm-gray text-atlantic-blue border border-warm-gray hover:border-brand-blue transition-all text-center"
                     >
                       Buy Now - Professional
                     </Link>
