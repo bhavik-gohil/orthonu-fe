@@ -52,10 +52,17 @@ export default function ProductCard({
     <Link
       href={href}
       target={linkTarget}
-      className={`group block cursor-pointer transition-all duration-200 hover:-translate-y-[3px] hover:shadow-[0_8px_24px_rgba(0,0,0,0.06)] rounded-3xl overflow-hidden bg-white border border-zinc-100 shadow ${className}`}
+      className={`group block cursor-pointer transition-all duration-200 hover:-translate-y-[3px] hover:shadow-[0_8px_24px_rgba(0,0,0,0.06)] rounded-3xl overflow-hidden bg-white border border-soft-dark/10 ${className}`}
     >
       {/* Image Container */}
-      <div className="relative aspect-square bg-[#F3F4F6] flex items-center justify-center overflow-hidden">
+      <div 
+        className={`relative aspect-auto flex items-center justify-center overflow-hidden`} 
+        style={{ 
+          backgroundColor: product.color?.startsWith("#") 
+            ? `${product.color}0D` 
+            : product.color 
+        }}
+      >
         {mainImage ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img
@@ -79,11 +86,11 @@ export default function ProductCard({
       {/* Info Container */}
       <div className="p-3 space-y-3">
         <div className="space-y-1">
-          <h3 className="text-lg font-bold text-soft-dark leading-tight tracking-tight line-clamp-2">
+          <h3 className="text-md font-bold text-soft-dark leading-tight tracking-tight line-clamp-2">
             {product.name}
           </h3>
           {product.intro && (
-            <p className="text-xs text-soft-dark/70 leading-snug line-clamp-2">
+            <p className="text-xs text-soft-dark/80 leading-snug line-clamp-2">
               {product.intro}
             </p>
           )}
@@ -93,7 +100,7 @@ export default function ProductCard({
           {/* Category Badge */}
           {product.productCategory && (
             <span
-              className="text-[9px] font-bold uppercase tracking-[0.2em] px-3 py-1.5 rounded-md text-soft-dark w-fit"
+              className="text-[9px] font-bold uppercase tracking-[0.15em] px-2 py-1 rounded-md text-soft-dark w-fit"
               style={{ 
                 backgroundColor: product.color?.startsWith("#") 
                   ? `${product.color}4D` 
@@ -106,7 +113,7 @@ export default function ProductCard({
 
           {
             product.tag &&
-            <div className="text-[10px] font-bold tracking-[0.2em] px-3 py-1.5 rounded-full bg-brand-blue/30 text-soft-dark w-fit">
+            <div className="text-[10px] font-bold tracking-[0.15em] px-2 py-1 rounded-full bg-brand-blue/30 text-soft-dark w-fit">
               {product.tag}
             </div>
           }

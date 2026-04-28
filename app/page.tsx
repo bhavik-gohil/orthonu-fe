@@ -568,8 +568,8 @@ export default function Home() {
             PRODUCT SECTIONS — Original section unchanged
         ───────────────────────────────────────────────────────────── */}
         {!loading && productGroups.length > 0 && (
-          <Section bgColor="bg-warm-gray/30">
-            <div className="space-y-32">
+          <Section bgColor="bg-warm-gray/30" className="">
+            <div className="space-y-32 max-w-5xl mx-auto px-4 md:px-8">
               {productGroups
                 .filter((group) => group.products.length > 0)
                 .map((group) => {
@@ -601,7 +601,7 @@ export default function Home() {
                           View All <ChevronRight size={12} />
                         </Link>
                       </div>
-                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-8">
                         {group.products.slice(0, 4).map((product) => (
                           <ProductCard
                             key={product.id}
