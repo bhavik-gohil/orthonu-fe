@@ -132,16 +132,16 @@ export default function AboutPage() {
                   <p className="text-base font-black tracking-[0.2em] uppercase text-soft-dark">
                     Mission
                   </p>
-                  <p className="text-xl leading-snug text-soft-dark/70">
+                  <p className="text-xl leading-snug text-soft-dark/80">
                     Eliminate the discomfort and embarrassment of wearing braces
                     or aligners
                   </p>
                 </div>
                 <div className="bg-atlantic-blue/80 text-white rounded-3xl p-10 space-y-4">
-                  <p className="text-base font-black tracking-[0.2em] uppercase text-warm-gray/70">
+                  <p className="text-base font-black tracking-[0.2em] uppercase text-warm-gray">
                     Vision
                   </p>
-                  <p className="text-xl leading-snug">
+                  <p className="text-xl leading-snug text-warm-gray/80">
                     Transform society's understanding that mouthcare =
                     healthcare
                   </p>

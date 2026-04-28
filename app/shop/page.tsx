@@ -203,20 +203,20 @@ function ShopContent() {
               No products found.
             </div>
           ) : (
-            <div className="space-y-40">
+            <div className="space-y-40 max-w-5xl mx-auto px-4 md:px-8">
               {grouped.map((group, idx) => (
                 <div key={idx} className="space-y-12">
                   <div className="flex items-center gap-8">
-                    <h2 className="text-[10px] font-black tracking-[0.4em] uppercase text-atlantic-blue bg-brand-blue/10 px-4 py-1.5 rounded-full">
+                    <h2 className="text-[10px] font-black tracking-[0.2em] uppercase text-soft-dark bg-brand-blue/10 px-4 py-1.5 rounded-full">
                       {group.name}
                     </h2>
-                    {/* <div className="flex-1 h-px bg-zinc-200" />
-                    <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest">
+                    <div className="flex-1 h-px bg-zinc-200" />
+                    {/* <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest">
                       {group.items.length} Product
                       {group.items.length !== 1 ? "s" : ""}
                     </span> */}
                   </div>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-8">
                     {group.items.map((product) => (
                       <ProductCard key={product.id} product={product} hrefPrefix={shopPrefix} />
                     ))}
@@ -233,7 +233,7 @@ function ShopContent() {
 
 export default function Shop() {
   return (
-    <div className="flex flex-col min-h-screen font-sans bg-warm-gray text-soft-dark">
+    <div className="flex flex-col min-h-screen font-sans bg-brand-blue/5 text-soft-dark">
       <Suspense
         fallback={
           <div className="flex min-h-[60vh] items-center justify-center">
