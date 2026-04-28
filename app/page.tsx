@@ -568,7 +568,7 @@ export default function Home() {
             PRODUCT SECTIONS — Original section unchanged
         ───────────────────────────────────────────────────────────── */}
         {!loading && productGroups.length > 0 && (
-          <Section bgColor="bg-warm-gray/30" className="">
+          <Section bgColor="bg-cloud-blue" className="">
             <div className="space-y-32 max-w-5xl mx-auto px-4 md:px-8">
               {productGroups
                 .filter((group) => group.products.length > 0)
@@ -595,8 +595,7 @@ export default function Home() {
                         <Link
                           href={shopUrl}
                           target="_blank"
-                          className="text-[10px] font-bold tracking-[0.3em] transition-colors flex items-center gap-2"
-                          style={{ color: accentColor }}
+                          className="text-[10px] font-bold tracking-[0.15em] transition-colors text-atlantic-blue/50 flex items-center gap-2"
                         >
                           View All <ChevronRight size={12} />
                         </Link>

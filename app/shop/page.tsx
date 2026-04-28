@@ -233,7 +233,7 @@ function ShopContent() {
 
 export default function Shop() {
   return (
-    <div className="flex flex-col min-h-screen font-sans bg-brand-blue/5 text-soft-dark">
+    <div className="flex flex-col min-h-screen font-sans bg-cloud-blue text-soft-dark">
       <Suspense
         fallback={
           <div className="flex min-h-[60vh] items-center justify-center">

@@ -56,7 +56,7 @@ export default function ProductCard({
     >
       {/* Image Container */}
       <div 
-        className={`relative aspect-auto flex items-center justify-center overflow-hidden`} 
+        className={`relative aspect-[4/3] flex items-center justify-center overflow-hidden`} 
         style={{ 
           backgroundColor: product.color?.startsWith("#") 
             ? `${product.color}0D` 
@@ -68,7 +68,7 @@ export default function ProductCard({
           <img
             src={mediaUrl(mainImage)}
             alt={product.name}
-            className="w-full h-full object-cover p-4 group-hover:scale-105 transition-transform duration-700"
+            className="w-full h-full object-contain p-6 group-hover:scale-110 transition-transform duration-700"
           />
         ) : (
           <div className="w-full h-full flex items-center justify-center">
