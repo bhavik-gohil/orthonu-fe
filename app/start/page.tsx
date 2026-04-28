@@ -177,7 +177,7 @@ export default function StartPilotPage() {
                 <form onSubmit={handleSubmit} className="space-y-4">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-1.5">
-                      <label className="text-[10px] font-black uppercase tracking-widest text-white/40 px-1">Name</label>
+                      <label className="text-[10px] font-extrabold uppercase tracking-widest text-white/40 px-1">Name</label>
                       <input 
                         required
                         type="text"
@@ -188,7 +188,7 @@ export default function StartPilotPage() {
                       />
                     </div>
                     <div className="space-y-1.5">
-                      <label className="text-[10px] font-black uppercase tracking-widest text-white/40 px-1">Email</label>
+                      <label className="text-[10px] font-extrabold uppercase tracking-widest text-white/40 px-1">Email</label>
                       <input 
                         required
                         type="email"
@@ -202,7 +202,7 @@ export default function StartPilotPage() {
                   
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-1.5">
-                      <label className="text-[10px] font-black uppercase tracking-widest text-white/40 px-1">Practice / DSO Name</label>
+                      <label className="text-[10px] font-extrabold uppercase tracking-widest text-white/40 px-1">Practice / DSO Name</label>
                       <input 
                         required
                         type="text"
@@ -213,7 +213,7 @@ export default function StartPilotPage() {
                       />
                     </div>
                     <div className="space-y-1.5">
-                      <label className="text-[10px] font-black uppercase tracking-widest text-white/40 px-1">Number of locations</label>
+                      <label className="text-[10px] font-extrabold uppercase tracking-widest text-white/40 px-1">Number of locations</label>
                       <input 
                         required
                         type="number"
@@ -234,7 +234,7 @@ export default function StartPilotPage() {
 
                   <button 
                     disabled={isSubmitting}
-                    className="w-full bg-brand-blue text-soft-dark font-black py-4 rounded-full hover:bg-white hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-3 mt-8 disabled:opacity-50 disabled:hover:scale-100 cursor-pointer"
+                    className="w-full bg-brand-blue text-soft-dark font-extrabold py-4 rounded-full hover:bg-white hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-3 mt-8 disabled:opacity-50 disabled:hover:scale-100 cursor-pointer"
                   >
                     {isSubmitting ? (
                       <Loader2 size={24} className="animate-spin" />
