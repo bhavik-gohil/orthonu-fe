@@ -64,7 +64,10 @@ export default function StartPilotPage() {
           <div className="space-y-2">
             <h2 className="text-3xl font-black text-soft-dark">Thank You!</h2>
             <p className="text-soft-dark/70 font-medium">
-              We'll reach out within 24 hours. — Sima, sima@orthonu.com
+              We'll reach out within 24 hours. 
+              <div className="font-semibold">
+                — Sima, sima@orthonu.com
+              </div>
             </p>
           </div>
           {/* <Link 
