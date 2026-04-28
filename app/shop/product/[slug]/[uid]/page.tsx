@@ -97,7 +97,7 @@ const ProductSkeleton = () => (
             <Skeleton className="h-4 w-2/3" />
           </div>
           <Skeleton className="h-8 w-24 mt-4" />
-          
+
           <div className="pt-4 grid grid-cols-1 sm:grid-cols-2 gap-3">
             <Skeleton className="h-12 rounded-2xl" />
             <Skeleton className="h-12 rounded-2xl" />
@@ -120,11 +120,11 @@ const ProductSkeleton = () => (
 export default function ProductDetailPage() {
   const params = useParams();
   const pathname = usePathname();
-  
+
   // Fallback to extract uid from pathname if useParams fails due to proxy rewrite
   let uid = params?.uid as string;
   if (!uid && pathname) {
-    const parts = pathname.split('/').filter(Boolean);
+    const parts = pathname.split("/").filter(Boolean);
     uid = parts[parts.length - 1] as string;
   }
 
@@ -134,7 +134,13 @@ export default function ProductDetailPage() {
   const [bundleProducts, setBundleProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeImage, setActiveImage] = useState(0);
-  const { items, addItem, updateQuantity, removeItem, loading: cartLoading } = useCart();
+  const {
+    items,
+    addItem,
+    updateQuantity,
+    removeItem,
+    loading: cartLoading,
+  } = useCart();
   const { user, loading: authLoading } = useAuth();
 
   useEffect(() => {
@@ -158,13 +164,14 @@ export default function ProductDetailPage() {
           setSelectedVariant(found); // Initially select the current product
 
           // Use the variants already included in the response, or fallback to the product itself
-          const allVariants = (found.variants && found.variants.length > 0)
-            ? found.variants.sort((a: Product, b: Product) => {
-                if (a.isDefaultVariant) return -1;
-                if (b.isDefaultVariant) return 1;
-                return 0;
-              })
-            : [found];
+          const allVariants =
+            found.variants && found.variants.length > 0
+              ? found.variants.sort((a: Product, b: Product) => {
+                  if (a.isDefaultVariant) return -1;
+                  if (b.isDefaultVariant) return 1;
+                  return 0;
+                })
+              : [found];
           setVariants(allVariants);
 
           // Use bundled products already included in the response
@@ -229,7 +236,11 @@ export default function ProductDetailPage() {
     setSelectedVariant(variant);
     setActiveImage(0); // Reset to first image when switching variants
     // Update URL to reflect selected variant
-    window.history.replaceState(null, '', `/shop/product/${variant.name.toLowerCase().replace(/[^a-z0-9]+/g, '-')}/${variant.uid}`);
+    window.history.replaceState(
+      null,
+      "",
+      `/shop/product/${variant.name.toLowerCase().replace(/[^a-z0-9]+/g, "-")}/${variant.uid}`,
+    );
   };
 
   if (loading) {
@@ -263,11 +274,11 @@ export default function ProductDetailPage() {
   const professionalPrice = selectedVariant?.prices.find(
     (p) => p.userType === "professional",
   )?.price;
-  
-  const isProfessional = user?.userType === 'professional';
+
+  const isProfessional = user?.userType === "professional";
   const showProfessionalPricing = isProfessional && professionalPrice != null;
   const isGuest = !authLoading && !user;
-  
+
   const allMedia = standardMedia;
 
   return (
@@ -382,10 +393,10 @@ export default function ProductDetailPage() {
               {selectedVariant?.productCategory && (
                 <span
                   className="text-[9px] font-bold uppercase tracking-[0.15em] px-2 py-1 rounded-md text-soft-dark w-fit"
-                  style={{ 
-                    backgroundColor: selectedVariant.color?.startsWith("#") 
-                      ? `${selectedVariant.color}4D` 
-                      : selectedVariant.color 
+                  style={{
+                    backgroundColor: selectedVariant.color?.startsWith("#")
+                      ? `${selectedVariant.color}4D`
+                      : selectedVariant.color,
                   }}
                 >
                   {selectedVariant.productCategory}
@@ -439,11 +450,13 @@ export default function ProductDetailPage() {
             {/* Add to Cart with Quantity Controls */}
             <div className="flex flex-col gap-3 pt-4">
               {quantityInCart === 0 ? (
-                <div className={`grid grid-cols-1 ${isGuest ? 'sm:grid-cols-2' : ''} gap-3`}>
+                <div
+                  className={`grid grid-cols-1 ${isGuest ? "sm:grid-cols-2" : ""} gap-3`}
+                >
                   <button
                     onClick={handleAddToCart}
                     disabled={cartLoading}
-                    className="w-full flex items-center justify-center gap-3 py-3 rounded-full font-bold text-xs tracking-[0.05em] bg-brand-blue text-white hover:bg-atlantic-blue hover:shadow-xl hover:shadow-brand-blue/30 hover:-translate-y-0.5 transition-all disabled:opacity-50 shadow-lg shadow-brand-blue/20 cursor-pointer"
+                    className="w-full flex items-center justify-center gap-3 py-4 rounded-full font-bold text-xs tracking-[0.05em] bg-brand-blue text-white hover:bg-atlantic-blue hover:shadow-xl hover:shadow-brand-blue/30 hover:-translate-y-0.5 transition-all disabled:opacity-50 shadow-lg shadow-brand-blue/20 cursor-pointer"
                   >
                     {cartLoading ? (
                       <Loader2 size={18} className="animate-spin" />
@@ -464,20 +477,24 @@ export default function ProductDetailPage() {
                 </div>
               ) : (
                 <>
-                  <div className="flex items-center justify-between gap-4 py-3 px-6 rounded-2xl bg-white border-2 border-brand-blue">
+                  <div className="flex items-center justify-between gap-4 py-3 px-6 rounded-3xl bg-white border-2 border-brand-blue">
                     <button
                       onClick={handleDecrement}
                       disabled={cartLoading}
                       className="w-10 h-10 flex items-center justify-center rounded-lg hover:bg-zinc-50 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
                       aria-label="Decrease quantity"
                     >
-                      <Minus size={18} strokeWidth={2.5} className="text-brand-blue" />
+                      <Minus
+                        size={18}
+                        strokeWidth={2.5}
+                        className="text-brand-blue"
+                      />
                     </button>
                     <div className="flex flex-col items-center min-w-[80px]">
-                      <span className="text-2xl font-black text-brand-blue">
+                      <span className="text-2xl font-black text-atlantic-blue">
                         {quantityInCart}
                       </span>
-                      <span className="text-[9px] font-bold uppercase tracking-[0.2em] text-soft-dark/40">
+                      <span className="text-[9px] font-bold uppercase tracking-[0.15em] text-soft-dark/40">
                         In Cart
                       </span>
                     </div>
@@ -487,14 +504,20 @@ export default function ProductDetailPage() {
                       className="w-10 h-10 flex items-center justify-center rounded-lg hover:bg-zinc-50 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
                       aria-label="Increase quantity"
                     >
-                      <Plus size={18} strokeWidth={2.5} className="text-brand-blue" />
+                      <Plus
+                        size={18}
+                        strokeWidth={2.5}
+                        className="text-brand-blue"
+                      />
                     </button>
                   </div>
 
-                  <div className={`grid grid-cols-1 ${isGuest ? 'sm:grid-cols-2' : ''} gap-3`}>
+                  <div
+                    className={`grid grid-cols-1 ${isGuest ? "sm:grid-cols-2" : ""} gap-3`}
+                  >
                     <Link
                       href="/shop/cart"
-                      className="w-full flex items-center justify-center gap-3 py-3 rounded-2xl font-bold text-xs tracking-[0.05em] bg-brand-blue text-white hover:bg-atlantic-blue hover:shadow-xl hover:shadow-brand-blue/30 hover:-translate-y-0.5 transition-all shadow-lg shadow-brand-blue/20"
+                      className="w-full flex items-center justify-center gap-3 py-4 rounded-full font-bold text-xs tracking-[0.05em] bg-brand-blue text-white hover:bg-atlantic-blue hover:shadow-xl hover:shadow-brand-blue/30 hover:-translate-y-0.5 transition-all disabled:opacity-50 shadow-lg shadow-brand-blue/20 cursor-pointer"
                     >
                       <ShoppingBag size={16} strokeWidth={2.5} />
                       Checkout
@@ -503,7 +526,7 @@ export default function ProductDetailPage() {
                     {isGuest && (
                       <Link
                         href="/shop/register?professional=yes"
-                        className="w-full flex items-center justify-center gap-2 py-3 rounded-2xl font-bold text-xs tracking-[0.05em] bg-white text-brand-blue border-2 border-brand-blue hover:bg-brand-blue/5 hover:shadow-md transition-all text-center"
+                        className="w-full flex items-center justify-center gap-2 py-4 rounded-full font-bold text-xs tracking-[0.05em] bg-warm-gray text-atlantic-blue border border-warm-gray hover:border-brand-blue transition-all text-center"
                       >
                         Buy Now - Professional
                       </Link>
