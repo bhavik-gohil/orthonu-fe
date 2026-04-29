@@ -13,6 +13,7 @@ import {
   ShieldCheck
 } from "lucide-react";
 import Link from "next/link";
+import { getMainUrl } from "@/lib/subdomains";
 
 export default function StartPilotPage() {
   const [formData, setFormData] = useState({
@@ -255,7 +256,7 @@ export default function StartPilotPage() {
       {/* Footer Branding (Minimal) */}
       <footer className="py-12 border-t border-zinc-100 bg-warm-gray/50">
         <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-6">
-          <img src="/orthonu-you-got-this.png" alt="OrthoNu" className="h-18" />
+          <img src={getMainUrl("/orthonu-you-got-this.png")} alt="OrthoNu" className="h-18" />
           <p className="text-xs font-bold tracking-[0.2em] text-soft-dark/70">
             © 2026 OrthoNu. All Rights Reserved.
           </p>
