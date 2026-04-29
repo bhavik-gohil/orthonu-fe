@@ -31,13 +31,15 @@ export function proxy(req: NextRequest) {
   // Using the exact NEXT_PUBLIC_ variables from your updated .env
   const MAIN_DOMAIN = process.env.NEXT_PUBLIC_MAIN_DOMAIN;
   const SHOP_DOMAIN = process.env.NEXT_PUBLIC_SHOP_DOMAIN;
-  const ADMIN_DOMAIN = process.env.NEXT_PUBLIC_ADMIN_DOMAI;
+  const ADMIN_DOMAIN = process.env.NEXT_PUBLIC_ADMIN_DOMAIN;
+  const START_DOMAIN = process.env.NEXT_PUBLIC_START_DOMAIN;
 
   // Strip port from hostname if present
   const cleanHostname = hostname.split(":")[0];
 
   const isShop = cleanHostname === SHOP_DOMAIN;
   const isAdmin = cleanHostname === ADMIN_DOMAIN;
+  const isStart = cleanHostname === START_DOMAIN;
   const isMain = cleanHostname === MAIN_DOMAIN;
 
   // SHOP subdomain — internally rewrite to /shop/...
@@ -53,6 +55,14 @@ export function proxy(req: NextRequest) {
       new URL(`/admin${pathname}${url.search}`, req.url),
     );
   }
+
+  // START subdomain — internally rewrite to /start/...
+  if (isStart && !pathname.startsWith("/start")) {
+    return NextResponse.rewrite(
+      new URL(`/start${pathname}${url.search}`, req.url),
+    );
+  }
+
 
   // MAIN SITE — redirect /shop and /admin to their subdomains
   if (isMain) {
