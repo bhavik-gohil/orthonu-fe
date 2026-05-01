@@ -447,7 +447,17 @@ export default function ProductDetailPage() {
                 </span>
               )}
               {selectedVariant?.tag && (
-                <div className="text-[10px] font-bold tracking-[0.15em] px-2 py-1 rounded-full bg-brand-blue/30 text-soft-dark w-fit border border-brand-blue/50">
+                <div
+                  className="text-[10px] font-bold tracking-[0.15em] px-2 py-1 rounded-full bg-brand-blue/30 text-soft-dark w-fit border border-brand-blue/50"
+                  style={{
+                    backgroundColor: selectedVariant.color?.startsWith("#")
+                      ? `${selectedVariant.color}4D`
+                      : selectedVariant.color,
+                    borderColor: selectedVariant.color?.startsWith("#")
+                      ? `${selectedVariant.color}80`
+                      : selectedVariant.color,
+                  }}
+                >
                   {selectedVariant.tag}
                 </div>
               )}
