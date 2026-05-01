@@ -66,10 +66,13 @@ export default function ProductCard({
         {/* Product Tag */}
         {product.tag && (
           <div
-            className="absolute bottom-2 left-2 z-10 text-[10px] font-bold tracking-[0.1em] px-2.5 py-1 rounded-full text-soft-dark border border-brand-blue/50 backdrop-blur-md shadow-sm"
+            className="absolute bottom-3 left-3 z-10 text-[10px] font-bold tracking-[0.1em] px-2.5 py-1 rounded-full text-soft-dark border backdrop-blur-md shadow-sm"
             style={{
               backgroundColor: product.color?.startsWith("#")
                 ? `${product.color}4D`
+                : product.color,
+              borderColor: product.color?.startsWith("#")
+                ? `${product.color}80`
                 : product.color,
             }}
           >
