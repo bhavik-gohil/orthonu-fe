@@ -1,0 +1,4 @@
+export const SESSION_CONFIG = {
+  ADMIN_JWT_EXPIRES_IN: "45m",
+  ADMIN_GRACE_PERIOD_MS: 50 * 60 * 1000,
+};
