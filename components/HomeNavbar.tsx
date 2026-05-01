@@ -107,9 +107,9 @@ export default function HomeNavbar() {
             onClick={handleLogoClick}
             className={cn(
               "py-1.5 md:px-3 rounded-3xl transition-all duration-300 text-white",
-              (pathname === "/" || pathname === "") && !activeHash
-                ? "bg-atlantic-blue/10"
-                : "hover:bg-atlantic-blue/10",
+              (pathname === "/" || pathname === "") &&
+                !activeHash &&
+                "bg-atlantic-blue/10",
             )}
           >
             Home
@@ -118,9 +118,7 @@ export default function HomeNavbar() {
             href="/about"
             className={cn(
               "py-1.5 md:px-3 rounded-3xl transition-all duration-300 text-white",
-              pathname.startsWith("/about")
-                ? "bg-atlantic-blue/10"
-                : "hover:bg-atlantic-blue/10",
+              pathname.startsWith("/about") && "bg-atlantic-blue/10",
             )}
           >
             About
@@ -129,9 +127,7 @@ export default function HomeNavbar() {
             href="/resources"
             className={cn(
               "py-1.5 md:px-3 rounded-3xl transition-all duration-300 text-white",
-              pathname.startsWith("/resources")
-                ? "bg-atlantic-blue/10"
-                : "hover:bg-atlantic-blue/10",
+              pathname.startsWith("/resources") && "bg-atlantic-blue/10",
             )}
           >
             Resources
@@ -142,9 +138,8 @@ export default function HomeNavbar() {
             className={cn(
               "py-1.5 md:px-3 rounded-3xl transition-all duration-300 text-white",
               (pathname === "/" || pathname === "") &&
-                activeHash.includes("#partner-with-us")
-                ? "bg-atlantic-blue/10"
-                : "hover:bg-atlantic-blue/10",
+                activeHash.includes("#partner-with-us") &&
+                "bg-atlantic-blue/10",
             )}
           >
             Partner with Us
@@ -156,7 +151,7 @@ export default function HomeNavbar() {
           <Link
             href={shopUrl}
             target="_blank"
-            className="group w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 bg-warm-gray text-atlantic-blue border border-warm-gray hover:border-atlantic-blue hover:text-warm-gray rounded-full font-bold tracking-wide hover:bg-atlantic-blue hover:shadow-lg hover:shadow-brand-blue/20 hover:-translate-y-0.5 transition-all duration-300"
+            className="group w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3.5 bg-warm-gray text-atlantic-blue border border-warm-gray hover:border-atlantic-blue hover:text-warm-gray rounded-full font-bold tracking-wide hover:bg-atlantic-blue hover:shadow-lg hover:shadow-brand-blue/20 hover:-translate-y-0.5 transition-all duration-300"
           >
             Shop Solutions
             <ChevronRight

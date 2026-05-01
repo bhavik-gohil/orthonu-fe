@@ -55,12 +55,12 @@ export default function ProductCard({
       className={`group block cursor-pointer transition-all duration-200 hover:-translate-y-[3px] hover:shadow-[0_8px_24px_rgba(0,0,0,0.06)] rounded-3xl overflow-hidden bg-white border border-soft-dark/10 ${className}`}
     >
       {/* Image Container */}
-      <div 
-        className={`relative aspect-[4/3] flex items-center justify-center overflow-hidden`} 
-        style={{ 
-          backgroundColor: product.color?.startsWith("#") 
-            ? `${product.color}0D` 
-            : product.color 
+      <div
+        className={`relative aspect-[4/3] flex items-center justify-center overflow-hidden`}
+        style={{
+          backgroundColor: product.color?.startsWith("#")
+            ? `${product.color}0D`
+            : product.color,
         }}
       >
         {mainImage ? (
@@ -98,31 +98,50 @@ export default function ProductCard({
 
         <div className="flex flex-wrap gap-2">
           {/* Category Badge */}
-          {product.productCategory && (
+          {product.categories?.[0]?.productCategory && (
             <span
-              className="text-[9px] font-bold uppercase tracking-[0.15em] px-2 py-1 rounded-md text-soft-dark w-fit"
-              style={{ 
-                backgroundColor: product.color?.startsWith("#") 
-                  ? `${product.color}4D` 
-                  : product.color 
+              className="text-[9px] font-bold uppercase tracking-[0.1em] px-2 py-1 rounded-md text-soft-dark w-fit border border-brand-blue/0"
+              style={{
+                backgroundColor: product.color?.startsWith("#")
+                  ? `${product.color}4D`
+                  : product.color,
               }}
             >
-              {product.productCategory}
+              {product.categories[0].productCategory}
             </span>
           )}
 
-          {
-            product.tag &&
-            <div className="text-[10px] font-bold tracking-[0.15em] px-2 py-1 rounded-full bg-brand-blue/30 text-soft-dark w-fit">
-              {product.tag}
-            </div>
-          }
+          {product.isBundle && (
+            <span
+              className="text-[9px] font-bold uppercase tracking-[0.1em] px-2 py-1 rounded-md text-soft-dark w-fit  border border-brand-blue/0"
+              style={{
+                backgroundColor: product.color?.startsWith("#")
+                  ? `${product.color}4D`
+                  : product.color,
+              }}
+            >
+              Bundle
+            </span>
+          )}
 
           {/* Variant Indicator */}
           {(product?.variantCount || 0) > 1 && (
-            <span className="text-[9px] font-bold uppercase tracking-widest text-atlantic-blue bg-white px-2 py-1 rounded-full shadow-sm border border-atlantic-blue/20">
+            <span
+              className="text-[9px] font-bold uppercase tracking-[0.1em] px-2 py-1 rounded-md text-soft-dark w-fit border border-atlantic-blue/40"
+              style={{
+                backgroundColor: product.color?.startsWith("#")
+                  ? `${product.color}4D`
+                  : product.color,
+              }}
+            >
               {product.variantCount} Options
             </span>
+          )}
+
+          {product.tag && (
+            <div className="text-[10px] font-bold tracking-[0.1em] px-2 py-1 rounded-full bg-brand-blue/30 text-soft-dark w-fit border border-brand-blue/50">
+              {product.tag}
+            </div>
           )}
         </div>
 

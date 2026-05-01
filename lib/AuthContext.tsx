@@ -41,6 +41,7 @@ interface AuthContextType {
     register: (data: any) => Promise<any>;
     logout: (redirectPath?: string) => Promise<void>;
     refreshUser: () => Promise<void>;
+    extendSession: () => Promise<void>;
     verifyOtp: (data: { email: string, code: string, type: 'registration' | 'admin_login' | 'password_reset' }) => Promise<any>;
     resendOtp: (data: { email: string, type: 'registration' | 'admin_login' | 'password_reset' }) => Promise<any>;
     forgotPassword: (email: string) => Promise<any>;
@@ -54,6 +55,7 @@ const AuthContext = createContext<AuthContextType>({
     register: async () => { },
     logout: async (redirectPath?: string) => { },
     refreshUser: async () => { },
+    extendSession: async () => { },
     verifyOtp: async () => { },
     resendOtp: async () => { },
     forgotPassword: async () => { },
@@ -63,16 +65,20 @@ const AuthContext = createContext<AuthContextType>({
 export function AuthProvider({ children }: { children: React.ReactNode }) {
     const [user, setUser] = useState<User | null>(null);
     const [loading, setLoading] = useState(true);
+    const [showSessionModal, setShowSessionModal] = useState(false);
+    const [isExtending, setIsExtending] = useState(false);
     const router = useRouter();
 
     const fetchMe = useCallback(async () => {
         try {
-            console.log("Fetching current user...");
+            if (typeof window !== "undefined" && window.location.pathname.startsWith("/admin")) {
+                setLoading(false);
+                return;
+            }
+            setLoading(true);
             const data = await apiCall("GET", "/auth/me");
-            console.log("Current user fetched:", data);
             setUser(data);
         } catch (err) {
-            console.log("No active user session found.");
             setUser(null);
         } finally {
             setLoading(false);
@@ -82,6 +88,51 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     useEffect(() => {
         fetchMe();
     }, [fetchMe]);
+
+    // Listen for session expiration events from api-client
+    useEffect(() => {
+        const handleSessionExpired = () => {
+            const isAdminPath = window.location.pathname.startsWith("/admin");
+            if (isAdminPath) {
+                setShowSessionModal(true);
+            }
+        };
+
+        const handleSessionLogout = () => {
+            const isAdminPath = window.location.pathname.startsWith("/admin");
+            if (isAdminPath) {
+                setShowSessionModal(false);
+                setUser(null);
+                router.push("/admin/login");
+            }
+        };
+
+        window.addEventListener("session-expired", handleSessionExpired);
+        window.addEventListener("session-logout", handleSessionLogout);
+        return () => {
+            window.removeEventListener("session-expired", handleSessionExpired);
+            window.removeEventListener("session-logout", handleSessionLogout);
+        };
+    }, [router]);
+
+    const extendSession = async () => {
+        try {
+            setIsExtending(true);
+            const data = await apiCall("POST", "/admin/refresh-session");
+            if (data.user) {
+                setUser(data.user);
+                setShowSessionModal(false);
+            }
+        } catch (err) {
+            console.error("Failed to extend session:", err);
+            // If refresh fails, redirect to login directly (don't call logout() to avoid infinite loop)
+            setUser(null);
+            setShowSessionModal(false);
+            router.push("/admin/login");
+        } finally {
+            setIsExtending(false);
+        }
+    };
 
     const login = async (credentials: any) => {
         console.log("Attempting login...");
@@ -121,12 +172,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     };
 
     const logout = async (redirectPath: string = getShopUrl()) => {
-        console.log("Logging out...");
-        await apiCall("POST", "/auth/logout");
+        const isAdminPath = typeof window !== "undefined" && window.location.pathname.startsWith("/admin");
+        const url = isAdminPath ? "/admin/logout" : "/auth/logout";
+        
+        try {
+            await apiCall("POST", url);
+        } catch (err) {
+            // Gracefully handle — server may be down or token already invalid
+        }
         setUser(null);
-        console.log("Logged out successfully.");
-
-        // Redirect to the provided path or default to /shop
+        setShowSessionModal(false);
         router.push(redirectPath);
     };
 
@@ -138,12 +193,52 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             register, 
             logout, 
             refreshUser: fetchMe,
+            extendSession,
             verifyOtp,
             resendOtp,
             forgotPassword,
             resetPassword
         }}>
             {children}
+
+            {/* Session Expiry Modal */}
+            {showSessionModal && (
+                <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-300">
+                    <div className="bg-white rounded-3xl p-8 max-w-md w-full shadow-2xl border border-zinc-100 text-center space-y-6 transform animate-in slide-in-from-bottom-4 duration-500">
+                        <div className="w-20 h-20 bg-brand-blue/10 rounded-full flex items-center justify-center mx-auto">
+                            <svg className="w-10 h-10 text-brand-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                        </div>
+                        <div className="space-y-2">
+                            <h2 className="text-2xl font-black text-soft-dark tracking-tight">Session Expiring Soon</h2>
+                            <p className="text-zinc-500 font-medium">Your session will expire soon due to inactivity. Would you like to stay logged in?</p>
+                        </div>
+                        <div className="flex flex-col gap-3 pt-2">
+                            <button
+                                onClick={extendSession}
+                                disabled={isExtending}
+                                className="w-full py-4 bg-brand-blue text-white rounded-2xl font-bold hover:bg-atlantic-blue transition-all shadow-lg shadow-brand-blue/20 flex items-center justify-center gap-2"
+                            >
+                                {isExtending ? (
+                                    <>
+                                        <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                                        Extending...
+                                    </>
+                                ) : (
+                                    "Stay Logged In"
+                                )}
+                            </button>
+                            <button
+                                onClick={() => logout()}
+                                className="w-full py-4 text-zinc-400 font-bold hover:text-soft-dark transition-colors"
+                            >
+                                Log Out
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </AuthContext.Provider>
     );
 }

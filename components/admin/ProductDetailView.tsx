@@ -78,9 +78,9 @@ export default function ProductDetailView({
                             )}
                         </div>
                         <div className="flex items-center gap-3 mt-1">
-                            {product.productCategory && (
+                            {product.categories?.[0]?.productCategory && (
                                 <span className="text-xs text-zinc-400">
-                                    {product.productCategory}
+                                    {product.categories[0].productCategory}
                                 </span>
                             )}
                             {product.tag && (

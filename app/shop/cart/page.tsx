@@ -37,7 +37,7 @@ export default function CartPage() {
                   </h1>
                   <Link
                     href="/shop/cart/checkout"
-                    className="hidden sm:flex items-center gap-2 px-6 py-3 bg-brand-blue text-white font-black text-[11px] uppercase tracking-widest rounded-xl hover:bg-atlantic-blue hover:shadow-xl hover:shadow-brand-blue/30 hover:-translate-y-0.5 transition-all shadow-lg shadow-brand-blue/20"
+                    className="hidden sm:flex items-center gap-2 px-6 py-4 bg-brand-blue text-white font-extrabold text-[11px] uppercase tracking-widest rounded-full hover:bg-atlantic-blue hover:shadow-xl hover:shadow-brand-blue/30 hover:-translate-y-0.5 transition-all shadow-lg shadow-brand-blue/20"
                   >
                     <ShoppingBag size={16} strokeWidth={2.5} />
                     Checkout

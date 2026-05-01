@@ -31,12 +31,21 @@ function formatDate(iso: string) {
     });
 }
 
-function YouTubeEmbed({ videoId, caption }: { videoId: string; caption?: string }) {
+function VideoEmbed({ videoId, caption }: { videoId: string; caption?: string }) {
+    let embedUrl = "";
+    if (videoId.length === 11) {
+        // Assume YouTube ID
+        embedUrl = `https://www.youtube.com/embed/${videoId}?si=8aFwCR4TnoRTweIJ&rel=0`;
+    } else {
+        // Assume Vimeo ID
+        embedUrl = `https://player.vimeo.com/video/${videoId}`;
+    }
+
     return (
         <figure className="my-8">
             <div className="relative rounded-2xl overflow-hidden bg-black aspect-video shadow-xl">
                 <iframe
-                    src={`https://www.youtube.com/embed/${videoId}?si=8aFwCR4TnoRTweIJ&rel=0`}
+                    src={embedUrl}
                     title={caption || "Video"}
                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                     allowFullScreen
@@ -129,7 +138,7 @@ function ContentRenderer({ blocks }: { blocks: BlogContentBlock[] }) {
 
                     case "video":
                         return (
-                            <YouTubeEmbed
+                            <VideoEmbed
                                 key={i}
                                 videoId={block.videoId || ""}
                                 caption={block.caption}
@@ -285,14 +294,16 @@ export default function BlogDetailPage({
                 // Filter products matching the blog's product categories
                 const filtered = data.filter((p) =>
                     blog.productCategories.some(
-                        (cat) =>
-                            p.productCategory
+                        (cat) => {
+                            const pCat = p.categories?.[0]?.productCategory;
+                            return pCat
                                 ?.toLowerCase()
                                 .includes(cat.toLowerCase().replace("®", "")) ||
                             p.name.toLowerCase().includes("tweakz") &&
                             blog.productCategories.includes("Tweakz®") ||
-                            (p.productCategory === "Oral Relief" &&
-                                blog.productCategories.includes("Oral Relief"))
+                            (pCat === "Oral Relief" &&
+                                blog.productCategories.includes("Oral Relief"));
+                        }
                     )
                 );
                 setProducts(filtered.slice(0, 4));

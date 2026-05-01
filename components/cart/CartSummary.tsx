@@ -26,7 +26,7 @@ export default function CartSummary({ subtotal, itemCount }: CartSummaryProps) {
     };
 
     return (
-        <div className="bg-white rounded-2xl border border-zinc-100 shadow-lg p-8 space-y-6 sticky top-24">
+        <div className="bg-white rounded-3xl border border-zinc-100 shadow-lg p-8 space-y-6 sticky top-24">
             <h2 className="text-[11px] font-black  tracking-wide text-soft-dark text-opacity-60">
                 Order Summary
             </h2>
@@ -59,7 +59,7 @@ export default function CartSummary({ subtotal, itemCount }: CartSummaryProps) {
             <div className="space-y-3 pt-4">
                 <button
                     onClick={handleCheckout}
-                    className="w-full flex items-center justify-center gap-3 py-3 bg-brand-blue text-white font-bold text-xs tracking-wide rounded-xl hover:bg-atlantic-blue hover:shadow-xl hover:shadow-brand-blue/30 hover:-translate-y-0.5 transition-all shadow-lg shadow-brand-blue/20"
+                    className="w-full flex items-center justify-center gap-3 py-4 bg-brand-blue text-white font-extrabold text-xs tracking-wider rounded-full hover:bg-atlantic-blue hover:shadow-xl hover:shadow-brand-blue/30 hover:-translate-y-0.5 transition-all shadow-lg shadow-brand-blue/20"
                 >
                     <ShoppingBag size={18} strokeWidth={2.5} />
                     {user ? "Proceed to Checkout" : "Register to Checkout"}
@@ -69,7 +69,7 @@ export default function CartSummary({ subtotal, itemCount }: CartSummaryProps) {
                 {!user && (
                     <Link
                         href={getShopUrl("/register?professional=yes")}
-                        className="w-full flex items-center justify-center gap-3 py-3 bg-white text-brand-blue border-2 border-brand-blue font-bold text-xs tracking-wide rounded-xl hover:bg-brand-blue/5 hover:shadow-md hover:-translate-y-0.5 transition-all"
+                        className="w-full flex items-center justify-center gap-3 py-4 bg-warm-gray text-atlantic-blue border border-brand-blue/0 font-extrabold text-xs tracking-wider rounded-full hover:border-atlantic-blue transition-all"
                     >
                         Buy Now - Professional
                     </Link>
@@ -77,7 +77,7 @@ export default function CartSummary({ subtotal, itemCount }: CartSummaryProps) {
 
                 <Link
                     href={getShopUrl()}
-                    className="w-full flex items-center justify-center py-4 text-[10px] font-bold  tracking-[0.3em] text-soft-dark/60 hover:text-brand-blue transition-colors"
+                    className="w-full flex items-center justify-center py-4 text-[10px] font-bold  tracking-[0.1em] text-soft-dark/60 hover:text-brand-blue transition-colors"
                 >
                     Continue Shopping
                 </Link>

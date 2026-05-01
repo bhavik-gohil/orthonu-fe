@@ -42,8 +42,12 @@ export default function AdminLayout({
         ) {
           router.push("/admin");
         }
-      } catch (err) {
-        if (pathname !== "/admin/login") {
+      } catch (err: any) {
+        // If the session is expired, we let the AuthContext (or global interceptor) handle the modal.
+        // We only redirect if it's a general unauthorized error or missing token.
+        const isExpired = err.response?.data?.code === "SESSION_EXPIRED";
+        
+        if (pathname !== "/admin/login" && !isExpired) {
           router.push("/admin/login");
         }
       } finally {
@@ -56,10 +60,6 @@ export default function AdminLayout({
 
   const handleLogout = async () => {
     try {
-      // Ideally we have a /logout endpoint that clears the cookie
-      // For now, we just redirect, but the cookie will still exist
-      // unless we clear it on the server.
-      // I'll add a logout route to the backend.
       await apiCall("POST", "admin/logout");
     } catch (err) {
       /* silent */

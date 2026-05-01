@@ -72,13 +72,12 @@ export default function ShopNavbar() {
           <Link
             href={isSubdomainEnvironment() ? "/" : "/shop"}
             className={cn(
-              "flex items-center gap-2 text-white relative group py-1.5 md:px-3 rounded-3xl transition-all duration-300",
+              "py-1.5 md:px-3 rounded-3xl transition-all duration-300 text-white",
               (pathname === shopPrefix ||
                 pathname === "/shop" ||
                 (pathname === "/" && isSubdomainEnvironment())) &&
-                !activeCategory
-                ? "bg-atlantic-blue/10"
-                : "hover:bg-atlantic-blue/10",
+                !activeCategory &&
+                "bg-atlantic-blue/10",
             )}
           >
             Home
@@ -93,10 +92,9 @@ export default function ShopNavbar() {
               >
                 <Link
                   className={cn(
-                    "flex items-center gap-2 text-white relative group py-1.5 md:px-3 rounded-3xl transition-all duration-300",
-                    activeCategory === cat.productCategory
-                      ? "bg-atlantic-blue/10"
-                      : "hover:bg-atlantic-blue/10",
+                    "py-1.5 md:px-3 rounded-3xl transition-all duration-300 text-white",
+                    activeCategory === cat.productCategory &&
+                      "bg-atlantic-blue/10",
                   )}
                   href={`${shopPrefix}/?category=${encodeURIComponent(cat.productCategory)}`.replace(
                     "//",
@@ -113,11 +111,10 @@ export default function ShopNavbar() {
             <Link
               href={`${shopPrefix}/register?professional=yes`}
               className={cn(
-                "flex items-center gap-2 relative text-white group py-1.5 md:px-3 rounded-3xl transition-all duration-300",
-                searchParams.get("professional") === "yes" ||
-                  pathname.includes("register")
-                  ? "bg-atlantic-blue/10"
-                  : "hover:bg-atlantic-blue/10",
+                "py-1.5 md:px-3 rounded-3xl transition-all duration-300 text-white",
+                (searchParams.get("professional") === "yes" ||
+                  pathname.includes("register")) &&
+                  "bg-atlantic-blue/10",
               )}
             >
               For Professional

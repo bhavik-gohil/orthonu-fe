@@ -11,7 +11,7 @@ export interface BlogContentBlock {
     src?: string; // for images/videos
     alt?: string; // for images
     caption?: string; // for images
-    videoId?: string; // for YouTube videos (embedded)
+    videoId?: string; // for YouTube or Vimeo videos (embedded)
 }
 
 export interface Blog {
@@ -27,7 +27,7 @@ export interface Blog {
     images: string[]; // all images in the post
 }
 
-const YT_PLACEHOLDER = "Xt4X4FvXk2A"; // placeholder YouTube video ID
+const VIDEO_PLACEHOLDER = "Xt4X4FvXk2A"; // placeholder video ID
 
 export const blogs: Blog[] = [
     // ─────────────────────────────────────────────
@@ -371,7 +371,7 @@ export const blogs: Blog[] = [
             },
             {
                 type: "video",
-                videoId: YT_PLACEHOLDER,
+                videoId: VIDEO_PLACEHOLDER,
                 caption: "Dr. Sima Yakoby Epstein's keynote at ASCEND (Full talk — coming soon)",
             },
             {

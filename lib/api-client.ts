@@ -7,6 +7,24 @@ const apiClient = axios.create({
     withCredentials: true,
 });
 
+// Interceptor to catch session expiration
+apiClient.interceptors.response.use(
+    (response) => response,
+    (error) => {
+        if (error.response?.status === 401) {
+            const code = error.response?.data?.code;
+            if (typeof window !== "undefined") {
+                if (code === "SESSION_EXPIRED_GRACE" || code === "SESSION_EXPIRED") {
+                    window.dispatchEvent(new CustomEvent("session-expired"));
+                } else if (code === "SESSION_EXPIRED_FINAL") {
+                    window.dispatchEvent(new CustomEvent("session-logout"));
+                }
+            }
+        }
+        return Promise.reject(error);
+    }
+);
+
 export const apiCall = async (method: "GET" | "POST" | "PUT" | "DELETE" | "PATCH", url: string, data?: any) => {
     try {
         const response = await apiClient({
@@ -16,8 +34,8 @@ export const apiCall = async (method: "GET" | "POST" | "PUT" | "DELETE" | "PATCH
         });
         return response.data;
     } catch (error: any) {
-        // Do not spam console for expected 401s on /auth/me when checking session
-        if (url === "/auth/me" && error.response?.status === 401) {
+        // Do not spam console for expected 401s on session checks
+        if ((url === "/auth/me" || url === "/admin/me" || url === "admin/me") && error.response?.status === 401) {
             throw error;
         }
         console.error(`API Call Error (${method} ${url}):`, error.response?.data || error.message);
