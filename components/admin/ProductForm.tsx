@@ -19,7 +19,26 @@ import {
   ChevronUp,
   ChevronDown,
   PlayCircle,
+  GripVertical,
 } from "lucide-react";
+import { 
+  DndContext, 
+  closestCenter, 
+  KeyboardSensor, 
+  PointerSensor, 
+  useSensor, 
+  useSensors,
+  DragEndEvent
+} from '@dnd-kit/core';
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  verticalListSortingStrategy,
+  useSortable,
+} from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
+import { restrictToVerticalAxis } from '@dnd-kit/modifiers';
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 const USER_TYPES = {
@@ -132,10 +151,11 @@ export interface ColorItem {
 
 export interface UnifiedMediaItem {
   id?: number;
+  tempId: string; // Required for drag-and-drop sorting
   type: "image" | "video";
-  url?: string; // Video URL or existing media URL
-  file?: File; // New image file
-  previewUrl?: string; // Local preview for new file
+  url?: string;
+  file?: File;
+  previewUrl?: string;
 }
 
 export interface FormState {
@@ -218,6 +238,7 @@ export default function ProductForm({
         .filter((m: any) => !m.isExtra)
         .map((m: any) => ({
           id: m.id,
+          tempId: `existing-${m.id}`,
           type: m.type as "image" | "video",
           url: m.media,
         }));
@@ -225,6 +246,7 @@ export default function ProductForm({
         .filter((m: any) => m.isExtra)
         .map((m: any) => ({
           id: m.id,
+          tempId: `existing-${m.id}`,
           type: m.type as "image" | "video",
           url: m.media,
         }));
@@ -650,7 +672,7 @@ export default function ProductForm({
               onClick={() => {
                 setField("mainMedia", [
                   ...form.mainMedia,
-                  { type: "video", url: "" },
+                  { type: "video", url: "", tempId: `new-video-${Date.now()}` },
                 ]);
               }}
               className="text-[10px] font-bold uppercase tracking-widest text-brand-blue bg-brand-blue/10 px-3 py-1.5 rounded-lg flex items-center gap-2 cursor-pointer hover:bg-brand-blue hover:text-white transition-all"
@@ -667,10 +689,11 @@ export default function ProductForm({
           className="hidden"
           onChange={(e) => {
             const files = Array.from(e.target.files || []);
-            const newItems: UnifiedMediaItem[] = files.map((f) => ({
+            const newItems: UnifiedMediaItem[] = files.map((f, idx) => ({
               type: "image",
               file: f,
               previewUrl: URL.createObjectURL(f),
+              tempId: `new-img-${Date.now()}-${idx}`,
             }));
             setField("mainMedia", [...form.mainMedia, ...newItems]);
             if (standardImageRef.current) standardImageRef.current.value = "";
@@ -703,7 +726,7 @@ export default function ProductForm({
               onClick={() => {
                 setField("extraMedia", [
                   ...form.extraMedia,
-                  { type: "video", url: "" },
+                  { type: "video", url: "", tempId: `new-extra-video-${Date.now()}` },
                 ]);
               }}
               className="text-[10px] font-bold uppercase tracking-widest text-brand-blue bg-brand-blue/10 px-3 py-1.5 rounded-lg flex items-center gap-2 cursor-pointer hover:bg-brand-blue hover:text-white transition-all"
@@ -720,10 +743,11 @@ export default function ProductForm({
           className="hidden"
           onChange={(e) => {
             const files = Array.from(e.target.files || []);
-            const newItems: UnifiedMediaItem[] = files.map((f) => ({
+            const newItems: UnifiedMediaItem[] = files.map((f, idx) => ({
               type: "image",
               file: f,
               previewUrl: URL.createObjectURL(f),
+              tempId: `new-extra-img-${Date.now()}-${idx}`,
             }));
             setField("extraMedia", [...form.extraMedia, ...newItems]);
             if (extraFileRef.current) extraFileRef.current.value = "";
@@ -885,9 +909,22 @@ function MediaManager({
   items: UnifiedMediaItem[];
   onChange: (items: UnifiedMediaItem[]) => void;
 }) {
-  const move = (i: number, dir: "up" | "down") => {
-    onChange(moveItem(items, i, dir));
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
+
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+    if (over && active.id !== over.id) {
+      const oldIndex = items.findIndex((m) => m.tempId === active.id);
+      const newIndex = items.findIndex((m) => m.tempId === over.id);
+      onChange(arrayMove(items, oldIndex, newIndex));
+    }
   };
+
   const remove = (i: number) => {
     const next = items.filter((_, j) => j !== i);
     onChange(next);
@@ -899,107 +936,143 @@ function MediaManager({
   };
 
   return (
-    <div className="flex flex-col gap-3">
-      {items.length === 0 && (
-        <div className="text-center py-8 border-2 border-dashed border-zinc-100 rounded-xl">
-          <p className="text-xs text-zinc-400">No media added yet.</p>
+    <DndContext
+      sensors={sensors}
+      collisionDetection={closestCenter}
+      onDragEnd={handleDragEnd}
+      modifiers={[restrictToVerticalAxis]}
+    >
+      <SortableContext
+        items={items.map((m) => m.tempId)}
+        strategy={verticalListSortingStrategy}
+      >
+        <div className="flex flex-col gap-3">
+          {items.length === 0 && (
+            <div className="text-center py-8 border-2 border-dashed border-zinc-100 rounded-xl">
+              <p className="text-xs text-zinc-400">No media added yet.</p>
+            </div>
+          )}
+          {items.map((m, i) => (
+            <SortableMediaItem
+              key={m.tempId}
+              m={m}
+              index={i}
+              onRemove={() => remove(i)}
+              onUpdateUrl={(url) => updateUrl(i, url)}
+            />
+          ))}
         </div>
-      )}
-      {items.map((m, i) => {
-        const embedUrl = m.type === "video" && m.url ? toVideoEmbed(m.url) : "";
-        const isVideoValid = embedUrl && VIDEO_EMBED_PATTERN.test(embedUrl);
+      </SortableContext>
+    </DndContext>
+  );
+}
 
-        return (
-          <div
-            key={i}
-            className="flex items-center gap-4 p-4 bg-zinc-50 border border-zinc-100 rounded-2xl group transition-all hover:bg-white hover:shadow-md"
-          >
-            {/* Reorder Arrows */}
-            <div className="flex flex-col gap-1">
-              <button
-                type="button"
-                disabled={i === 0}
-                onClick={() => move(i, "up")}
-                className="text-zinc-400 hover:text-brand-blue disabled:opacity-0 transition-opacity p-1"
-              >
-                <ChevronUp size={20} />
-              </button>
-              <button
-                type="button"
-                disabled={i === items.length - 1}
-                onClick={() => move(i, "down")}
-                className="text-zinc-400 hover:text-brand-blue disabled:opacity-0 transition-opacity p-1"
-              >
-                <ChevronDown size={20} />
-              </button>
-            </div>
+function SortableMediaItem({
+  m,
+  index,
+  onRemove,
+  onUpdateUrl,
+}: {
+  m: UnifiedMediaItem;
+  index: number;
+  onRemove: () => void;
+  onUpdateUrl: (url: string) => void;
+}) {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: m.tempId });
 
-            {/* Media Preview (Larger) */}
-            {m.type === "image" ? (
-              <div className="w-72 aspect-auto rounded-xl bg-zinc-100 overflow-hidden shrink-0 border border-zinc-200 shadow-sm relative">
-                <img
-                  src={m.previewUrl || fullUrl(m.url)}
-                  className="w-full h-full object-cover"
-                  alt=""
-                />
-              </div>
-            ) : isVideoValid ? (
-              <div className="w-72 aspect-video rounded-xl bg-zinc-100 overflow-hidden shrink-0 border border-zinc-200 shadow-sm relative">
-                <iframe
-                  src={embedUrl}
-                  className="w-full h-full pointer-events-none"
-                  tabIndex={-1}
-                />
-              </div>
-            ) : (
-              <div className="w-72 aspect-video rounded-xl bg-zinc-100 overflow-hidden shrink-0 border border-zinc-200 shadow-sm relative">
-                <div className="w-full h-full flex flex-col items-center justify-center text-zinc-400 gap-2">
-                  <PlayCircle size={32} strokeWidth={1.5} />
-                  <span className="text-[10px] font-bold uppercase tracking-widest">
-                    Enter Video URL
-                  </span>
-                </div>
-              </div>
-            )}
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    zIndex: isDragging ? 50 : 0,
+    opacity: isDragging ? 0.5 : 1,
+  };
 
-            {/* Info / Input */}
-            <div className="flex-1 min-w-0">
-              {m.type === "video" ? (
-                <div className="space-y-1">
-                  <label className="text-[10px] font-bold uppercase tracking-widest text-zinc-400">
-                    Video Source URL
-                  </label>
-                  <input
-                    type="text"
-                    placeholder="Paste YouTube or Vimeo URL"
-                    value={m.url || ""}
-                    onChange={(e) => updateUrl(i, e.target.value)}
-                    className="w-full px-4 py-2.5 bg-white border border-zinc-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-blue/20 transition-all"
-                  />
-                </div>
-              ) : (
-                <div className="space-y-1">
-                  <p className="text-sm font-bold text-soft-dark truncate">
-                    {m.file ? m.file.name : "Existing Image"}
-                  </p>
-                  <p className="text-[10px] text-zinc-400 uppercase font-bold tracking-wider">
-                    Product Image
-                  </p>
-                </div>
-              )}
-            </div>
+  const embedUrl = m.type === "video" && m.url ? toVideoEmbed(m.url) : "";
+  const isVideoValid = embedUrl && VIDEO_EMBED_PATTERN.test(embedUrl);
 
-            {/* Actions */}
-            <button
-              type="button"
-              onClick={() => remove(i)}
-              className="text-zinc-400 hover:text-rose-500 transition-colors p-2 rounded-lg hover:bg-rose-50"
-            >
-              <Trash2 size={18} />
-            </button>
+  return (
+    <div ref={setNodeRef} style={style} className="touch-none">
+      <div className={`flex items-center gap-4 p-4 bg-zinc-50 border border-zinc-100 rounded-2xl group transition-all ${isDragging ? "shadow-2xl bg-white ring-2 ring-brand-blue/20" : "hover:bg-white hover:shadow-md"}`}>
+        {/* Drag Handle */}
+        <div
+          {...attributes}
+          {...listeners}
+          className="cursor-grab active:cursor-grabbing p-2 text-zinc-300 hover:text-brand-blue transition-colors shrink-0"
+        >
+          <GripVertical size={20} />
+        </div>
+
+        {/* Media Preview (Larger) */}
+        {m.type === "image" ? (
+          <div className="w-72 aspect-auto rounded-xl bg-zinc-100 overflow-hidden shrink-0 border border-zinc-200 shadow-sm relative">
+            <img
+              src={m.previewUrl || fullUrl(m.url)}
+              className="w-full h-full object-cover"
+              alt=""
+            />
           </div>
-        );
-      })}
+        ) : isVideoValid ? (
+          <div className="w-72 aspect-video rounded-xl bg-zinc-100 overflow-hidden shrink-0 border border-zinc-200 shadow-sm relative">
+            <iframe
+              src={embedUrl}
+              className="w-full h-full pointer-events-none"
+              tabIndex={-1}
+            />
+          </div>
+        ) : (
+          <div className="w-72 aspect-video rounded-xl bg-zinc-100 overflow-hidden shrink-0 border border-zinc-200 shadow-sm relative">
+            <div className="w-full h-full flex flex-col items-center justify-center text-zinc-400 gap-2">
+              <PlayCircle size={32} strokeWidth={1.5} />
+              <span className="text-[10px] font-bold uppercase tracking-widest">
+                Enter Video URL
+              </span>
+            </div>
+          </div>
+        )}
+
+        {/* Info / Input */}
+        <div className="flex-1 min-w-0">
+          {m.type === "video" ? (
+            <div className="space-y-1">
+              <label className="text-[10px] font-bold uppercase tracking-widest text-zinc-400">
+                Video Source URL
+              </label>
+              <input
+                type="text"
+                placeholder="Paste YouTube or Vimeo URL"
+                value={m.url || ""}
+                onChange={(e) => onUpdateUrl(e.target.value)}
+                className="w-full px-4 py-2.5 bg-white border border-zinc-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-blue/20 transition-all"
+              />
+            </div>
+          ) : (
+            <div className="space-y-1">
+              <p className="text-sm font-bold text-soft-dark truncate">
+                {m.file ? m.file.name : "Existing Image"}
+              </p>
+              <p className="text-[10px] text-zinc-400 uppercase font-bold tracking-wider">
+                Product Image
+              </p>
+            </div>
+          )}
+        </div>
+
+        {/* Actions */}
+        <button
+          type="button"
+          onClick={onRemove}
+          className="text-zinc-400 hover:text-rose-500 transition-colors p-2 rounded-lg hover:bg-rose-50"
+        >
+          <Trash2 size={18} />
+        </button>
+      </div>
     </div>
   );
 }
