@@ -63,6 +63,20 @@ export default function ProductCard({
             : product.color,
         }}
       >
+        {/* Product Tag */}
+        {product.tag && (
+          <div
+            className="absolute bottom-2 left-2 z-10 text-[10px] font-bold tracking-[0.1em] px-2.5 py-1 rounded-full text-soft-dark border border-brand-blue/50 backdrop-blur-md shadow-sm"
+            style={{
+              backgroundColor: product.color?.startsWith("#")
+                ? `${product.color}4D`
+                : product.color,
+            }}
+          >
+            {product.tag}
+          </div>
+        )}
+
         {mainImage ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img
@@ -138,11 +152,6 @@ export default function ProductCard({
             </span>
           )}
 
-          {product.tag && (
-            <div className="text-[10px] font-bold tracking-[0.1em] px-2 py-1 rounded-full bg-brand-blue/30 text-soft-dark w-fit border border-brand-blue/50">
-              {product.tag}
-            </div>
-          )}
         </div>
 
         <div className="flex items-center justify-between border-t border-zinc-50">
