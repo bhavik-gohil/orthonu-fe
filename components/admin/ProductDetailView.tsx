@@ -263,13 +263,6 @@ export default function ProductDetailView({
                     </h3>
                     <div className="flex gap-2">
                         <Link
-                            href={`/shop/product/${product.slug}`}
-                            target="_blank"
-                            className="px-4 py-2 text-[10px] font-bold uppercase tracking-widest text-brand-blue border border-brand-blue/20 rounded-xl hover:bg-brand-blue/5 transition-all flex items-center gap-2"
-                        >
-                            <ExternalLink size={14} /> Preview
-                        </Link>
-                        <Link
                             href={`/admin/product/add-variant?parentId=${product.id}`}
                             className="px-5 py-2 text-[10px] font-bold uppercase tracking-widest text-brand-blue bg-brand-blue/5 border border-brand-blue/10 hover:bg-brand-blue hover:text-white rounded-xl transition-all flex items-center gap-2 cursor-pointer"
                         >
