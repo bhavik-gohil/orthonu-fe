@@ -80,9 +80,11 @@ export default function CartItemRow({
               <span
                 className="text-[9px] font-bold uppercase tracking-[0.1em] px-2 py-1 rounded-md text-soft-dark w-fit"
                 style={{
-                  backgroundColor: item.color?.startsWith("#")
-                    ? `${item.color}33`
-                    : item.color,
+                  backgroundColor: item.color
+                    ? item.color.startsWith("#")
+                      ? `${item.color}33`
+                      : item.color
+                    : undefined,
                 }}
               >
                 {item.productCategory}
@@ -92,9 +94,11 @@ export default function CartItemRow({
               <span
                 className="text-[9px] font-bold uppercase tracking-[0.1em] px-2 py-1 rounded-md text-soft-dark w-fit"
                 style={{
-                  backgroundColor: item.color?.startsWith("#")
-                    ? `${item.color}33`
-                    : item.color,
+                  backgroundColor: item.color
+                    ? item.color.startsWith("#")
+                      ? `${item.color}33`
+                      : item.color
+                    : undefined,
                 }}
               >
                 Bundle
@@ -104,9 +108,9 @@ export default function CartItemRow({
               <span
                 className="text-[9px] font-bold uppercase tracking-[0.1em] px-2 py-1 rounded-md text-soft-dark w-fit border border-atlantic-blue/40"
                 style={{
-                  backgroundColor: item.color?.startsWith("#")
+                  backgroundColor: (item.color || undefined)?.startsWith("#")
                     ? `${item.color}33`
-                    : item.color,
+                    : item.color || undefined,
                 }}
               >
                 {item.variantName}

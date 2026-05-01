@@ -71,8 +71,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     const fetchMe = useCallback(async () => {
         try {
-            // AuthContext only handles shop user sessions.
-            // Admin session verification is handled by AdminLayout separately.
+            if (typeof window !== "undefined" && window.location.pathname.startsWith("/admin")) {
+                setLoading(false);
+                return;
+            }
+            setLoading(true);
             const data = await apiCall("GET", "/auth/me");
             setUser(data);
         } catch (err) {
@@ -89,16 +92,28 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     // Listen for session expiration events from api-client
     useEffect(() => {
         const handleSessionExpired = () => {
-            // Only show for admin users or if in admin path
             const isAdminPath = window.location.pathname.startsWith("/admin");
             if (isAdminPath) {
                 setShowSessionModal(true);
             }
         };
 
+        const handleSessionLogout = () => {
+            const isAdminPath = window.location.pathname.startsWith("/admin");
+            if (isAdminPath) {
+                setShowSessionModal(false);
+                setUser(null);
+                router.push("/admin/login");
+            }
+        };
+
         window.addEventListener("session-expired", handleSessionExpired);
-        return () => window.removeEventListener("session-expired", handleSessionExpired);
-    }, []);
+        window.addEventListener("session-logout", handleSessionLogout);
+        return () => {
+            window.removeEventListener("session-expired", handleSessionExpired);
+            window.removeEventListener("session-logout", handleSessionLogout);
+        };
+    }, [router]);
 
     const extendSession = async () => {
         try {
@@ -196,8 +211,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                             </svg>
                         </div>
                         <div className="space-y-2">
-                            <h2 className="text-2xl font-black text-soft-dark tracking-tight">Session Expired</h2>
-                            <p className="text-zinc-500 font-medium">Your session has timed out due to inactivity. Would you like to stay logged in?</p>
+                            <h2 className="text-2xl font-black text-soft-dark tracking-tight">Session Expiring Soon</h2>
+                            <p className="text-zinc-500 font-medium">Your session will expire soon due to inactivity. Would you like to stay logged in?</p>
                         </div>
                         <div className="flex flex-col gap-3 pt-2">
                             <button

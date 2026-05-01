@@ -487,9 +487,9 @@ export default function ProductDetailPage() {
 
             {/* Variant Switching Pills - Moved below price */}
             {variants.length > 1 && (
-              <div className="space-y-3 pt-2">
-                <h3 className="text-[10px] font-extrabold text-soft-dark/40 uppercase tracking-[0.15em]">
-                  Available Variants
+              <div className="space-y-2 pt-2">
+                <h3 className="text-[10px] font-extrabold text-soft-dark/60 uppercase tracking-[0.1em]">
+                  Available Options
                   {/* ({variants.length}) */}
                 </h3>
                 <div className="flex flex-wrap gap-2">

@@ -11,11 +11,14 @@ const apiClient = axios.create({
 apiClient.interceptors.response.use(
     (response) => response,
     (error) => {
-        // Trigger session-expired only if backend sends the specific code
-        if (error.response?.status === 401 && error.response?.data?.code === "SESSION_EXPIRED") {
-            // Trigger a custom event that AuthContext can listen for
+        if (error.response?.status === 401) {
+            const code = error.response?.data?.code;
             if (typeof window !== "undefined") {
-                window.dispatchEvent(new CustomEvent("session-expired"));
+                if (code === "SESSION_EXPIRED_GRACE" || code === "SESSION_EXPIRED") {
+                    window.dispatchEvent(new CustomEvent("session-expired"));
+                } else if (code === "SESSION_EXPIRED_FINAL") {
+                    window.dispatchEvent(new CustomEvent("session-logout"));
+                }
             }
         }
         return Promise.reject(error);
