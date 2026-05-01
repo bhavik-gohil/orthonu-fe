@@ -12,7 +12,7 @@ import {
   Loader2,
   ShoppingBag,
   ChevronLeft,
-  PlayCircle,
+  Play,
   FileText,
   Info,
   Tag,
@@ -46,6 +46,27 @@ function toVideoEmbed(url: string): string {
   if (vimeoMatch) return `https://player.vimeo.com/video/${vimeoMatch[1]}`;
 
   return url;
+}
+
+// Helper function to get video thumbnail URLs
+function toVideoThumbnail(url: string): string {
+  if (!url) return "";
+  
+  // YouTube
+  let ytId = null;
+  const ytMatch = url.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))([a-zA-Z0-9_-]{11})/);
+  if (ytMatch) ytId = ytMatch[1];
+  if (ytId) return `https://img.youtube.com/vi/${ytId}/mqdefault.jpg`;
+
+  // Vimeo
+  let vimeoId = null;
+  // Match standard, player, and manage URLs
+  const vimeoMatch = url.match(/vimeo\.com\/(?:video\/|channels\/|groups\/|.*\/)?(\d+)/);
+  if (vimeoMatch) vimeoId = vimeoMatch[1];
+  
+  if (vimeoId) return `https://vumbnail.com/${vimeoId}.jpg`;
+
+  return "";
 }
 
 const Skeleton = ({ className }: { className?: string }) => (
@@ -363,7 +384,7 @@ export default function ProductDetailPage() {
                     title={selectedVariant?.name}
                   />
                   <div className="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-colors flex items-center justify-center">
-                    <PlayCircle
+                    <Play
                       size={48}
                       className="text-white opacity-0 group-hover:opacity-100 transition-opacity drop-shadow-lg"
                     />
@@ -392,8 +413,16 @@ export default function ProductDetailPage() {
                     className={`relative shrink-0 w-16 h-16 rounded-xl overflow-hidden border-2 transition-all duration-200 ${activeImage === i ? "border-brand-blue shadow-sm" : "border-zinc-100 md:hover:border-zinc-300"}`}
                   >
                     {m.type === "video" ? (
-                      <div className="w-full h-full bg-brand-blue/10 flex items-center justify-center text-brand-blue">
-                        <PlayCircle size={16} />
+                      <div className="w-full h-full relative">
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img
+                          src={toVideoThumbnail(m.media)}
+                          alt=""
+                          className="w-full h-full object-cover"
+                        />
+                        <div className="absolute inset-0 flex items-center justify-center bg-black/20 text-white">
+                          <Play size={20} fill="currentColor" className="opacity-80" />
+                        </div>
                       </div>
                     ) : (
                       // eslint-disable-next-line @next/next/no-img-element
@@ -849,8 +878,16 @@ export default function ProductDetailPage() {
                 className={`shrink-0 w-16 h-16 rounded-xl overflow-hidden border-2 transition-all duration-200 ${lightboxIndex === i ? "border-brand-blue" : "border-transparent opacity-100"}`}
               >
                 {m.type === "video" ? (
-                  <div className="w-full h-full bg-white/10 flex items-center justify-center text-white">
-                    <PlayCircle size={20} />
+                  <div className="w-full h-full relative">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={toVideoThumbnail(m.media)}
+                      alt=""
+                      className="w-full h-full object-cover"
+                    />
+                    <div className="absolute inset-0 flex items-center justify-center bg-black/20 text-white">
+                      <Play size={20} fill="currentColor" className="opacity-80" />
+                    </div>
                   </div>
                 ) : (
                   // eslint-disable-next-line @next/next/no-img-element
