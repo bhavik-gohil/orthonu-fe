@@ -14,6 +14,11 @@ import {
   Link2,
   FileText,
   CheckCircle2,
+  ChevronLeft,
+  ChevronRight,
+  ChevronUp,
+  ChevronDown,
+  PlayCircle,
 } from "lucide-react";
 
 // ─── Constants ────────────────────────────────────────────────────────────────
@@ -23,20 +28,48 @@ const USER_TYPES = {
 } as const;
 type UserType = (typeof USER_TYPES)[keyof typeof USER_TYPES];
 
-const MAX_STANDARD_IMAGES = 10;
+const MAX_STANDARD_IMAGES = 30;
 const MAX_EXTRA_MEDIA = 5;
 const MAX_IMAGE_SIZE = 10 * 1024 * 1024;
 const MAX_PDF_SIZE = 20 * 1024 * 1024;
-const YOUTUBE_EMBED_PATTERN = /^https:\/\/(www\.)?youtube\.com\/embed\//;
+const VIDEO_EMBED_PATTERN =
+  /^https:\/\/(www\.)?(youtube\.com\/embed\/|player\.vimeo\.com\/video\/)/;
 
-function toYoutubeEmbed(url: string): string {
+function toVideoEmbed(url: string): string {
   if (!url) return url;
-  if (YOUTUBE_EMBED_PATTERN.test(url)) return url;
-  const shortMatch = url.match(/youtu\.be\/([a-zA-Z0-9_-]{11})/);
-  if (shortMatch) return `https://www.youtube.com/embed/${shortMatch[1]}`;
-  const watchMatch = url.match(/[?&]v=([a-zA-Z0-9_-]{11})/);
-  if (watchMatch) return `https://www.youtube.com/embed/${watchMatch[1]}`;
+  if (VIDEO_EMBED_PATTERN.test(url)) return url;
+
+  // YouTube
+  const ytShortMatch = url.match(/youtu\.be\/([a-zA-Z0-9_-]{11})/);
+  if (ytShortMatch) return `https://www.youtube.com/embed/${ytShortMatch[1]}`;
+  const ytWatchMatch = url.match(/[?&]v=([a-zA-Z0-9_-]{11})/);
+  if (ytWatchMatch) return `https://www.youtube.com/embed/${ytWatchMatch[1]}`;
+
+  // Vimeo
+  // Match standard URLs, manage/videos URLs, and showcase URLs. Also extract privacy hash if present.
+  const vimeoMatch = url.match(/vimeo\.com\/(?:.*\/)?(\d+)(?:\/([a-zA-Z0-9]+))?/);
+  if (vimeoMatch) {
+    let embed = `https://player.vimeo.com/video/${vimeoMatch[1]}`;
+    if (vimeoMatch[2]) {
+      embed += `?h=${vimeoMatch[2]}`;
+    }
+    return embed;
+  }
+
   return url;
+}
+
+function moveItem<T>(
+  arr: T[],
+  index: number,
+  direction: "up" | "down" | "left" | "right",
+): T[] {
+  const next = [...arr];
+  const targetIndex =
+    direction === "up" || direction === "left" ? index - 1 : index + 1;
+  if (targetIndex < 0 || targetIndex >= arr.length) return arr;
+  [next[index], next[targetIndex]] = [next[targetIndex], next[index]];
+  return next;
 }
 
 function fullUrl(path: string | undefined): string {
@@ -75,7 +108,6 @@ export interface ProductItem {
   name: string;
   intro?: string;
   slug: string;
-  productCategory: string;
   tag?: string;
   description?: string;
   additionalInfo?: Record<string, string>;
@@ -89,6 +121,7 @@ export interface ProductItem {
   bundleItems?: ProductBundle[];
   variants?: ProductItem[];
   color?: string;
+  categories?: Category[];
 }
 
 export interface ColorItem {
@@ -97,12 +130,12 @@ export interface ColorItem {
   colorName: string;
 }
 
-export interface ExtraMediaEntry {
+export interface UnifiedMediaItem {
   id?: number;
-  type: "image" | "video" | "pdf";
-  file?: File;
-  youtubeUrl?: string;
-  previewUrl?: string;
+  type: "image" | "video";
+  url?: string; // Video URL or existing media URL
+  file?: File; // New image file
+  previewUrl?: string; // Local preview for new file
 }
 
 export interface FormState {
@@ -113,15 +146,12 @@ export interface FormState {
   productCategory: string;
   regularPrice: string;
   professionalPrice: string;
-  standardImages: { file: File; previewUrl: string }[];
-  currentImages?: { id: number; media: string }[];
-  standardYoutubeUrls: { id?: number; url: string }[];
-  extraMedia: ExtraMediaEntry[];
+  mainMedia: UnifiedMediaItem[];
+  extraMedia: UnifiedMediaItem[];
   tag: string;
   description: string;
   kvPairs: { key: string; value: string }[];
   isBundle: boolean;
-  bundleItems: number[];
   color: string;
 }
 
@@ -133,14 +163,12 @@ export const defaultForm = (): FormState => ({
   productCategory: "",
   regularPrice: "",
   professionalPrice: "",
-  standardImages: [],
-  standardYoutubeUrls: [{ url: "" }],
+  mainMedia: [],
   extraMedia: [],
   tag: "",
   description: "",
   kvPairs: [{ key: "", value: "" }],
   isBundle: false,
-  bundleItems: [],
   color: "",
 });
 
@@ -183,30 +211,33 @@ export default function ProductForm({
       const professionalPrice =
         initialData.prices?.find((p) => p.userType === USER_TYPES.PROFESSIONAL)
           ?.price || 0;
+      const allMedia = (initialData.media || []).sort(
+        (a: any, b: any) => a.displayOrder - b.displayOrder,
+      );
+      const mainMedia: UnifiedMediaItem[] = allMedia
+        .filter((m: any) => !m.isExtra)
+        .map((m: any) => ({
+          id: m.id,
+          type: m.type as "image" | "video",
+          url: m.media,
+        }));
+      const extraMedia: UnifiedMediaItem[] = allMedia
+        .filter((m: any) => m.isExtra)
+        .map((m: any) => ({
+          id: m.id,
+          type: m.type as "image" | "video",
+          url: m.media,
+        }));
+
       return {
         name: initialData.name,
         intro: initialData.intro || "",
         variantName: initialData.variantName || "",
-        productCategory: initialData.productCategory,
+        productCategory: initialData.categories?.[0]?.productCategory || "",
         regularPrice: String(regularPrice),
         professionalPrice: String(professionalPrice),
-        standardImages: [],
-        currentImages:
-          initialData.media
-            ?.filter((m) => !m.isExtra && m.type === "image")
-            .map((m) => ({ id: m.id, media: m.media })) || [],
-        standardYoutubeUrls: initialData.media
-          ?.filter((m) => m.type === "video" && !m.isExtra)
-          .map((m) => ({ id: m.id, url: m.media })) || [{ url: "" }],
-        extraMedia:
-          initialData.media
-            ?.filter((m) => m.isExtra)
-            .map((m) => ({
-              id: m.id,
-              type: m.type as any,
-              youtubeUrl: m.type === "video" ? m.media : undefined,
-              previewUrl: m.type !== "video" ? fullUrl(m.media) : undefined,
-            })) || [],
+        mainMedia,
+        extraMedia,
         tag: initialData.tag || "",
         description: initialData.description || "",
         kvPairs: initialData.additionalInfo
@@ -216,7 +247,6 @@ export default function ProductForm({
             }))
           : [{ key: "", value: "" }],
         isBundle: initialData.isBundle,
-        bundleItems: initialData.bundleItems?.map((b) => b.productRefId) || [],
         color: initialData.color || "",
       };
     }
@@ -225,6 +255,7 @@ export default function ProductForm({
   const [colors, setColors] = useState<ColorItem[]>([]);
   const [submitting, setSubmitting] = useState(false);
   const standardImageRef = useRef<HTMLInputElement>(null);
+  const extraFileRef = useRef<HTMLInputElement>(null);
 
   const setField = <K extends keyof FormState>(key: K, value: FormState[K]) =>
     setForm((prev) => ({ ...prev, [key]: value }));
@@ -243,8 +274,8 @@ export default function ProductForm({
   }, []);
 
   const validate = (f: FormState, isEdit: boolean): string | null => {
-    if (!isEdit && !f.name.trim()) return "Product name is required.";
-    if (!isEdit && !f.productCategory) return "Category is required.";
+    if (!f.name.trim()) return "Product name is required.";
+    if (!f.productCategory) return "Category is required.";
 
     if (!isEdit || f.regularPrice) {
       if (
@@ -255,36 +286,23 @@ export default function ProductForm({
         return "A valid regular price is required.";
     }
 
-    const totalImages =
-      f.standardImages.length + (f.currentImages?.length || 0);
-    if (!isEdit && totalImages === 0)
-      return "At least one product image is required.";
-
-    for (const img of f.standardImages)
-      if (img.file.size > MAX_IMAGE_SIZE)
-        return `Image "${img.file.name}" exceeds the 10 MB limit.`;
-
-    const filledYtUrls = f.standardYoutubeUrls.filter((u) => u.url.trim());
-    for (const item of filledYtUrls)
-      if (!YOUTUBE_EMBED_PATTERN.test(toYoutubeEmbed(item.url)))
-        return `"${item.url}" is not a valid YouTube URL.`;
-
-    for (const em of f.extraMedia) {
+    for (const m of [...f.mainMedia, ...f.extraMedia]) {
       if (
-        em.type === "video" &&
-        (!em.youtubeUrl?.trim() ||
-          !YOUTUBE_EMBED_PATTERN.test(toYoutubeEmbed(em.youtubeUrl)))
-      )
-        return "Extra video must be a valid YouTube URL.";
-      if (em.type === "image" && em.file && em.file.size > MAX_IMAGE_SIZE)
-        return `Extra image "${em.file.name}" exceeds 10 MB.`;
-      if (em.type === "pdf" && em.file && em.file.size > MAX_PDF_SIZE)
-        return `PDF "${em.file.name}" exceeds 20 MB.`;
+        m.type === "video" &&
+        (!m.url?.trim() || !VIDEO_EMBED_PATTERN.test(toVideoEmbed(m.url)))
+      ) {
+        return "Please provide a valid YouTube or Vimeo URL.";
+      }
     }
 
-    if (!isEdit && !f.description.trim()) return "Description is required.";
-    if (f.isBundle && f.bundleItems.length === 0)
-      return "Select at least one product for the bundle.";
+    if (
+      f.mainMedia.filter((m) => m.type === "image").length === 0 &&
+      !initialData
+    ) {
+      return "At least one image is required.";
+    }
+
+    if (!f.description.trim()) return "Description is required.";
     return null;
   };
 
@@ -309,51 +327,44 @@ export default function ProductForm({
         price: Number(f.professionalPrice),
       });
     fd.append("prices", JSON.stringify(prices));
-    f.standardImages.forEach((img) => fd.append("standardImages", img.file));
-    const validYtItems = f.standardYoutubeUrls
-      .map((u) => ({ ...u, url: u.url.trim() }))
-      .filter((u) => u.url);
-    const newYtUrls = validYtItems
-      .filter((u) => !u.id)
-      .map((u) => toYoutubeEmbed(u.url));
-    if (newYtUrls.length > 0)
-      fd.append("standardYoutubeUrls", JSON.stringify(newYtUrls));
 
-    const allExtra = [...f.extraMedia];
-    const fileOnlyExtra = allExtra.filter((e) => e.type !== "video");
-    const extraMediaMeta = allExtra.map((item) =>
-      item.type === "video"
-        ? { type: "video", youtubeUrl: item.youtubeUrl }
-        : { type: item.type, fileIndex: fileOnlyExtra.indexOf(item) },
-    );
-    if (extraMediaMeta.length)
-      fd.append("extraMediaMeta", JSON.stringify(extraMediaMeta));
-    fileOnlyExtra.forEach((e) => e.file && fd.append("extraFiles", e.file));
+    // Process Unified Media
+    const mediaLayout: any[] = [];
+    const standardImages: File[] = [];
+    const extraFiles: File[] = [];
+    const keepMediaIds: number[] = [];
 
-    // Build keepMediaIds array for existing media (only for updates, not for variant creation)
-    if (!isVariantCreation) {
-      const keepMediaIds: number[] = [];
-
-      // Keep existing standard images
-      if (f.currentImages) {
-        f.currentImages.forEach((img) => keepMediaIds.push(img.id));
-      }
-
-      // Keep existing YouTube videos
-      validYtItems
-        .filter((u) => u.id)
-        .forEach((item) => {
-          if (item.id) keepMediaIds.push(item.id);
-        });
-
-      // Keep existing extra media
-      f.extraMedia.forEach((em) => {
-        if (em.id) keepMediaIds.push(em.id);
+    const processMedia = (items: UnifiedMediaItem[], isExtra: boolean) => {
+      const targetFiles = isExtra ? extraFiles : standardImages;
+      items.forEach((m) => {
+        if (m.id) {
+          keepMediaIds.push(m.id);
+          const payload: any = { id: m.id, type: m.type, isExtra };
+          if (m.type === "video" && m.url) {
+            payload.url = toVideoEmbed(m.url);
+          }
+          mediaLayout.push(payload);
+        } else if (m.type === "video" && m.url) {
+          mediaLayout.push({
+            type: "video",
+            url: toVideoEmbed(m.url),
+            isExtra,
+          });
+        } else if (m.type === "image" && m.file) {
+          const fileIndex = targetFiles.length;
+          targetFiles.push(m.file);
+          mediaLayout.push({ type: "image", fileIndex, isExtra });
+        }
       });
+    };
 
-      if (keepMediaIds.length > 0)
-        fd.append("keepMediaIds", JSON.stringify(keepMediaIds));
-    }
+    processMedia(f.mainMedia, false);
+    processMedia(f.extraMedia, true);
+
+    fd.append("mediaLayout", JSON.stringify(mediaLayout));
+    fd.append("keepMediaIds", JSON.stringify(keepMediaIds));
+    standardImages.forEach((file) => fd.append("standardImages", file));
+    extraFiles.forEach((file) => fd.append("extraFiles", file));
     fd.append("tag", f.tag);
     fd.append("description", f.description);
     fd.append(
@@ -368,11 +379,6 @@ export default function ProductForm({
         ),
       ),
     );
-    if (f.isBundle)
-      fd.append(
-        "bundleItems",
-        JSON.stringify(f.bundleItems.map((id) => ({ productRefId: id }))),
-      );
     return fd;
   };
 
@@ -404,7 +410,11 @@ export default function ProductForm({
       }
 
       await apiUpload(url, buildFormData(form, isVariant), method);
-      form.standardImages.forEach((img) => URL.revokeObjectURL(img.previewUrl));
+      
+      // Cleanup preview URLs
+      [...form.mainMedia, ...form.extraMedia].forEach((m) => {
+        if (m.previewUrl) URL.revokeObjectURL(m.previewUrl);
+      });
 
       const successMessage = isVariant
         ? "Variant added successfully!"
@@ -579,7 +589,7 @@ export default function ProductForm({
               placeholder="Detailed product description…"
               value={form.description}
               onChange={(e) => setField("description", e.target.value)}
-              className={`${inputCls} min-h-[120px] resize-none`}
+              className={`${inputCls} min-h-[120px]`}
             />
           </div>
           <KVBuilder
@@ -625,195 +635,104 @@ export default function ProductForm({
       </section>
 
       <section className={sectionCls}>
-        <div>
+        <div className="flex items-center justify-between mb-2">
           <h2 className={sectionHeading}>Product Media {!isVariant && "*"}</h2>
-          <p className="text-xs text-zinc-400 mt-0.5">
-            Images (JPEG, PNG, WebP · max 10 MB each)
-          </p>
-        </div>
-        <div className="flex flex-col gap-4">
-          <label className="flex flex-col items-center justify-center gap-3 border-2 border-dashed border-zinc-200 rounded-xl p-10 cursor-pointer hover:border-brand-blue hover:bg-brand-blue/5 transition-all group">
-            <div className="p-4 bg-brand-blue/10 rounded-xl text-brand-blue group-hover:bg-brand-blue group-hover:text-white transition-all">
-              <ImageIcon size={32} />
-            </div>
-            <div className="text-center space-y-1">
-              <span className="block text-sm font-bold text-soft-dark">
-                Click to select images
-              </span>
-              <span className="block text-[10px] uppercase font-bold text-zinc-400 tracking-wider">
-                Up to {MAX_STANDARD_IMAGES} images · JPEG, PNG, WebP
-              </span>
-            </div>
-            <input
-              ref={standardImageRef}
-              type="file"
-              accept="image/jpeg,image/png,image/webp"
-              multiple
-              className="hidden"
-              onChange={(e) => {
-                const newFiles = Array.from(e.target.files || []);
-                if (newFiles.length === 0) return;
-                const combined = [
-                  ...form.standardImages,
-                  ...newFiles.map((f) => ({
-                    file: f,
-                    previewUrl: URL.createObjectURL(f),
-                  })),
-                ];
-                setField(
-                  "standardImages",
-                  combined.slice(
-                    0,
-                    MAX_STANDARD_IMAGES - (form.currentImages?.length || 0),
-                  ),
-                );
-                if (standardImageRef.current)
-                  standardImageRef.current.value = "";
-              }}
-            />
-          </label>
-          {/* Image Preview Grid */}
-          <div className="grid grid-cols-5 gap-2">
-            {form.currentImages?.map((img, i) => (
-              <div
-                key={`curr-${i}`}
-                className="relative group rounded-xl overflow-hidden aspect-square bg-zinc-100 border border-zinc-100"
-              >
-                <img
-                  src={fullUrl(img.media)}
-                  alt=""
-                  className="w-full h-full object-cover"
-                />
-                <button
-                  type="button"
-                  onClick={() => {
-                    setField(
-                      "currentImages",
-                      form.currentImages?.filter((_, j) => j !== i),
-                    );
-                  }}
-                  className="absolute top-1 right-1 bg-black/60 text-white rounded-full p-0.5 opacity-0 group-hover:opacity-100 transition-opacity hover:bg-rose-500"
-                >
-                  <X size={11} />
-                </button>
-              </div>
-            ))}
-            {form.standardImages.map((img, i) => (
-              <div
-                key={`new-${i}`}
-                className="relative group rounded-xl overflow-hidden aspect-square bg-zinc-100 border border-zinc-100"
-              >
-                <img
-                  src={img.previewUrl}
-                  alt={img.file.name}
-                  className="w-full h-full object-cover"
-                />
-                <button
-                  type="button"
-                  onClick={() => {
-                    URL.revokeObjectURL(img.previewUrl);
-                    setField(
-                      "standardImages",
-                      form.standardImages.filter((_, j) => j !== i),
-                    );
-                  }}
-                  className="absolute top-1 right-1 bg-black/60 text-white rounded-full p-0.5 opacity-0 group-hover:opacity-100 transition-opacity hover:bg-rose-500"
-                >
-                  <X size={11} />
-                </button>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* YouTube Video Section */}
-        <div className="flex flex-col gap-2 mt-4">
-          <div className="flex items-center justify-between">
-            <label className="text-xs font-medium text-zinc-500 flex items-center gap-1">
-              Video (<Link2 size={11} /> YouTube){" "}
-              <span className="text-zinc-400 font-normal">(Optional)</span>
-            </label>
+          <div className="flex items-center gap-2">
             <button
               type="button"
-              onClick={() =>
-                setField("standardYoutubeUrls", [
-                  ...form.standardYoutubeUrls,
-                  { url: "" },
-                ])
-              }
+              onClick={() => standardImageRef.current?.click()}
+              className="text-[10px] font-bold uppercase tracking-widest text-brand-blue bg-brand-blue/10 px-3 py-1.5 rounded-lg flex items-center gap-2 cursor-pointer hover:bg-brand-blue hover:text-white transition-all"
+            >
+              <PlusCircle size={12} strokeWidth={3} /> Add Images
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setField("mainMedia", [
+                  ...form.mainMedia,
+                  { type: "video", url: "" },
+                ]);
+              }}
               className="text-[10px] font-bold uppercase tracking-widest text-brand-blue bg-brand-blue/10 px-3 py-1.5 rounded-lg flex items-center gap-2 cursor-pointer hover:bg-brand-blue hover:text-white transition-all"
             >
               <PlusCircle size={12} strokeWidth={3} /> Add Video
             </button>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {form.standardYoutubeUrls.map((item, i) => (
-              <YoutubeUrlInput
-                key={i}
-                value={item.url}
-                onChange={(val) => {
-                  const next = [...form.standardYoutubeUrls];
-                  next[i] = { ...next[i], url: val };
-                  setField("standardYoutubeUrls", next);
-                }}
-                onRemove={
-                  form.standardYoutubeUrls.length > 1
-                    ? () =>
-                        setField(
-                          "standardYoutubeUrls",
-                          form.standardYoutubeUrls.filter((_, j) => j !== i),
-                        )
-                    : undefined
-                }
-              />
-            ))}
-          </div>
         </div>
+        <input
+          ref={standardImageRef}
+          type="file"
+          accept="image/*"
+          multiple
+          className="hidden"
+          onChange={(e) => {
+            const files = Array.from(e.target.files || []);
+            const newItems: UnifiedMediaItem[] = files.map((f) => ({
+              type: "image",
+              file: f,
+              previewUrl: URL.createObjectURL(f),
+            }));
+            setField("mainMedia", [...form.mainMedia, ...newItems]);
+            if (standardImageRef.current) standardImageRef.current.value = "";
+          }}
+        />
+        <MediaManager
+          items={form.mainMedia}
+          onChange={(items) => setField("mainMedia", items)}
+        />
       </section>
 
       <section className={sectionCls}>
-        <div className="flex items-center justify-between mb-4">
-          <div>
-            <h2 className={sectionHeading}>
-              Extra Media{" "}
-              <span className="text-zinc-400 font-normal text-xs">
-                (Optional · up to {MAX_EXTRA_MEDIA})
-              </span>
-            </h2>
+        <div className="flex items-center justify-between mb-2">
+          <div className="flex flex-col">
+            <h2 className={sectionHeading}>Extra Content</h2>
             <p className="text-xs text-zinc-400 mt-0.5">
-              Images, YouTube URLs, or PDFs
+              Additional images or videos shown in gallery
             </p>
           </div>
-          <button
-            type="button"
-            disabled={form.extraMedia.length >= MAX_EXTRA_MEDIA}
-            onClick={() =>
-              setField("extraMedia", [...form.extraMedia, { type: "image" }])
-            }
-            className="text-[10px] font-bold uppercase tracking-widest text-brand-blue bg-brand-blue/10 px-3 py-1.5 rounded-lg flex items-center gap-2 cursor-pointer hover:bg-brand-blue hover:text-white transition-all"
-          >
-            <PlusCircle size={12} strokeWidth={3} /> Add
-          </button>
-        </div>
-        <div className="flex flex-col gap-4">
-          {form.extraMedia.map((em, i) => (
-            <ExtraMediaRow
-              key={i}
-              entry={em}
-              onChange={(patch) => {
-                const updated = [...form.extraMedia];
-                updated[i] = { ...updated[i], ...patch };
-                setField("extraMedia", updated);
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={() => extraFileRef.current?.click()}
+              className="text-[10px] font-bold uppercase tracking-widest text-brand-blue bg-brand-blue/10 px-3 py-1.5 rounded-lg flex items-center gap-2 cursor-pointer hover:bg-brand-blue hover:text-white transition-all"
+            >
+              <PlusCircle size={12} strokeWidth={3} /> Add Images
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setField("extraMedia", [
+                  ...form.extraMedia,
+                  { type: "video", url: "" },
+                ]);
               }}
-              onRemove={() =>
-                setField(
-                  "extraMedia",
-                  form.extraMedia.filter((_, j) => j !== i),
-                )
-              }
-            />
-          ))}
+              className="text-[10px] font-bold uppercase tracking-widest text-brand-blue bg-brand-blue/10 px-3 py-1.5 rounded-lg flex items-center gap-2 cursor-pointer hover:bg-brand-blue hover:text-white transition-all"
+            >
+              <PlusCircle size={12} strokeWidth={3} /> Add Video
+            </button>
+          </div>
         </div>
+        <input
+          ref={extraFileRef}
+          type="file"
+          accept="image/*"
+          multiple
+          className="hidden"
+          onChange={(e) => {
+            const files = Array.from(e.target.files || []);
+            const newItems: UnifiedMediaItem[] = files.map((f) => ({
+              type: "image",
+              file: f,
+              previewUrl: URL.createObjectURL(f),
+            }));
+            setField("extraMedia", [...form.extraMedia, ...newItems]);
+            if (extraFileRef.current) extraFileRef.current.value = "";
+          }}
+        />
+        <MediaManager
+          items={form.extraMedia}
+          onChange={(items) => setField("extraMedia", items)}
+        />
       </section>
 
       <section className={sectionCls}>
@@ -823,13 +742,6 @@ export default function ProductForm({
           checked={form.isBundle}
           onChange={(v) => setField("isBundle", v)}
         />
-        {form.isBundle && (
-          <BundleSelector
-            products={products}
-            selected={form.bundleItems}
-            onChange={(ids) => setField("bundleItems", ids)}
-          />
-        )}
       </section>
 
       <div className="pt-12 flex justify-end bg-zinc-50 -mx-8 -mb-8 p-8 border-t border-zinc-100 mt-8 rounded-b-xl">
@@ -884,21 +796,39 @@ function KVBuilder({
             placeholder="Value"
             value={pair.value}
             onChange={(e) => update(i, "value", e.target.value)}
-            className={inputCls + " col-span-7"}
+            className={inputCls + " col-span-6"}
           />
-          <button
-            type="button"
-            onClick={() =>
-              onChange(
-                pairs.length > 1
-                  ? pairs.filter((_, j) => j !== i)
-                  : [{ key: "", value: "" }],
-              )
-            }
-            className="col-span-1 flex items-center justify-center text-zinc-400 hover:text-rose-500 transition-colors"
-          >
-            <Trash2 size={14} />
-          </button>
+          <div className="col-span-2 flex items-center gap-1">
+            <button
+              type="button"
+              disabled={i === 0}
+              onClick={() => onChange(moveItem(pairs, i, "up"))}
+              className="text-zinc-400 hover:text-brand-blue disabled:opacity-30"
+            >
+              <ChevronUp size={14} />
+            </button>
+            <button
+              type="button"
+              disabled={i === pairs.length - 1}
+              onClick={() => onChange(moveItem(pairs, i, "down"))}
+              className="text-zinc-400 hover:text-brand-blue disabled:opacity-30"
+            >
+              <ChevronDown size={14} />
+            </button>
+            <button
+              type="button"
+              onClick={() =>
+                onChange(
+                  pairs.length > 1
+                    ? pairs.filter((_, j) => j !== i)
+                    : [{ key: "", value: "" }],
+                )
+              }
+              className="text-zinc-400 hover:text-rose-500 transition-colors ml-1"
+            >
+              <Trash2 size={14} />
+            </button>
+          </div>
         </div>
       ))}
       <button
@@ -908,168 +838,6 @@ function KVBuilder({
       >
         <PlusCircle size={12} /> Add Field
       </button>
-    </div>
-  );
-}
-
-function ExtraMediaRow({
-  entry,
-  onChange,
-  onRemove,
-}: {
-  entry: ExtraMediaEntry;
-  onChange: (patch: Partial<ExtraMediaEntry>) => void;
-  onRemove: () => void;
-}) {
-  const embedUrl =
-    entry.type === "video" && entry.youtubeUrl?.trim()
-      ? toYoutubeEmbed(entry.youtubeUrl.trim())
-      : "";
-  const ytValid = embedUrl ? YOUTUBE_EMBED_PATTERN.test(embedUrl) : false;
-  return (
-    <div className="flex flex-col gap-3 p-4 bg-zinc-50 border border-zinc-100 rounded-xl">
-      <div className="flex items-start gap-2">
-        <select
-          value={entry.type}
-          onChange={(e) =>
-            onChange({
-              type: e.target.value as any,
-              file: undefined,
-              youtubeUrl: undefined,
-              previewUrl: undefined,
-            })
-          }
-          className="px-3 py-2 border border-zinc-200 rounded-lg text-xs bg-white focus:outline-none focus:ring-2 cursor-pointer shrink-0"
-        >
-          <option value="image">Image</option>
-          <option value="video">YouTube URL</option>
-          <option value="pdf">PDF</option>
-        </select>
-        {entry.type === "video" ? (
-          <input
-            type="text"
-            placeholder="Paste any YouTube URL"
-            value={entry.youtubeUrl || ""}
-            onChange={(e) => onChange({ youtubeUrl: e.target.value })}
-            className={inputCls + " flex-1"}
-          />
-        ) : (
-          <label className="flex-1 flex items-center gap-2 px-4 py-2.5 border border-zinc-200 rounded-xl text-sm bg-white cursor-pointer hover:border-brand-blue/40 transition-colors">
-            {entry.type === "pdf" ? (
-              <FileText size={13} className="text-zinc-400 shrink-0" />
-            ) : (
-              <ImageIcon size={13} className="text-zinc-400 shrink-0" />
-            )}
-            <span className="text-zinc-400 text-xs truncate">
-              {entry.file
-                ? entry.file.name
-                : `Choose ${entry.type === "pdf" ? "PDF" : "Image"}…`}
-            </span>
-            <input
-              type="file"
-              accept={entry.type === "pdf" ? "application/pdf" : "image/*"}
-              className="hidden"
-              onChange={(e) => {
-                const file = e.target.files?.[0];
-                if (!file) return;
-                onChange({
-                  file,
-                  previewUrl:
-                    entry.type === "image"
-                      ? URL.createObjectURL(file)
-                      : undefined,
-                });
-              }}
-            />
-          </label>
-        )}
-        <button
-          type="button"
-          onClick={onRemove}
-          className="text-zinc-400 hover:text-rose-500 transition-colors shrink-0 mt-2.5"
-        >
-          <X size={14} />
-        </button>
-      </div>
-      {entry.type === "image" && entry.previewUrl && (
-        <img
-          src={entry.previewUrl}
-          alt="preview"
-          className="rounded-xl w-28 h-28 object-cover border border-zinc-100"
-        />
-      )}
-      {entry.type === "video" && ytValid && (
-        <div className="rounded-xl overflow-hidden aspect-video w-full max-w-xs bg-zinc-100">
-          <iframe src={embedUrl} className="w-full h-full" allowFullScreen />
-        </div>
-      )}
-      {entry.type === "pdf" && entry.file && (
-        <div className="flex items-center gap-2 text-xs text-zinc-500">
-          <FileText size={12} /> {entry.file.name}
-        </div>
-      )}
-    </div>
-  );
-}
-
-function BundleSelector({
-  products,
-  selected,
-  onChange,
-}: {
-  products: ProductItem[];
-  selected: number[];
-  onChange: (ids: number[]) => void;
-}) {
-  const toggle = (id: number) =>
-    onChange(
-      selected.includes(id)
-        ? selected.filter((s) => s !== id)
-        : [...selected, id],
-    );
-  const available = products.filter((p) => !selected.includes(p.id));
-  const selectedProducts = products.filter((p) => selected.includes(p.id));
-  return (
-    <div className="flex flex-col gap-3 mt-4">
-      {selectedProducts.length > 0 && (
-        <div className="flex flex-wrap gap-2">
-          {selectedProducts.map((p) => (
-            <span
-              key={p.id}
-              className="flex items-center gap-1.5 bg-brand-blue/10 text-brand-blue text-xs font-medium px-3 py-1.5 rounded-full"
-            >
-              {p.name}
-              <button
-                type="button"
-                onClick={() => toggle(p.id)}
-                className="hover:text-rose-500"
-              >
-                <X size={11} />
-              </button>
-            </span>
-          ))}
-        </div>
-      )}
-      <p className="text-xs text-zinc-500">Select products for bundle:</p>
-      <div className="max-h-44 overflow-y-auto flex flex-col gap-0.5 border border-zinc-100 rounded-xl p-2 bg-white">
-        {available.length === 0 ? (
-          <p className="text-xs text-zinc-400 text-center py-4">
-            No more products
-          </p>
-        ) : (
-          available.map((p) => (
-            <button
-              key={p.id}
-              type="button"
-              onClick={() => toggle(p.id)}
-              className="flex items-center gap-2.5 px-3 py-2 rounded-lg hover:bg-zinc-50 text-left transition-colors cursor-pointer text-sm text-zinc-700 italic font-bold"
-            >
-              <Plus size={12} className="text-zinc-400 italic font-bold" />{" "}
-              {p.name}
-            </button>
-          ))
-        )}
-      </div>
     </div>
   );
 }
@@ -1110,44 +878,128 @@ function CheckboxToggle({
   );
 }
 
-function YoutubeUrlInput({
-  value,
+function MediaManager({
+  items,
   onChange,
-  onRemove,
 }: {
-  value: string;
-  onChange: (v: string) => void;
-  onRemove?: () => void;
+  items: UnifiedMediaItem[];
+  onChange: (items: UnifiedMediaItem[]) => void;
 }) {
-  const embedUrl = value.trim() ? toYoutubeEmbed(value.trim()) : "";
-  const isValid = embedUrl ? YOUTUBE_EMBED_PATTERN.test(embedUrl) : false;
+  const move = (i: number, dir: "up" | "down") => {
+    onChange(moveItem(items, i, dir));
+  };
+  const remove = (i: number) => {
+    const next = items.filter((_, j) => j !== i);
+    onChange(next);
+  };
+  const updateUrl = (i: number, url: string) => {
+    const next = [...items];
+    next[i] = { ...next[i], url };
+    onChange(next);
+  };
+
   return (
-    <div className="flex flex-col gap-2 bg-zinc-50 p-4 rounded-xl border border-zinc-100">
-      <div className="flex items-center gap-2">
-        <input
-          type="text"
-          placeholder="Paste any YouTube URL"
-          value={value}
-          onChange={(e) => onChange(e.target.value)}
-          className={inputCls}
-        />
-        {onRemove && (
-          <button
-            type="button"
-            onClick={onRemove}
-            className="text-zinc-400 hover:text-rose-500"
-          >
-            <X size={15} />
-          </button>
-        )}
-      </div>
-      {isValid && (
-        <iframe
-          src={embedUrl}
-          className="rounded-lg aspect-video w-full"
-          allowFullScreen
-        />
+    <div className="flex flex-col gap-3">
+      {items.length === 0 && (
+        <div className="text-center py-8 border-2 border-dashed border-zinc-100 rounded-xl">
+          <p className="text-xs text-zinc-400">No media added yet.</p>
+        </div>
       )}
+      {items.map((m, i) => {
+        const embedUrl = m.type === "video" && m.url ? toVideoEmbed(m.url) : "";
+        const isVideoValid = embedUrl && VIDEO_EMBED_PATTERN.test(embedUrl);
+
+        return (
+          <div
+            key={i}
+            className="flex items-center gap-4 p-4 bg-zinc-50 border border-zinc-100 rounded-2xl group transition-all hover:bg-white hover:shadow-md"
+          >
+            {/* Reorder Arrows */}
+            <div className="flex flex-col gap-1">
+              <button
+                type="button"
+                disabled={i === 0}
+                onClick={() => move(i, "up")}
+                className="text-zinc-400 hover:text-brand-blue disabled:opacity-0 transition-opacity p-1"
+              >
+                <ChevronUp size={20} />
+              </button>
+              <button
+                type="button"
+                disabled={i === items.length - 1}
+                onClick={() => move(i, "down")}
+                className="text-zinc-400 hover:text-brand-blue disabled:opacity-0 transition-opacity p-1"
+              >
+                <ChevronDown size={20} />
+              </button>
+            </div>
+
+            {/* Media Preview (Larger) */}
+            {m.type === "image" ? (
+              <div className="w-72 aspect-auto rounded-xl bg-zinc-100 overflow-hidden shrink-0 border border-zinc-200 shadow-sm relative">
+                <img
+                  src={m.previewUrl || fullUrl(m.url)}
+                  className="w-full h-full object-cover"
+                  alt=""
+                />
+              </div>
+            ) : isVideoValid ? (
+              <div className="w-72 aspect-video rounded-xl bg-zinc-100 overflow-hidden shrink-0 border border-zinc-200 shadow-sm relative">
+                <iframe
+                  src={embedUrl}
+                  className="w-full h-full pointer-events-none"
+                  tabIndex={-1}
+                />
+              </div>
+            ) : (
+              <div className="w-72 aspect-video rounded-xl bg-zinc-100 overflow-hidden shrink-0 border border-zinc-200 shadow-sm relative">
+                <div className="w-full h-full flex flex-col items-center justify-center text-zinc-400 gap-2">
+                  <PlayCircle size={32} strokeWidth={1.5} />
+                  <span className="text-[10px] font-bold uppercase tracking-widest">
+                    Enter Video URL
+                  </span>
+                </div>
+              </div>
+            )}
+
+            {/* Info / Input */}
+            <div className="flex-1 min-w-0">
+              {m.type === "video" ? (
+                <div className="space-y-1">
+                  <label className="text-[10px] font-bold uppercase tracking-widest text-zinc-400">
+                    Video Source URL
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="Paste YouTube or Vimeo URL"
+                    value={m.url || ""}
+                    onChange={(e) => updateUrl(i, e.target.value)}
+                    className="w-full px-4 py-2.5 bg-white border border-zinc-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-blue/20 transition-all"
+                  />
+                </div>
+              ) : (
+                <div className="space-y-1">
+                  <p className="text-sm font-bold text-soft-dark truncate">
+                    {m.file ? m.file.name : "Existing Image"}
+                  </p>
+                  <p className="text-[10px] text-zinc-400 uppercase font-bold tracking-wider">
+                    Product Image
+                  </p>
+                </div>
+              )}
+            </div>
+
+            {/* Actions */}
+            <button
+              type="button"
+              onClick={() => remove(i)}
+              className="text-zinc-400 hover:text-rose-500 transition-colors p-2 rounded-lg hover:bg-rose-50"
+            >
+              <Trash2 size={18} />
+            </button>
+          </div>
+        );
+      })}
     </div>
   );
 }

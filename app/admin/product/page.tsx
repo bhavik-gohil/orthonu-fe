@@ -189,53 +189,79 @@ function ListView({
       </Card>
     );
 
-  return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-      {products.map((product, i) => (
-        <Card
-          key={i}
-          className="group hover:border-brand-blue/30 hover:shadow-xl hover:shadow-brand-blue/5 transition-all duration-300"
-          padding="medium"
-        >
-          <div className="flex items-start justify-between">
-            <div className="flex flex-col gap-2">
-              <span className="text-[9px] font-black uppercase tracking-widest text-brand-blue/60">
-                {product.productCategory}
-              </span>
-              <h3 className="text-lg font-bold text-soft-dark group-hover:text-brand-blue transition-colors">
-                {product.name}
-              </h3>
-              <div className="flex items-center gap-2 mt-1">
-                {product.isBundle && (
-                  <span className="text-[9px] font-bold text-fresh-mint bg-fresh-mint/10 px-2.5 py-1 rounded-full uppercase tracking-tighter">
-                    Bundle
-                  </span>
-                )}
-                {product.variants && product.variants.length > 0 && (
-                  <span className="text-[9px] font-bold text-soft-plum bg-soft-plum/10 px-2.5 py-1 rounded-full uppercase tracking-tighter">
-                    {product.variants.length} variant{product.variants.length > 1 ? "s" : ""}
-                  </span>
-                )}
-              </div>
-            </div>
+  // Group products by category
+  const groupedProducts = products.reduce(
+    (acc, p) => {
+      const cat = (p as any).categories?.[0]?.productCategory || "Uncategorized";
+      if (!acc[cat]) acc[cat] = [];
+      acc[cat].push(p);
+      return acc;
+    },
+    {} as Record<string, ProductItem[]>,
+  );
 
-            <div className="flex gap-2">
-              <button
-                onClick={() => onDeleteClick(product)}
-                className="w-10 h-10 flex items-center justify-center rounded-xl bg-rose-50 text-rose-500 border border-rose-100 opacity-0 group-hover:opacity-100 hover:bg-rose-500 hover:text-white transition-all cursor-pointer"
-                title="Delete Product"
-              >
-                <Trash2 size={16} />
-              </button>
-              <button
-                onClick={() => onViewClick(product)}
-                className="px-6 py-2 text-[10px] font-bold uppercase tracking-widest rounded-xl bg-zinc-50 text-soft-dark border border-zinc-200 hover:bg-brand-blue hover:text-white hover:border-brand-blue hover:shadow-lg hover:shadow-brand-blue/20 transition-all cursor-pointer"
-              >
-                Manage
-              </button>
-            </div>
+  const categoryNames = Object.keys(groupedProducts).sort();
+
+  return (
+    <div className="space-y-12">
+      {categoryNames.map((cat) => (
+        <div key={cat} className="space-y-4">
+          <div className="flex items-center gap-4">
+            <h2 className="text-[10px] font-black uppercase tracking-[0.3em] text-brand-blue whitespace-nowrap">
+              {cat}
+            </h2>
+            <div className="flex-1 h-px bg-zinc-100" />
+            <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest">
+              {groupedProducts[cat].length} Item{groupedProducts[cat].length !== 1 ? "s" : ""}
+            </span>
           </div>
-        </Card>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {groupedProducts[cat].map((product, i) => (
+              <Card
+                key={i}
+                className="group hover:border-brand-blue/30 hover:shadow-xl hover:shadow-brand-blue/5 transition-all duration-300"
+                padding="medium"
+              >
+                <div className="flex items-start justify-between">
+                  <div className="flex flex-col gap-2">
+                    <h3 className="text-lg font-bold text-soft-dark group-hover:text-brand-blue transition-colors">
+                      {product.name}
+                    </h3>
+                    <div className="flex items-center gap-2 mt-1">
+                      {product.isBundle && (
+                        <span className="text-[9px] font-bold text-atlantic-blue bg-brand-blue/10 px-2.5 py-1 rounded-full uppercase tracking-tighter">
+                          Bundle
+                        </span>
+                      )}
+                      {product.variants && product.variants.length > 0 && (
+                        <span className="text-[9px] font-bold text-atlantic-blue bg-brand-blue/10 px-2.5 py-1 rounded-full uppercase tracking-tighter">
+                          {product.variants.length} variant{product.variants.length > 1 ? "s" : ""}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => onDeleteClick(product)}
+                      className="w-10 h-10 flex items-center justify-center rounded-xl bg-rose-50 text-rose-500 border border-rose-100 opacity-0 group-hover:opacity-100 hover:bg-rose-500 hover:text-white transition-all cursor-pointer"
+                      title="Delete Product"
+                    >
+                      <Trash2 size={16} />
+                    </button>
+                    <button
+                      onClick={() => onViewClick(product)}
+                      className="px-6 py-2 text-[10px] font-bold uppercase tracking-widest rounded-xl bg-zinc-50 text-soft-dark border border-zinc-200 hover:bg-brand-blue hover:text-white hover:border-brand-blue hover:shadow-lg hover:shadow-brand-blue/20 transition-all cursor-pointer"
+                    >
+                      Manage
+                    </button>
+                  </div>
+                </div>
+              </Card>
+            ))}
+          </div>
+        </div>
       ))}
     </div>
   );

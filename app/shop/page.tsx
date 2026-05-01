@@ -41,7 +41,7 @@ function ShopContent() {
   }, []);
 
   const filtered = activeCategory
-    ? products.filter((p) => p.productCategory === activeCategory)
+    ? products.filter((p) => p.categories?.some((c) => c.productCategory === activeCategory))
     : products;
 
   const grouped = activeCategory
@@ -52,7 +52,7 @@ function ShopContent() {
       .map((cat) => ({
         name: cat.productCategory,
         items: products.filter(
-          (p) => p.productCategory === cat.productCategory,
+          (p) => p.categories?.some((c) => c.productCategory === cat.productCategory),
         ),
       }))
       .filter((g) => g.items.length > 0);

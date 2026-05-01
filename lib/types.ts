@@ -23,7 +23,6 @@ export interface Product {
     name: string;
     intro: string;
     tag: string;
-    productCategory: string;
     description: string;
     additionalInfo: Record<string, string> | null;
     isBundle: boolean;
@@ -37,6 +36,7 @@ export interface Product {
     bundleItems?: ProductBundle[];
     variants?: Product[];
     color?: string;
+    categories?: Category[];
 }
 
 export interface Category {

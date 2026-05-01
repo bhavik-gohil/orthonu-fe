@@ -246,7 +246,7 @@ export default function ProductGroupsPage() {
             !addedProductIds.has(p.id) &&
             (productSearch === "" ||
                 p.name.toLowerCase().includes(productSearch.toLowerCase()) ||
-                p.productCategory?.toLowerCase().includes(productSearch.toLowerCase()))
+                p.categories?.[0]?.productCategory?.toLowerCase().includes(productSearch.toLowerCase()))
     );
 
     // ─────────────────────────────────────────────────────────────
@@ -520,7 +520,7 @@ export default function ProductGroupsPage() {
                                                             {product?.name ?? `Product #${item.productId}`}
                                                         </p>
                                                         <p className="text-xs text-zinc-400 truncate">
-                                                            {product?.productCategory ?? "—"}
+                                                            {product?.categories?.[0]?.productCategory ?? "—"}
                                                         </p>
                                                     </div>
                                                     <div onClick={(e) => e.stopPropagation()}>
@@ -604,7 +604,7 @@ export default function ProductGroupsPage() {
                                                     )}
                                                     <div className="flex-1 min-w-0">
                                                         <p className="text-xs font-bold text-soft-dark truncate">{product.name}</p>
-                                                        <p className="text-[10px] text-zinc-400 truncate">{product.productCategory}</p>
+                                                        <p className="text-[10px] text-zinc-400 truncate">{product.categories?.[0]?.productCategory ?? ""}</p>
                                                     </div>
                                                     <div className="shrink-0 opacity-0 group-hover:opacity-100 transition-all">
                                                         <div className="flex items-center gap-1 text-[10px] font-bold text-brand-blue bg-brand-blue/8 px-2 py-1 rounded-lg">

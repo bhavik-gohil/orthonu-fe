@@ -21,36 +21,30 @@ import {
   Minus,
   Plus,
   ArrowRight,
+  X,
 } from "lucide-react";
 
 // Helper function to convert YouTube URLs to embed format
-function toYoutubeEmbed(url: string): string {
+function toVideoEmbed(url: string): string {
   if (!url) return url;
 
   // Already an embed URL
-  if (url.includes("/embed/")) return url;
+  if (url.includes("/embed/") || url.includes("player.vimeo.com/video/"))
+    return url;
 
-  // Extract video ID from various YouTube URL formats
+  // YouTube
   let videoId = null;
+  const ytShortMatch = url.match(/youtu\.be\/([a-zA-Z0-9_-]{11})/);
+  if (ytShortMatch) videoId = ytShortMatch[1];
+  const ytWatchMatch = url.match(/[?&]v=([a-zA-Z0-9_-]{11})/);
+  if (ytWatchMatch) videoId = ytWatchMatch[1];
 
-  // Format: https://youtu.be/VIDEO_ID
-  const shortMatch = url.match(/youtu\.be\/([a-zA-Z0-9_-]{11})/);
-  if (shortMatch) {
-    videoId = shortMatch[1];
-  }
+  if (videoId) return `https://www.youtube.com/embed/${videoId}`;
 
-  // Format: https://www.youtube.com/watch?v=VIDEO_ID
-  const watchMatch = url.match(/[?&]v=([a-zA-Z0-9_-]{11})/);
-  if (watchMatch) {
-    videoId = watchMatch[1];
-  }
+  // Vimeo
+  const vimeoMatch = url.match(/vimeo\.com\/(\d+)/);
+  if (vimeoMatch) return `https://player.vimeo.com/video/${vimeoMatch[1]}`;
 
-  // If we found a video ID, return embed URL
-  if (videoId) {
-    return `https://www.youtube.com/embed/${videoId}`;
-  }
-
-  // Return original URL if we couldn't parse it
   return url;
 }
 
@@ -142,6 +136,9 @@ export default function ProductDetailPage() {
     loading: cartLoading,
   } = useCart();
   const { user, loading: authLoading } = useAuth();
+  const [isLightboxOpen, setIsLightboxOpen] = useState(false);
+  const [lightboxIndex, setLightboxIndex] = useState(0);
+  const [zoom, setZoom] = useState(1);
 
   useEffect(() => {
     if (!uid) {
@@ -243,6 +240,47 @@ export default function ProductDetailPage() {
     );
   };
 
+  const standardMedia = (selectedVariant?.media || [])
+    .filter((m) => !m.isExtra)
+    .sort((a, b) => a.displayOrder - b.displayOrder);
+  const extraMedia = (selectedVariant?.media || [])
+    .filter((m) => m.isExtra)
+    .sort((a, b) => a.displayOrder - b.displayOrder);
+  const allMedia = standardMedia;
+
+  const openLightbox = (index: number) => {
+    setLightboxIndex(index);
+    setIsLightboxOpen(true);
+    setZoom(1);
+    document.body.style.overflow = "hidden";
+  };
+
+  const closeLightbox = () => {
+    setIsLightboxOpen(false);
+    document.body.style.overflow = "unset";
+  };
+
+  const nextLightbox = () => {
+    setLightboxIndex((prev) => (prev + 1) % allMedia.length);
+    setZoom(1);
+  };
+
+  const prevLightbox = () => {
+    setLightboxIndex((prev) => (prev - 1 + allMedia.length) % allMedia.length);
+    setZoom(1);
+  };
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (!isLightboxOpen) return;
+      if (e.key === "Escape") closeLightbox();
+      if (e.key === "ArrowRight") nextLightbox();
+      if (e.key === "ArrowLeft") prevLightbox();
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [isLightboxOpen, allMedia.length]);
+
   if (loading) {
     return <ProductSkeleton />;
   }
@@ -266,8 +304,6 @@ export default function ProductDetailPage() {
     );
   }
 
-  const standardMedia = selectedVariant?.media.filter((m) => !m.isExtra) || [];
-  const extraMedia = selectedVariant?.media.filter((m) => m.isExtra) || [];
   const regularPrice = selectedVariant?.prices.find(
     (p) => p.userType === "regular",
   )?.price;
@@ -278,8 +314,6 @@ export default function ProductDetailPage() {
   const isProfessional = user?.userType === "professional";
   const showProfessionalPricing = isProfessional && professionalPrice != null;
   const isGuest = !authLoading && !user;
-
-  const allMedia = standardMedia;
 
   return (
     <div className="flex flex-col min-h-screen font-sans bg-white text-soft-dark">
@@ -293,13 +327,14 @@ export default function ProductDetailPage() {
             Shop
           </Link>
           <ChevronRight size={10} />
-          {selectedVariant?.productCategory && (
+          {/* Category Breadcrumb */}
+          {selectedVariant?.categories?.[0]?.productCategory && (
             <>
               <Link
-                href={`/shop?category=${encodeURIComponent(selectedVariant.productCategory)}`}
+                href={`/shop?category=${encodeURIComponent(selectedVariant.categories[0].productCategory)}`}
                 className="hover:text-brand-blue transition-colors"
               >
-                {selectedVariant.productCategory}
+                {selectedVariant.categories[0].productCategory}
               </Link>
               <ChevronRight size={10} />
             </>
@@ -312,41 +347,53 @@ export default function ProductDetailPage() {
           {/* Media Gallery */}
           <div className="space-y-6 sticky">
             {/* Main Media View */}
-            <div className="relative h-56 w-full md:h-96 md:w-96 bg-white rounded-3xl overflow-hidden border border-zinc-100 shadow-lg shadow-zinc-200/50">
+            <div
+              className="relative h-64 w-full md:h-[450px] md:w-[450px] bg-white rounded-3xl overflow-hidden border border-zinc-100 shadow-xl shadow-zinc-200/50 cursor-zoom-in group"
+              onClick={() => openLightbox(activeImage)}
+            >
               {allMedia.length === 0 ? (
-                <div className="flex items-center justify-center text-zinc-200 max-h-fit w-fit">
+                <div className="flex items-center justify-center text-zinc-200 w-full h-full">
                   <ShoppingBag size={100} strokeWidth={0.5} />
                 </div>
               ) : allMedia[activeImage]?.type === "video" ? (
-                <iframe
-                  src={toYoutubeEmbed(allMedia[activeImage].media)}
-                  className="w-full h-full"
-                  title={selectedVariant?.name}
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  allowFullScreen
-                />
+                <div className="relative w-full h-full">
+                  <iframe
+                    src={toVideoEmbed(allMedia[activeImage].media)}
+                    className="w-full h-full pointer-events-none"
+                    title={selectedVariant?.name}
+                  />
+                  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-colors flex items-center justify-center">
+                    <PlayCircle
+                      size={48}
+                      className="text-white opacity-0 group-hover:opacity-100 transition-opacity drop-shadow-lg"
+                    />
+                  </div>
+                </div>
               ) : (
                 // eslint-disable-next-line @next/next/no-img-element
                 <img
                   src={mediaUrl(allMedia[activeImage]?.media)}
                   alt={selectedVariant?.name}
-                  className="w-auto h-full object-cover m-auto"
+                  className="w-full h-full object-contain p-4 md:group-hover:scale-105 transition-transform duration-700"
                 />
               )}
             </div>
 
-            {/* Thumbnail Strip */}
+            {/* Thumbnail Row - Simplified for mobile */}
             {allMedia.length > 1 && (
-              <div className="flex gap-3 overflow-x-auto pb-1">
+              <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide max-w-full md:max-w-[450px]">
                 {allMedia.map((m, i) => (
                   <button
                     key={i}
-                    onClick={() => setActiveImage(i)}
-                    className={`shrink-0 w-16 h-16 rounded-xl overflow-hidden border-2 transition-all duration-200 ${activeImage === i ? "border-brand-blue shadow-md shadow-brand-blue/20" : "border-zinc-100 hover:border-zinc-300"}`}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setActiveImage(i);
+                    }}
+                    className={`relative shrink-0 w-16 h-16 rounded-xl overflow-hidden border-2 transition-all duration-200 ${activeImage === i ? "border-brand-blue shadow-sm" : "border-zinc-100 md:hover:border-zinc-300"}`}
                   >
                     {m.type === "video" ? (
                       <div className="w-full h-full bg-brand-blue/10 flex items-center justify-center text-brand-blue">
-                        <PlayCircle size={20} />
+                        <PlayCircle size={16} />
                       </div>
                     ) : (
                       // eslint-disable-next-line @next/next/no-img-element
@@ -356,6 +403,9 @@ export default function ProductDetailPage() {
                         className="w-full h-full object-cover"
                       />
                     )}
+                    {activeImage === i && (
+                      <div className="absolute inset-0 bg-brand-blue/5" />
+                    )}
                   </button>
                 ))}
               </div>
@@ -364,54 +414,42 @@ export default function ProductDetailPage() {
 
           {/* Product Info */}
           <div className="space-y-3 mt-3">
-            {/* Variant Switching Pills */}
-            {variants.length > 1 && (
-              <div className="space-y-2">
-                <h3 className="text-xs font-bold text-soft-dark/60 uppercase tracking-wider">
-                  Available Variants ({variants.length})
-                </h3>
-                <div className="flex flex-wrap gap-2">
-                  {variants.map((variant) => (
-                    <button
-                      key={variant.id}
-                      onClick={() => handleVariantSwitch(variant)}
-                      className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-all ${
-                        selectedVariant?.id === variant.id
-                          ? "bg-brand-blue text-white shadow-md"
-                          : "bg-white text-soft-dark border border-zinc-200 hover:border-brand-blue hover:text-brand-blue"
-                      }`}
-                    >
-                      {variant.variantName || "Original"}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* Category & Tag */}
+            {/* Categories & Tag */}
             <div className="flex flex-wrap items-center gap-2">
-              {selectedVariant?.productCategory && (
+              {/* Show all categories if available, otherwise fallback to the string field */}
+              {selectedVariant?.categories &&
+              selectedVariant.categories.length > 0
+                ? selectedVariant.categories.map((cat) => (
+                    <span
+                      key={cat.id}
+                      className="text-[9px] font-bold uppercase tracking-[0.15em] px-2 py-1 rounded-md text-soft-dark w-fit  border border-brand-blue/0"
+                      style={{
+                        backgroundColor: selectedVariant.color?.startsWith("#")
+                          ? `${selectedVariant.color}4D`
+                          : selectedVariant.color,
+                      }}
+                    >
+                      {cat.productCategory}
+                    </span>
+                  ))
+                : null}
+
+              {selectedVariant?.isBundle && (
                 <span
-                  className="text-[9px] font-bold uppercase tracking-[0.15em] px-2 py-1 rounded-md text-soft-dark w-fit"
+                  className="flex text-[9px] font-bold uppercase tracking-[0.1em] px-2 py-1 rounded-md text-soft-dark w-fit  border border-brand-blue/0"
                   style={{
                     backgroundColor: selectedVariant.color?.startsWith("#")
                       ? `${selectedVariant.color}4D`
                       : selectedVariant.color,
                   }}
                 >
-                  {selectedVariant.productCategory}
+                  Bundle
                 </span>
               )}
               {selectedVariant?.tag && (
-                <div className="text-[10px] font-bold tracking-[0.15em] px-2 py-1 rounded-full bg-brand-blue/30 text-soft-dark w-fit">
+                <div className="text-[10px] font-bold tracking-[0.15em] px-2 py-1 rounded-full bg-brand-blue/30 text-soft-dark w-fit border border-brand-blue/50">
                   {selectedVariant.tag}
                 </div>
-              )}
-              {selectedVariant?.isBundle && (
-                <span className="text-[9px] font-bold uppercase tracking-[0.3em] text-fresh-mint bg-fresh-mint/10 px-3 py-1.5 rounded-full flex items-center gap-1">
-                  <Package size={9} />
-                  Bundle
-                </span>
               )}
             </div>
 
@@ -444,6 +482,31 @@ export default function ProductDetailPage() {
                     ${regularPrice.toFixed(2)}
                   </span>
                 )}
+              </div>
+            )}
+
+            {/* Variant Switching Pills - Moved below price */}
+            {variants.length > 1 && (
+              <div className="space-y-3 pt-2">
+                <h3 className="text-[10px] font-extrabold text-soft-dark/40 uppercase tracking-[0.15em]">
+                  Available Variants
+                  {/* ({variants.length}) */}
+                </h3>
+                <div className="flex flex-wrap gap-2">
+                  {variants.map((variant) => (
+                    <button
+                      key={variant.id}
+                      onClick={() => handleVariantSwitch(variant)}
+                      className={`px-4 py-2 rounded-lg text-xs font-bold transition-all ${
+                        selectedVariant?.id === variant.id
+                          ? "bg-atlantic-blue text-white shadow-lg shadow-atlantic-blue/20"
+                          : "bg-white text-soft-dark border border-zinc-200 hover:border-atlantic-blue hover:text-atlantic-blue hover:cursor-pointer"
+                      }`}
+                    >
+                      {variant.variantName || "Original"}
+                    </button>
+                  ))}
+                </div>
               </div>
             )}
 
@@ -642,20 +705,22 @@ export default function ProductDetailPage() {
         {extraMedia.length > 0 && (
           <section className="space-y-8">
             <div className="flex items-center gap-6">
-              <h2 className="text-[10px] font-bold tracking-[0.15em] text-brand-blue bg-brand-blue/5 px-4 py-1.5 rounded-full">
+              <h2 className="text-[10px] font-bold tracking-[0.1em] text-atlantic-blue bg-brand-blue/10 px-4 py-1.5 rounded-full">
                 Instructional Media
               </h2>
               <div className="flex-1 h-px bg-zinc-200" />
             </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
               {extraMedia.map((m, i) => (
                 <div
                   key={i}
-                  className="rounded-2xl overflow-hidden aspect-video bg-white border border-zinc-100 shadow-md"
+                  className={`rounded-2xl overflow-hidden bg-white border border-zinc-100 shadow-md ${
+                    m.type === "image" ? "flex" : "aspect-video"
+                  }`}
                 >
                   {m.type === "video" ? (
                     <iframe
-                      src={toYoutubeEmbed(m.media)}
+                      src={toVideoEmbed(m.media)}
                       className="w-full h-full"
                       title={`Media ${i + 1}`}
                       allowFullScreen
@@ -675,7 +740,7 @@ export default function ProductDetailPage() {
                     <img
                       src={mediaUrl(m.media)}
                       alt=""
-                      className="w-full h-full object-cover"
+                      className="w-full h-auto object-contain"
                     />
                   )}
                 </div>
@@ -684,6 +749,112 @@ export default function ProductDetailPage() {
           </section>
         )}
       </main>
+
+      {/* Full Screen Lightbox */}
+      {isLightboxOpen && (
+        <div className="fixed inset-0 z-[100] flex flex-col bg-soft-dark backdrop-blur-xl animate-in fade-in duration-300">
+          {/* Header */}
+          <div className="flex items-center justify-between p-6">
+            <div className="flex flex-col">
+              <h2 className="text-white font-bold text-lg">
+                {selectedVariant?.name}
+              </h2>
+              <p className="text-white/40 text-[10px] font-bold uppercase tracking-widest">
+                {lightboxIndex + 1} / {allMedia.length}
+              </p>
+            </div>
+            <div className="flex items-center gap-4">
+              <button
+                onClick={() => setZoom((z) => (z === 1 ? 2 : 1))}
+                className="w-10 h-10 flex items-center justify-center rounded-full bg-white/10 text-white hover:bg-white/20 transition-all"
+                title="Toggle Zoom"
+              >
+                {zoom === 1 ? <Plus size={20} /> : <Minus size={20} />}
+              </button>
+              <button
+                onClick={closeLightbox}
+                className="w-10 h-10 flex items-center justify-center rounded-full bg-white/10 text-white hover:bg-white/20 transition-all"
+              >
+                <X size={24} />
+              </button>
+            </div>
+          </div>
+
+          {/* Content */}
+          <div className="flex-1 relative flex items-center justify-center p-4 overflow-hidden">
+            {/* Nav Buttons */}
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                prevLightbox();
+              }}
+              className="absolute left-6 z-10 w-14 h-14 flex items-center justify-center rounded-full bg-black/20 text-white hover:bg-black/40 transition-all backdrop-blur-md border border-white/10"
+            >
+              <ChevronLeft size={32} />
+            </button>
+
+            <div
+              className="w-full h-full flex items-center justify-center transition-transform duration-300 ease-out cursor-zoom-in"
+              style={{ transform: `scale(${zoom})` }}
+              onClick={() => setZoom((z) => (z === 1 ? 2 : 1))}
+            >
+              {allMedia[lightboxIndex]?.type === "video" ? (
+                <div className="w-full h-full max-w-5xl aspect-video bg-black rounded-2xl overflow-hidden shadow-2xl">
+                  <iframe
+                    src={toVideoEmbed(allMedia[lightboxIndex].media)}
+                    className="w-full h-full"
+                    allowFullScreen
+                  />
+                </div>
+              ) : (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  src={mediaUrl(allMedia[lightboxIndex]?.media)}
+                  alt=""
+                  className="max-w-full max-h-full object-contain rounded-lg shadow-2xl"
+                />
+              )}
+            </div>
+
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                nextLightbox();
+              }}
+              className="absolute right-6 z-10 w-14 h-14 flex items-center justify-center rounded-full bg-black/20 text-white hover:bg-black/40 transition-all backdrop-blur-md border border-white/10"
+            >
+              <ChevronRight size={32} />
+            </button>
+          </div>
+
+          {/* Thumbnails */}
+          <div className="p-6 flex justify-center gap-3 overflow-x-auto">
+            {allMedia.map((m, i) => (
+              <button
+                key={i}
+                onClick={() => {
+                  setLightboxIndex(i);
+                  setZoom(1);
+                }}
+                className={`shrink-0 w-16 h-16 rounded-xl overflow-hidden border-2 transition-all duration-200 ${lightboxIndex === i ? "border-brand-blue" : "border-transparent opacity-100"}`}
+              >
+                {m.type === "video" ? (
+                  <div className="w-full h-full bg-white/10 flex items-center justify-center text-white">
+                    <PlayCircle size={20} />
+                  </div>
+                ) : (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={mediaUrl(m.media)}
+                    alt=""
+                    className="w-full h-full object-cover"
+                  />
+                )}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

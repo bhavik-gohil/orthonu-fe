@@ -43,7 +43,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         if (userType === "professional" && item.professionalPrice) {
             return Number(item.professionalPrice);
         }
-        return Number(item.regularPrice) ?? 0;
+        return Number(item.regularPrice) || 0;
     }, [user]);
 
     // Helper: Calculate line total
@@ -139,8 +139,8 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
                 setItems(data.items || []);
             } else {
                 // Guest: fetch product info from public shop endpoint to build cart item snapshot
-                const allProducts = await apiCall("GET", "/shop/products");
-                const product = allProducts.find((p: any) => p.id === productId);
+                // Optimization: Fetch only the specific product by ID
+                const product = await apiCall("GET", `/shop/products?id=${productId}`);
                 if (!product) throw new Error("Product not found");
 
                 const regularPrice = product.prices?.find((p: any) => p.userType === "regular")?.price ?? 0;
@@ -164,7 +164,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
                             professionalPrice,
                             variantName: product.variantName ?? null,
                             color: product.color ?? null,
-                            productCategory: product.productCategory ?? null,
+                            productCategory: product.categories?.[0]?.productCategory ?? null,
                             isBundle: product.isBundle ?? false,
                         } as CartItem];
                     }
