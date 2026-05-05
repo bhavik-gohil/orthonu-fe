@@ -184,7 +184,7 @@ function ShopContent() {
       )}
 
       {/* ── OrthoNu Kits Section ─────────────────────────────────── */}
-      <section className="py-24 px-6  ">
+      <section className="pt-6 pb-24 px-6">
         <div className="max-w-6xl mx-auto space-y-24">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div className="space-y-8 lg:order-1">
