@@ -59,7 +59,7 @@ export default function CartSummary({ subtotal, itemCount }: CartSummaryProps) {
             <div className="space-y-3 pt-4">
                 <button
                     onClick={handleCheckout}
-                    className="w-full flex items-center justify-center gap-3 py-4 bg-brand-blue text-white font-extrabold text-xs tracking-wider rounded-full hover:bg-atlantic-blue hover:shadow-xl hover:shadow-brand-blue/30 hover:-translate-y-0.5 transition-all shadow-lg shadow-brand-blue/20"
+                    className="w-full flex items-center justify-center gap-3 py-4 bg-brand-blue text-white font-extrabold text-xs tracking-wider rounded-full hover:bg-atlantic-blue hover:shadow-xl hover:shadow-brand-blue/30 hover:-translate-y-0.5 transition-all shadow-lg shadow-brand-blue/20 cursor-pointer"
                 >
                     <ShoppingBag size={18} strokeWidth={2.5} />
                     {user ? "Proceed to Checkout" : "Register to Checkout"}
@@ -77,17 +77,17 @@ export default function CartSummary({ subtotal, itemCount }: CartSummaryProps) {
 
                 <Link
                     href={getShopUrl()}
-                    className="w-full flex items-center justify-center py-4 text-[10px] font-bold  tracking-[0.1em] text-soft-dark/60 hover:text-brand-blue transition-colors"
+                    className="w-full flex items-center justify-center pt-4 text-[10px] font-bold  tracking-[0.1em] text-soft-dark/60 hover:text-brand-blue transition-colors"
                 >
                     Continue Shopping
                 </Link>
             </div>
 
-            <div className="pt-4 border-t border-zinc-100">
+            {/* <div className="pt-4 border-t border-zinc-100">
                 <p className="text-[10px] text-soft-dark/40 leading-relaxed">
                     Free shipping on orders over $50. Secure checkout with SSL encryption.
                 </p>
-            </div>
+            </div> */}
         </div>
     );
 }

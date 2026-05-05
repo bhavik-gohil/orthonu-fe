@@ -48,8 +48,8 @@ export default function ShopNavbar() {
   }, []);
 
   return (
-    <nav className="sticky top-0 z-50 w-full bg-brand-blue/95 backdrop-blur-md border-b border-white/10 font-sans shadow-lg shadow-brand-blue/20">
-      <div className="max-w-7xl mx-auto px-6 md:px-12 py-4 flex items-center justify-between">
+    <nav className="sticky top-0 z-50 w-full bg-brand-blue/95 backdrop-blur-lg border-b border-white/10 font-sans shadow-lg shadow-brand-blue/20">
+      <div className="max-w-7xl mx-auto px-6 lg:px-12 py-4 flex items-center justify-between">
         {/* Logo Area */}
         <Link
           href={shopPrefix || "/"}
@@ -61,27 +61,28 @@ export default function ShopNavbar() {
               alt="OrthoNu"
               width={120}
               height={26}
-              className="h-10 md:h-14 w-auto brightness-0 invert transition-all group-hover:drop-shadow-[0_0_15px_rgba(255,255,255,0.4)]"
+              className="h-10 lg:h-14 w-auto brightness-0 invert transition-all group-hover:drop-shadow-[0_0_15px_rgba(255,255,255,0.4)]"
               priority
             />
           </div>
         </Link>
 
         {/* Desktop Navigation */}
-        <div className="hidden md:flex items-center gap-2 text-xs font-semibold tracking-wide text-white">
+        <div className="hidden lg:flex items-center gap-2 text-xs font-semibold tracking-wide text-white">
           <Link
             href={isSubdomainEnvironment() ? "/" : "/shop"}
             className={cn(
-              "py-1.5 md:px-3 rounded-3xl transition-all duration-300 text-white",
+              "py-1.5 lg:px-3 rounded-3xl transition-all duration-300 text-white",
               (pathname === shopPrefix ||
                 pathname === "/shop" ||
                 (pathname === "/" && isSubdomainEnvironment())) &&
-                !activeCategory &&
+                !activeCategory && !searchParams.get("isBundle") &&
                 "bg-atlantic-blue/10",
             )}
           >
             Home
           </Link>
+
           {categories.map((cat, i) => {
             return (
               <div
@@ -92,11 +93,11 @@ export default function ShopNavbar() {
               >
                 <Link
                   className={cn(
-                    "py-1.5 md:px-3 rounded-3xl transition-all duration-300 text-white",
+                    "py-1.5 lg:px-3 rounded-3xl transition-all duration-300 text-white",
                     activeCategory === cat.productCategory &&
                       "bg-atlantic-blue/10",
                   )}
-                  href={`${shopPrefix}/?category=${encodeURIComponent(cat.productCategory)}`.replace(
+                  href={`${shopPrefix}/products?category=${encodeURIComponent(cat.productCategory)}`.replace(
                     "//",
                     "/",
                   )}
@@ -106,12 +107,21 @@ export default function ShopNavbar() {
               </div>
             );
           })}
+          <Link
+            href={`${shopPrefix}/products?isBundle=true`}
+            className={cn(
+              "py-1.5 lg:px-3 rounded-3xl transition-all duration-300 text-white",
+              searchParams.get("isBundle") === "true" && "bg-atlantic-blue/10",
+            )}
+          >
+            OrthoNu Kits
+          </Link>
 
           {shouldShowProfessionalLink && (
             <Link
               href={`${shopPrefix}/register?professional=yes`}
               className={cn(
-                "py-1.5 md:px-3 rounded-3xl transition-all duration-300 text-white",
+                "py-1.5 lg:px-3 rounded-3xl transition-all duration-300 text-white",
                 (searchParams.get("professional") === "yes" ||
                   pathname.includes("register")) &&
                   "bg-atlantic-blue/10",
@@ -123,7 +133,7 @@ export default function ShopNavbar() {
         </div>
 
         {/* Actions Area */}
-        <div className="flex items-center gap-3 md:gap-5">
+        <div className="flex items-center gap-3 lg:gap-5">
           {/* For Professional Button */}
 
           {/* Shopping Bag */}
@@ -220,7 +230,7 @@ export default function ShopNavbar() {
           {/* Mobile Toggle */}
           <button
             onClick={() => setMobileOpen(!mobileOpen)}
-            className="md:hidden p-3.5 text-white hover:bg-white/10 rounded-2xl border border-white/5 transition-all"
+            className="lg:hidden p-3.5 text-white hover:bg-white/10 rounded-2xl border border-white/5 transition-all"
           >
             {mobileOpen ? (
               <X size={22} strokeWidth={2.5} />
@@ -233,7 +243,7 @@ export default function ShopNavbar() {
 
       {/* Mobile Navigation Overhaul */}
       {mobileOpen && (
-        <div className="md:hidden bg-brand-blue px-6 py-6 animate-in slide-in-from-top-10 duration-500 border-t border-white/5">
+        <div className="lg:hidden bg-brand-blue px-6 py-6 animate-in slide-in-from-top-10 duration-500 border-t border-white/5">
           <div className="space-y-2">
             <p className="text-[9px] font-black uppercase tracking-widest text-white/40 mb-4">
               Navigation
@@ -246,19 +256,20 @@ export default function ShopNavbar() {
                 (pathname === shopPrefix ||
                   pathname === "/shop" ||
                   (pathname === "/" && isSubdomainEnvironment())) &&
-                  !activeCategory &&
+                  !activeCategory && !searchParams.get("isBundle") &&
                   "bg-warm-gray/15 rounded-xl",
               )}
             >
               Home
             </Link>
+
             <p className="text-[9px] font-black uppercase tracking-widest text-white/40 my-4">
               Categories
             </p>
             {categories.map((cat) => (
               <Link
                 key={cat.id}
-                href={`${shopPrefix}/?category=${encodeURIComponent(cat.productCategory)}`.replace(
+                href={`${shopPrefix}/products?category=${encodeURIComponent(cat.productCategory)}`.replace(
                   "//",
                   "/",
                 )}
@@ -270,17 +281,18 @@ export default function ShopNavbar() {
                 )}
               >
                 {cat.productCategory}
-                {/* <ChevronDown
-                  size={16}
-                  className={cn(
-                    "-rotate-90",
-                    activeCategory === cat.productCategory
-                      ? "text-white"
-                      : "text-white/20",
-                  )}
-                /> */}
               </Link>
             ))}
+            <Link
+              href={`${shopPrefix}/products?isBundle=true`}
+              onClick={() => setMobileOpen(false)}
+              className={cn(
+                "flex items-center font-semibold py-3.5 px-3 border-b-2 border-white/0 transition-colors text-white text-xs",
+                searchParams.get("isBundle") === "true" && "bg-warm-gray/15 rounded-xl",
+              )}
+            >
+              OrthoNu Kits
+            </Link>
           </div>
 
           {shouldShowProfessionalLink && (
