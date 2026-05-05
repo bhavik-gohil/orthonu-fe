@@ -45,6 +45,7 @@ export interface Category {
     header: string;
     text: string;
     image: string;
+    name?: string;
 }
 
 export interface CartItem {

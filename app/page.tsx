@@ -567,7 +567,7 @@ export default function Home() {
         {/* ─────────────────────────────────────────────────────────────
             PRODUCT SECTIONS — Original section unchanged
         ───────────────────────────────────────────────────────────── */}
-        {!loading && productGroups.length > 0 && (
+        {/* {!loading && productGroups.length > 0 && (
           <Section bgColor="bg-cloud-blue" className="">
             <div className="space-y-32 max-w-5xl mx-auto px-4 md:px-8">
               {productGroups
@@ -615,7 +615,7 @@ export default function Home() {
                 })}
             </div>
           </Section>
-        )}
+        )} */}
 
         {/* Loading State */}
         {loading && (

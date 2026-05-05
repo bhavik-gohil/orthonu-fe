@@ -8,6 +8,8 @@ import { useCart } from "@/lib/CartContext";
 import { useAuth } from "@/lib/AuthContext";
 import ShopNavbar from "@/components/ShopNavbar";
 import Link from "next/link";
+import ProductCard from "@/components/shop/ProductCard";
+import { isSubdomainEnvironment } from "@/lib/subdomains";
 import {
   Loader2,
   ShoppingBag,
@@ -147,6 +149,7 @@ export default function ProductDetailPage() {
   const [variants, setVariants] = useState<Product[]>([]);
   const [selectedVariant, setSelectedVariant] = useState<Product | null>(null);
   const [bundleProducts, setBundleProducts] = useState<Product[]>([]);
+  const [suggestedProducts, setSuggestedProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeImage, setActiveImage] = useState(0);
   const {
@@ -160,6 +163,13 @@ export default function ProductDetailPage() {
   const [isLightboxOpen, setIsLightboxOpen] = useState(false);
   const [lightboxIndex, setLightboxIndex] = useState(0);
   const [zoom, setZoom] = useState(1);
+  const [shopPrefix, setShopPrefix] = useState("/shop");
+
+  useEffect(() => {
+    if (isSubdomainEnvironment()) {
+      setShopPrefix("");
+    }
+  }, []);
 
   useEffect(() => {
     if (!uid) {
@@ -169,13 +179,14 @@ export default function ProductDetailPage() {
 
     const fetchProduct = async () => {
       try {
-        const data: Product[] = await apiCall(
-          "GET",
-          `/shop/products?uid=${uid}`,
-        );
-        const found = Array.isArray(data)
-          ? data.find((p) => p.uid === uid)
-          : data;
+        const [productData, allProductsData] = await Promise.all([
+          apiCall("GET", `/shop/products?uid=${uid}`),
+          apiCall("GET", "/shop/products")
+        ]);
+        
+        const found = Array.isArray(productData)
+          ? productData.find((p) => p.uid === uid)
+          : productData;
 
         if (found) {
           setProduct(found);
@@ -199,11 +210,28 @@ export default function ProductDetailPage() {
               .filter(Boolean) as Product[];
             setBundleProducts(bundled);
           }
+          // Compute Suggested Products
+          const allProducts = Array.isArray(allProductsData) ? allProductsData : [];
+          const categoryName = found.categories?.[0]?.productCategory;
+          
+          const related = allProducts.filter((p: Product) => 
+            !p.isBundle &&
+            p.uid !== found.uid &&
+            p.categories?.some(c => c.productCategory === categoryName)
+          ).slice(0, 3);
+
+          const kits = allProducts.filter((p: Product) => 
+            p.isBundle &&
+            p.uid !== found.uid
+          ).slice(0, 3);
+
+          setSuggestedProducts([...related, ...kits]);
         } else {
           setProduct(null);
           setVariants([]);
           setSelectedVariant(null);
           setBundleProducts([]);
+          setSuggestedProducts([]);
         }
       } catch (error) {
         console.error("Failed to fetch product:", error);
@@ -571,7 +599,7 @@ export default function ProductDetailPage() {
                   {isGuest && (
                     <Link
                       href="/shop/register?professional=yes"
-                      className="w-full flex items-center justify-center gap-2 py-4 rounded-full font-bold text-xs tracking-[0.05em] bg-warm-gray text-atlantic-blue border border-warm-gray hover:border-brand-blue transition-all text-center"
+                      className="w-full flex items-center justify-center gap-2 py-4 rounded-full font-bold text-xs tracking-[0.05em] bg-warm-gray text-atlantic-blue border border-warm-gray hover:border-atlantic-blue transition-all text-center"
                     >
                       Buy Now - Professional
                     </Link>
@@ -628,7 +656,7 @@ export default function ProductDetailPage() {
                     {isGuest && (
                       <Link
                         href="/shop/register?professional=yes"
-                        className="w-full flex items-center justify-center gap-2 py-4 rounded-full font-bold text-xs tracking-[0.05em] bg-warm-gray text-atlantic-blue border border-warm-gray hover:border-brand-blue transition-all text-center"
+                        className="w-full flex items-center justify-center gap-2 py-4 rounded-full font-bold text-xs tracking-[0.05em] bg-warm-gray text-atlantic-blue border border-warm-gray hover:border-atlantic-blue transition-all text-center"
                       >
                         Buy Now - Professional
                       </Link>
@@ -783,6 +811,26 @@ export default function ProductDetailPage() {
                     />
                   )}
                 </div>
+              ))}
+            </div>
+          </section>
+        )}
+
+        {/* Suggested Products Section */}
+        {suggestedProducts.length > 0 && (
+          <section className="space-y-8 mt-16 pt-8 border-t border-zinc-100 max-w-5xl justify-center">
+            <div className="flex items-center gap-6">
+              <h2 className="text-2xl font-black text-soft-dark tracking-tight">
+                You May Also Like
+              </h2>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+              {suggestedProducts.map((p) => (
+                <ProductCard
+                  key={p.id}
+                  product={p}
+                  hrefPrefix={shopPrefix}
+                />
               ))}
             </div>
           </section>
